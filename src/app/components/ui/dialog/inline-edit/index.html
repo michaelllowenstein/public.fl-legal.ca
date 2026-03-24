@@ -1,0 +1,91 @@
+
+    <div
+      class="bg-white rounded-2xl shadow-dialog w-full max-w-xl p-8 animate-scale-in"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-title"
+      (click)="$event.stopPropagation()">
+ 
+      <!-- Header -->
+      <div class="flex items-start justify-between mb-5">
+        <div>
+          <h2 id="edit-title" class="font-display text-brand text-xl font-semibold">
+            Edit Content
+          </h2>
+          @if (data.label) {
+            <p class="font-sans text-gray-400 text-xs mt-0.5">{{ data.label }}</p>
+          }
+        </div>
+        <button
+          class="text-gray-300 hover:text-gray-500 p-1 rounded transition-colors -mt-1 -mr-1"
+          aria-label="Cancel"
+          (click)="cancel()">
+          <app-friclowenstein-icon name="x-mark" class="w-5 h-5" />
+        </button>
+      </div>
+ 
+      <!-- Editor -->
+      <div class="relative">
+        <textarea
+          id="edit-field"
+          [(ngModel)]="draft"
+          rows="7"
+          [maxlength]="data.maxLength ?? 50000"
+          class="w-full border rounded-lg px-3.5 py-3 font-body text-sm text-brand
+                 leading-relaxed resize-y
+                 focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent
+                 transition-shadow"
+          [class.border-red-400]="error()"
+          [class.border-gray-300]="!error()"
+          placeholder="Enter content…">
+        </textarea>
+ 
+        <!-- Character count (shown when maxLength is set) -->
+        @if (data.maxLength) {
+          <p
+            class="absolute bottom-2.5 right-3 font-sans text-[11px] pointer-events-none"
+            [class.text-red-500]="remainingChars() < 0"
+            [class.text-gray-400]="remainingChars() >= 0">
+            {{ draft().length }} / {{ data.maxLength }}
+          </p>
+        }
+      </div>
+ 
+      <!-- Hints -->
+      <div class="flex items-center gap-1.5 mt-2">
+        @if (!data.plainText) {
+          <app-friclowenstein-icon name="document-text" class="w-3 h-3 text-gray-400" />
+          <p class="font-sans text-[11px] text-gray-400">
+            HTML tags are supported — e.g. <code class="bg-gray-100 px-1 rounded">&lt;strong&gt;</code>,
+            <code class="bg-gray-100 px-1 rounded">&lt;em&gt;</code>,
+            <code class="bg-gray-100 px-1 rounded">&lt;br&gt;</code>
+          </p>
+        }
+      </div>
+ 
+      @if (error()) {
+        <p class="font-sans text-xs text-red-500 flex items-center gap-1 mt-2 animate-fade-in">
+          <app-friclowenstein-icon name="x-mark" class="w-3 h-3" />
+          {{ error() }}
+        </p>
+      }
+ 
+      <!-- Actions -->
+      <div class="flex gap-3 mt-6">
+        <button
+          class="flex-1 font-sans text-sm text-gray-500 border border-gray-200
+                 rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          class="flex-1 font-sans text-sm font-semibold bg-brand-gold hover:bg-yellow-500
+                 text-brand-dark rounded-lg py-2.5 transition-colors disabled:opacity-40
+                 flex items-center justify-center gap-2"
+          [disabled]="remainingChars() < 0"
+          (click)="save()">
+          <app-friclowenstein-icon name="check" class="w-4 h-4" />
+          Save Changes
+        </button>
+      </div>
+    </div>

@@ -1,0 +1,50 @@
+{
+  "name": "fl-legal.ca",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "local": "ng serve --configuration local --port 4422",
+    "build:local": "ng build --configuration local",
+    "watch": "ng build --watch --configuration local",
+    "build:prod": "ng build --configuration production",
+    "ngo:service": "node scripts/gen.mjs --service",
+    "ngo:guard": "node scripts/gen.mjs --guard",
+    "ngo:pipe": "node scripts/gen.mjs --pipe",
+    "ngo:comp": "node scripts/gen.mjs",
+    "ngo": "node scripts/gen.mjs",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "npm@11.11.0",
+  "dependencies": {
+    "@angular/animations": "^21.2.5",
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@floating-ui/dom": "^1.7.6",
+    "@ng-icons/core": "^33.1.0",
+    "@ng-icons/heroicons": "^33.1.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.0",
+    "@angular/cli": "^21.2.0",
+    "@angular/compiler-cli": "^21.2.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^3.4.19",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "~5.9.2"
+  }
+}

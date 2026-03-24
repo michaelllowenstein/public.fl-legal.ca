@@ -1,0 +1,99 @@
+<!-- Banner -->
+<div class="bg-brand-dark py-16 px-4 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(184,147,42,0.1),transparent_55%)]
+              pointer-events-none"></div>
+  <span class="inline-block font-sans text-brand-gold text-[11px] uppercase
+               tracking-[0.2em] font-semibold mb-3">Practice</span>
+  <h1 class="font-display text-white text-4xl md:text-5xl font-semibold mt-1">Areas of Law</h1>
+  <p class="font-sans text-white/50 text-sm mt-3 max-w-sm mx-auto">
+    Comprehensive legal services across Alberta
+  </p>
+</div>
+ 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-14
+            lg:grid lg:grid-cols-[1fr_300px] lg:gap-14 lg:items-start">
+ 
+  <!-- Main -->
+  <div>
+    <div
+      class="font-body text-gray-600 text-base leading-[1.85] fl-prose mb-10
+             animate-fade-up max-w-2xl"
+      [appEditableText]="'areasOfLaw/body'"
+      editLabel="Introduction"
+      [innerHTML]="intro() | safeHtml">
+    </div>
+ 
+    @if (loading()) {
+      <div class="grid sm:grid-cols-2 gap-4">
+        @for (_ of [1,2,3,4,5,6]; track $index) {
+          <div class="bg-white rounded-2xl p-5 animate-pulse shadow-card">
+            <div class="w-8 h-8 bg-gray-200 rounded-lg mb-3"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-gray-100 rounded w-full"></div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div
+        class="grid sm:grid-cols-2 gap-4"
+        [@listStagger]="site().bulletpoints?.length ?? 0">
+        @for (area of site().bulletpoints ?? []; track $index; let i = $index) {
+          <div
+            class="group bg-white rounded-2xl shadow-card p-5 flex gap-4
+                   hover:shadow-dialog hover:-translate-y-0.5 transition-all duration-250
+                   border border-transparent hover:border-brand-gold/20"
+            [style.animation-delay]="(i * 40) + 'ms'">
+            <div class="shrink-0 w-10 h-10 rounded-xl bg-brand/8 flex items-center justify-center
+                        group-hover:bg-brand group-hover:scale-110 transition-all duration-250 mt-0.5">
+              <app-friclowenstein-icon [name]="iconFor(area)"
+                       class="w-5 h-5 text-brand group-hover:text-white transition-colors" />
+            </div>
+            <span
+              class="font-body text-gray-700 text-sm leading-relaxed fl-prose"
+              [appEditableText]="'areasOfLaw/bulletpoints/' + $index"
+              [innerHTML]="area | safeHtml">
+            </span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+ 
+  <!-- Sidebar -->
+  <aside class="mt-12 lg:mt-0 lg:sticky lg:top-24 space-y-5">
+    <div class="bg-brand rounded-3xl p-6 text-white overflow-hidden relative">
+      <div class="absolute -top-4 -right-4 w-24 h-24 bg-brand-light/30 rounded-full
+                  pointer-events-none"></div>
+      <h3 class="font-display text-xl font-semibold mb-3 relative">Need Legal Advice?</h3>
+      <p class="font-sans text-white/70 text-sm leading-relaxed mb-5 relative">
+        Over 40 years of experience across all areas of Alberta law.
+      </p>
+      <a
+        href="tel:+14032589455"
+        class="flex items-center gap-2 font-sans text-sm bg-brand-gold hover:bg-yellow-500
+               text-brand-dark font-semibold px-5 py-2.5 rounded-xl transition-all
+               duration-200 hover:-translate-y-0.5 relative">
+        <app-friclowenstein-icon name="phone" class="w-4 h-4" />
+        (403) 258-9455
+      </a>
+    </div>
+    <div class="bg-brand-cream rounded-2xl p-5 border border-brand-gold/15">
+      <p class="font-sans text-[11px] uppercase tracking-wider text-gray-400
+                font-semibold mb-3">Related</p>
+      <ul class="space-y-2">
+        @for (link of relatedLinks; track link.path) {
+          <li>
+            <a [routerLink]="link.path"
+               class="flex items-center gap-2 font-sans text-sm text-brand
+                      hover:text-brand-light transition-colors group">
+              <app-friclowenstein-icon name="chevron-right"
+                       class="w-3.5 h-3.5 text-brand-gold
+                              group-hover:translate-x-0.5 transition-transform" />
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </aside>
+</div>
