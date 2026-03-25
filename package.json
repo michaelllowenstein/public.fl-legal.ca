@@ -1,6 +1,6 @@
 {
   "name": "fl-legal.ca",
-  "version": "0.0.0",
+  "version": "3.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -17,7 +17,6 @@
     "test": "ng test"
   },
   "private": true,
-  "packageManager": "npm@11.11.0",
   "dependencies": {
     "@angular/animations": "^21.2.5",
     "@angular/common": "^21.2.0",
