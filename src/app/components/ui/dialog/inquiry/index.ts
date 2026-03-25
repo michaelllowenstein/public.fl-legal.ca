@@ -5,12 +5,12 @@ import {
   inject,
   computed,
 } from '@angular/core';
-import { FricLowensteinIcon } from '../../../feature/friclowenstein/icon';
-import { HttpClient } from '@angular/common/http';
-import { injectDialogClose } from '@factory/dialog/tokens';
-import { FormsModule } from '@angular/forms';
-import { env } from '@env/environment';
 import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { injectDialogClose } from '@factory/dialog/tokens';
+import { env } from '@env/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
  

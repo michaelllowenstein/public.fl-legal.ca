@@ -14,7 +14,7 @@
  */
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
 
 export interface ConfirmData {
   title?:         string;

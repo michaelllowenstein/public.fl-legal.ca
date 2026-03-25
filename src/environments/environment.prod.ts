@@ -11,8 +11,9 @@ export const env = {
     appId: "1:581710329723:web:d080beb8b2d70567bf6fde",
     measurementId: "G-SFSMDQYZMR"
   },
+  mapsEmbedApiKey: "AIzaSyAsucFozvuHXMfyfWgb_Y6qpgu-S0wTWQ4",
   maps: {
-    mapsEmbedApiKey: "AIzaSyAsucFozvuHXMfyfWgb_Y6qpgu-S0wTWQ4",
+    apiKey: "AIzaSyAsucFozvuHXMfyfWgb_Y6qpgu-S0wTWQ4",
     latitude: 50.955083281651376,
     longitude: -114.06998756735986,
     pointOfInterest: "Southcentre Executive Tower"
@@ -27,3 +28,4 @@ export const env = {
   },
   apiURL: 'https://localhostapi.ca',
 };
+    

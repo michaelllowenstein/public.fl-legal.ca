@@ -15,7 +15,7 @@ import {
   signal, ChangeDetectorRef, inject,
 } from '@angular/core';
 import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 

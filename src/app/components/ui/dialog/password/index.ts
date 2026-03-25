@@ -7,7 +7,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { EditorService } from '@services/editor';
 import { injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
 
 @Component({
   selector:    'app-password-dialog',

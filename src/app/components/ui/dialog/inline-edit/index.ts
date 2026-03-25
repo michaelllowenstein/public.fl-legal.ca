@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
 
 export interface InlineEditData {
   fieldKey:      string;

@@ -7,7 +7,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { injectDialogClose, injectDialogData } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
  
 export interface ContextMenuItem {
   label:    string;

@@ -2,20 +2,33 @@ import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { DialogService } from '@factory/dialog/service';
 import { InquiryDialog } from '@ui/dialog/inquiry';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
+
+export interface MenuIcon {
+  source: string;
+  alt: string;
+}
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FricLowensteinIcon],
+  imports: [FricLowensteinIcon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })
 export class NavbarComponent {
   private dialog = inject(DialogService);
+  webMenu = signal<MenuIcon>({
+    source: '../../../../assets/site/branding/cropped-favicon-512-100x100', 
+    alt: 'Fric, Lowenstein & Co. LLP'
+  });
+  mobileMenu = signal<MenuIcon>({
+    source: '../../../../assets/site/branding/logo-white-on-blue-small', 
+    alt: 'Fric, Lowenstein & Co. LLP'
+  });
 
   menuOpen = signal(false);
   scrolled = signal(false);
