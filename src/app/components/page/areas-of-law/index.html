@@ -45,7 +45,7 @@
             [style.animation-delay]="(i * 40) + 'ms'">
             <div class="shrink-0 w-10 h-10 rounded-xl bg-brand/8 flex items-center justify-center
                         group-hover:bg-brand group-hover:scale-110 transition-all duration-250 mt-0.5">
-              <app-friclowenstein-icon [name]="iconFor(area)"
+              <app-icon [name]="iconFor(area)"
                        class="w-5 h-5 text-brand group-hover:text-white transition-colors" />
             </div>
             <span
@@ -73,7 +73,7 @@
         class="flex items-center gap-2 font-sans text-sm bg-brand-gold hover:bg-yellow-500
                text-brand-dark font-semibold px-5 py-2.5 rounded-xl transition-all
                duration-200 hover:-translate-y-0.5 relative">
-        <app-friclowenstein-icon name="phone" class="w-4 h-4" />
+        <app-icon name="phone" class="w-4 h-4" />
         (403) 258-9455
       </a>
     </div>
@@ -86,7 +86,7 @@
             <a [routerLink]="link.path"
                class="flex items-center gap-2 font-sans text-sm text-brand
                       hover:text-brand-light transition-colors group">
-              <app-friclowenstein-icon name="chevron-right"
+              <app-icon name="chevron-right"
                        class="w-3.5 h-3.5 text-brand-gold
                               group-hover:translate-x-0.5 transition-transform" />
               {{ link.label }}

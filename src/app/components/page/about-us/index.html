@@ -88,7 +88,7 @@
                   }
                 </div>
                 @if (activeProfile() === profile.id) {
-                  <app-friclowenstein-icon name="chevron-right" class="w-4 h-4 ml-auto text-white/60 shrink-0" />
+                  <app-icon name="chevron-right" class="w-4 h-4 ml-auto text-white/60 shrink-0" />
                 }
               </button>
             </li>
@@ -115,7 +115,7 @@
           <span class="font-sans text-sm font-medium text-brand">
             {{ activeProfileData()?.name ?? 'Select team member' }}
           </span>
-          <app-friclowenstein-icon [name]="sidenavOpen() ? 'chevron-up' : 'chevron-down'"
+          <app-icon [name]="sidenavOpen() ? 'chevron-up' : 'chevron-down'"
                    class="w-4 h-4 text-brand-gold" />
         </button>
         @if (sidenavOpen()) {
@@ -138,7 +138,7 @@
                   }
                 </div>
                 @if (activeProfile() === profile.id) {
-                  <app-friclowenstein-icon name="check" class="w-4 h-4 text-brand-gold ml-auto" />
+                  <app-icon name="check" class="w-4 h-4 text-brand-gold ml-auto" />
                 }
               </button>
             }
@@ -200,7 +200,7 @@
                 <div>
                   <h4 class="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]
                              text-brand-gold mb-3 flex items-center gap-2">
-                    <app-friclowenstein-icon name="document-text" class="w-3.5 h-3.5" />
+                    <app-icon name="document-text" class="w-3.5 h-3.5" />
                     Education
                   </h4>
                   <p class="font-body text-gray-500 text-sm leading-relaxed">
@@ -212,13 +212,13 @@
                 <div>
                   <h4 class="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]
                              text-brand-gold mb-3 flex items-center gap-2">
-                    <app-friclowenstein-icon name="scale" class="w-3.5 h-3.5" />
+                    <app-icon name="scale" class="w-3.5 h-3.5" />
                     Professional
                   </h4>
                   <ul class="space-y-2">
                     @for (item of profile.achievements; track item) {
                       <li class="flex gap-2.5 font-body text-gray-600 text-sm">
-                        <app-friclowenstein-icon name="chevron-right"
+                        <app-icon name="chevron-right"
                                  class="w-3.5 h-3.5 text-brand-gold shrink-0 mt-0.5" />
                         {{ item }}
                       </li>
@@ -230,13 +230,13 @@
                 <div>
                   <h4 class="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]
                              text-brand-gold mb-3 flex items-center gap-2">
-                    <app-friclowenstein-icon name="user" class="w-3.5 h-3.5" />
+                    <app-icon name="user" class="w-3.5 h-3.5" />
                     Community
                   </h4>
                   <ul class="space-y-2">
                     @for (item of profile.community; track item) {
                       <li class="flex gap-2.5 font-body text-gray-600 text-sm">
-                        <app-friclowenstein-icon name="chevron-right"
+                        <app-icon name="chevron-right"
                                  class="w-3.5 h-3.5 text-brand-gold shrink-0 mt-0.5" />
                         {{ item }}
                       </li>

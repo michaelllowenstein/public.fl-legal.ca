@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-// import { authGuard } from '@guards/auth';
-// 
+
 export const ROUTE_ORDER = [
   'HomePage', 'AboutUsPage', 'AreasOfLawPage', 'PricingPage',
   'BlogPage', 'FaqComponent', 'ContactUsPage',

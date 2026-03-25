@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CarouselComponent, CarouselSlide } from '@feature/carousel';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { Icon } from '@ui/icon';
 import { EditableContentDirective } from '@directives/editable-content';
 import { SafeHtmlPipe } from '@pipes/safe-html';
 import { HOME } from '@schema/constants';
@@ -19,7 +19,7 @@ import { sectionText, bodyText } from '@schema/utils/section-text';
 @Component({
   selector:    'app-home',
   standalone:  true,
-  imports:     [RouterLink, CarouselComponent, FricLowensteinIcon, EditableContentDirective, SafeHtmlPipe],
+  imports:     [RouterLink, CarouselComponent, Icon, EditableContentDirective, SafeHtmlPipe],
   animations:  [pageEnter, listStagger, fadeIn],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',

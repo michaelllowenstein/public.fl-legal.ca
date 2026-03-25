@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { LoggerService } from '@services/logger';
 import { listStagger, pageEnter } from '@animations/page';
 import { SiteService } from '@services/site';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
  
 export interface BlogEntry {
   id:        string;
@@ -25,7 +25,7 @@ export interface BlogEntry {
 @Component({
   selector:    'app-blog',
   standalone:  true,
-  imports:     [RouterLink, FricLowensteinIcon],
+  imports:     [RouterLink, Icon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],

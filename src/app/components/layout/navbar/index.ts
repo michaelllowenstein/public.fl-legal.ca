@@ -5,7 +5,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { DialogService } from '@factory/dialog/service';
 import { InquiryDialog } from '@ui/dialog/inquiry';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 
 export interface MenuIcon {
   source: string;
@@ -15,7 +15,7 @@ export interface MenuIcon {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [FricLowensteinIcon, RouterLink],
+  imports: [Icon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

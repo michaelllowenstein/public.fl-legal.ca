@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@services/auth';
 import { LoggerService } from '@services/logger';
-import { FricLowensteinIcon } from '../icon';
+import { Icon } from '../../../ui/icon';
 
 @Component({
   selector:    'app-login',
   standalone:  true,
-  imports:     [FormsModule, FricLowensteinIcon],
+  imports:     [FormsModule, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
 })

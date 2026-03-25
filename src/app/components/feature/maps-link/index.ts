@@ -1,10 +1,10 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { Icon } from '@ui/icon';
 
 @Component({
   selector: 'app-maps-link',
   standalone: true,
-  imports: [FricLowensteinIcon],
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

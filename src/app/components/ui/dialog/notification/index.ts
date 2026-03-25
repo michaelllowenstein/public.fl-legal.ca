@@ -15,7 +15,7 @@ import {
   signal, ChangeDetectorRef, inject,
 } from '@angular/core';
 import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -42,7 +42,7 @@ const STYLE_MAP: Record<NotificationType, string> = {
 @Component({
   selector:    'app-notification',
   standalone:  true,
-  imports:     [FricLowensteinIcon],
+  imports:     [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
   styles: [`

@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { LoggerService } from '@services/logger';
 import { SiteService } from '@services/site';
 import { AREASOFLAW } from '@app/schema/constants';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 import { EditableContentDirective } from '@directives/editable-content';
 import { SafeHtmlPipe } from '@pipes/safe-html';
 import { pageEnter, listStagger } from '@animations/page';
@@ -35,7 +35,7 @@ function iconForArea(label: string): string {
 @Component({
   selector:    'app-areas-of-law',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, Icon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],

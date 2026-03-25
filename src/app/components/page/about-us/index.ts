@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { EditableContentDirective } from '@directives/editable-content';
 import { SafeHtmlPipe } from '@pipes/safe-html';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 import { SiteService } from '@services/site';
 import { LoggerService } from '@services/logger';
 import { ABOUTUS, PROFILES } from '@schema/constants';
@@ -15,7 +15,7 @@ import { bodyText } from '@schema/utils';
 @Component({
   selector:    'app-about-us',
   standalone:  true,
-  imports:     [FricLowensteinIcon, EditableContentDirective, SafeHtmlPipe],
+  imports:     [Icon, EditableContentDirective, SafeHtmlPipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],

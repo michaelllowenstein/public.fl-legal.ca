@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { pageEnter } from '@app/animations/page';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 import { SafeHtmlPipe } from '@pipes/safe-html';
 import { LoggerService } from '@services/logger';
 import { SiteService } from '@services/site';
@@ -12,7 +12,7 @@ import { SiteService } from '@services/site';
 @Component({
   selector:    'app-article',
   standalone:  true,
-  imports:     [RouterLink, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, SafeHtmlPipe, Icon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter],

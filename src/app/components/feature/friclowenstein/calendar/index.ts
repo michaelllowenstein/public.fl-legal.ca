@@ -14,13 +14,13 @@ import { CalendarService, CalendarEvent } from '@services/calendar';
 import { LoggerService } from '@services/logger';
 import { AuthService } from '@app/core/services/auth';
 import { NotificationDialog } from '@ui/dialog/notification';
-import { FricLowensteinIcon } from '../icon';
+import { Icon } from '../../../ui/icon';
 import { SpinnerComponent } from '@app/components/ui/spinner';
 
 @Component({
   selector:    'app-calendar',
   standalone:  true,
-  imports:     [FricLowensteinIcon, SpinnerComponent, SlicePipe],
+  imports:     [Icon, SpinnerComponent, SlicePipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

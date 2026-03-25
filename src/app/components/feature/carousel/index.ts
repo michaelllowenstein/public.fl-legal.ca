@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, signal, input,
   ChangeDetectionStrategy, computed,
 } from '@angular/core';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { Icon } from '@ui/icon';
 
 export interface CarouselSlide {
   imageUrl: string;
@@ -13,7 +13,7 @@ export interface CarouselSlide {
 @Component({
   selector: 'app-carousel',
   standalone: true,
-  imports: [FricLowensteinIcon],
+  imports: [Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
   styles: `

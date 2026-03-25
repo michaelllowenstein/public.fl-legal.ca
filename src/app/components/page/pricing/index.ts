@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { pageEnter, listStagger } from '@animations/page';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 import { LoggerService } from '@services/logger';
 import { SiteService } from '@services/site';
 import { PRICING } from '@schema/constants';
@@ -18,7 +18,7 @@ import { sectionText } from '@schema/utils';
   selector:    'app-pricing',
   standalone:  true,
   templateUrl: './index.html',
-  imports: [RouterLink, FricLowensteinIcon],
+  imports: [RouterLink, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })

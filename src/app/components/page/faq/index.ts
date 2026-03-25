@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { pageEnter, accordion } from '@app/animations/page';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { Icon } from '@ui/icon';
 import { EditableContentDirective } from '@app/core/directives/editable-content';
 import { SafeHtmlPipe } from '@app/core/pipes/safe-html';
 import { LoggerService } from '@app/core/services/logger';
@@ -19,7 +19,7 @@ import { FAQ } from '@schema/constants';
 @Component({
   selector:    'app-faq',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, Icon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, accordion],

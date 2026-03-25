@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { Icon } from '@friclowenstein/icon';
 
 export interface InlineEditData {
   fieldKey:      string;
@@ -26,7 +26,7 @@ export interface InlineEditResult {
 @Component({
   selector:    'app-inline-edit-dialog',
   standalone:  true,
-  imports:     [FormsModule, FricLowensteinIcon],
+  imports:     [FormsModule, Icon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
