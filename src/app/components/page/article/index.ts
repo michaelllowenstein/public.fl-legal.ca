@@ -17,7 +17,7 @@ import { SiteService } from '@services/site';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter],
 })
-export class ArticleComponent implements OnInit, OnDestroy {
+export class ArticlePage implements OnInit, OnDestroy {
   private route          = inject(ActivatedRoute);
   private siteService    = inject(SiteService);
   private log            = inject(LoggerService).child('article');

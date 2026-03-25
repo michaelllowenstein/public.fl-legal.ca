@@ -40,9 +40,9 @@ export class HomePage implements OnInit {
   private _initStart = performance.now();
  
   readonly slides: CarouselSlide[] = [
-    { imageUrl: '../../../../assets/site/images/oxfordpropsv1.jpg', heading: 'Experienced Legal Counsel',  subheading: 'Since 1982 — Calgary, Alberta'                        },
-    { imageUrl: '../../../../assets/site/images/oxfordpropslobbyv1.jpg', heading: 'Protecting Your Rights',     subheading: 'Trusted by individuals and businesses across Alberta' },
-    { imageUrl: '../../../../assets/site/images/oxfordpropslobbyv2.jpg', heading: 'Dedicated to Your Success',  subheading: 'Personal attention. Professional results.'            },
+    { imageUrl: 'assets/site/images/oxfordpropsv1.jpg', heading: 'Experienced Legal Counsel',  subheading: 'Since 1982 — Calgary, Alberta'                        },
+    { imageUrl: 'assets/site/images/oxfordpropslobbyv1.jpg', heading: 'Protecting Your Rights',     subheading: 'Trusted by individuals and businesses across Alberta' },
+    { imageUrl: 'assets/site/images/oxfordpropslobbyv2.jpg', heading: 'Dedicated to Your Success',  subheading: 'Personal attention. Professional results.'            },
   ];
  
   readonly practiceAreas = [

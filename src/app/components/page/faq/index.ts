@@ -24,7 +24,7 @@ import { FAQ } from '@schema/constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, accordion],
 })
-export class FaqComponent implements OnInit {
+export class FaqPage implements OnInit {
   private siteService    = inject(SiteService);
   private log            = inject(LoggerService).child('faq');
  

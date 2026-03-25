@@ -22,7 +22,7 @@ import { sectionText } from '@schema/utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })
-export class PricingComponent {
+export class PricingPage {
   private siteService    = inject(SiteService);
   private log            = inject(LoggerService).child('pricing');
  

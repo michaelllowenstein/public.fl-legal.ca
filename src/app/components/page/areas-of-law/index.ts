@@ -40,7 +40,7 @@ function iconForArea(label: string): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })
-export class AreasOfLawComponent implements OnInit {
+export class AreasOfLawPage implements OnInit {
   private contentService = inject(SiteService);
   private log            = inject(LoggerService).child('areas-of-law');
  

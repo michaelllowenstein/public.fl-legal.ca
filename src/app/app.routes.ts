@@ -47,14 +47,5 @@ export const routes: Routes = [
     path: 'contact-us',
     loadComponent: () => import('@page/contact-us').then(m => m.ContactUsPage),
     data: { animation: 'ContactUsPage' },
-  },
-  // {
-  //   path: 'friclowenstein/login',
-  //   loadComponent: () => import('@friclowenstein/login').then(m => m.FricLowensteinLogin),
-  // },
-  // {
-  //   path: 'friclowenstein/calendar',
-  //   loadComponent: () => import('@friclowenstein//calendar').then(m => m.FricLowensteinCalendar),
-  //   canActivate: [authGuard],
-  // },
+  }
 ];

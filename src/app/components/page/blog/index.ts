@@ -30,7 +30,7 @@ export interface BlogEntry {
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })
-export class BlogComponent implements OnInit {
+export class BlogPage implements OnInit {
   private contentService = inject(SiteService);
   private log            = inject(LoggerService).child('blog');
  

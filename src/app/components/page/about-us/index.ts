@@ -20,7 +20,7 @@ import { bodyText } from '@schema/utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
 })
-export class AboutUsComponent implements OnInit {
+export class AboutUsPage implements OnInit {
   private siteService = inject(SiteService);
   private el             = inject(ElementRef<HTMLElement>);
   private log            = inject(LoggerService).child('about-us');
