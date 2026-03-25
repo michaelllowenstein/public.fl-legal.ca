@@ -24,7 +24,7 @@ import { sectionText, bodyText } from '@schema/utils/section-text';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
 })
-export class HomeComponent implements OnInit {
+export class HomePage implements OnInit {
   private siteService = inject(SiteService);
   private el          = inject(ElementRef<HTMLElement>);
   private log         = inject(LoggerService).child('home');
@@ -40,9 +40,9 @@ export class HomeComponent implements OnInit {
   private _initStart = performance.now();
  
   readonly slides: CarouselSlide[] = [
-    { imageUrl: '../../../../assets/images/oxfordpropsv1.jpg', heading: 'Experienced Legal Counsel',  subheading: 'Since 1982 — Calgary, Alberta'                        },
-    { imageUrl: '../../../../assets/images/oxfordpropslobbyv1.jpg', heading: 'Protecting Your Rights',     subheading: 'Trusted by individuals and businesses across Alberta' },
-    { imageUrl: '../../../../assets/images/oxfordpropslobbyv2.jpg', heading: 'Dedicated to Your Success',  subheading: 'Personal attention. Professional results.'            },
+    { imageUrl: '../../../../assets/site/images/oxfordpropsv1.jpg', heading: 'Experienced Legal Counsel',  subheading: 'Since 1982 — Calgary, Alberta'                        },
+    { imageUrl: '../../../../assets/site/images/oxfordpropslobbyv1.jpg', heading: 'Protecting Your Rights',     subheading: 'Trusted by individuals and businesses across Alberta' },
+    { imageUrl: '../../../../assets/site/images/oxfordpropslobbyv2.jpg', heading: 'Dedicated to Your Success',  subheading: 'Personal attention. Professional results.'            },
   ];
  
   readonly practiceAreas = [
@@ -53,21 +53,13 @@ export class HomeComponent implements OnInit {
     { icon: 'document-text', label: 'Corporate Law'     },
     { icon: 'scale',         label: 'Employment Law'    },
   ];
- 
+
   async ngOnInit() {
-    this.log.debug('Home page initialising');
     try {
       const content = await this.siteService.getSection('home');
-      if (content) {
-        this.site.set({ ...HOME, ...content });
-        this.log.debug('Home content applied from Firebase');
-      } else {
-        this.log.debug('Using hardcoded HOME fallback');
-      }
+      if (content) this.site.set({ ...HOME, ...content });
     } finally {
       this.loading.set(false);
-      this.log.info('Home page ready', { tti: Math.round(performance.now() - this._initStart) });
-      setTimeout(() => this.checkVisibility(), 100);
     }
   }
  

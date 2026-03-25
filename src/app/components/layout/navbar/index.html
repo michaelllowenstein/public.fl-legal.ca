@@ -1,209 +1,144 @@
-<!-- home.component.html -->
+<header
+  class="fixed top-0 left-0 right-0 z-40 transition-shadow duration-300"
+  [class.shadow-lg]="scrolled()"
+  [class.bg-brand-dark]="true">
 
-<!-- Hero Carousel -->
-<app-carousel [slides]="slides" height="520px" />
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
 
-<!-- Practice Areas strip — enhanced badges -->
-<section class="bg-brand-dark py-8 border-t border-white/5">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-      @for (area of practiceAreas; track area.label) {
-        
-          routerLink="/areas-of-law"
-          class="group flex flex-col items-center gap-2.5 py-5 px-2 rounded-2xl
-                 text-center cursor-pointer
-                 hover:bg-white/8
-                 transition-all duration-200">
-
-          <!-- Icon circle — grows on hover -->
-          <div
-            class="w-12 h-12 rounded-full
-                   bg-gradient-to-br from-brand-gold/30 to-brand-gold/10
-                   border border-brand-gold/25
-                   flex items-center justify-center
-                   group-hover:scale-110 group-hover:from-brand-gold/50
-                   group-hover:to-brand-gold/25 group-hover:border-brand-gold/60
-                   group-hover:shadow-lg group-hover:shadow-brand-gold/20
-                   transition-all duration-300 ease-out">
-            <app-friclowenstein-icon [name]="area.icon" class="w-5 h-5 text-brand-gold" />
-          </div>
-
-          <!-- Label — lifts and brightens -->
-          <span
-            class="font-sans text-white/60 text-[11px] leading-tight
-                   tracking-wide font-medium
-                   group-hover:text-white
-                   transition-colors duration-200">
-            {{ area.label }}
-          </span>
-        </a>
-      }
-    </div>
-  </div>
-</section>
-
-<!-- Main content — tightened spacing -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid lg:grid-cols-3 gap-10">
-
-  <!-- Primary content -->
-  <div class="lg:col-span-2 space-y-8">
-
-    <!-- Intro -->
-    <section>
-      <span class="inline-block font-sans text-brand-gold text-[11px] uppercase
-                   tracking-[0.2em] font-semibold mb-2">
-        About the Firm
-      </span>
-      <h1
-        class="font-display text-brand text-3xl md:text-4xl font-semibold
-               mt-1 mb-4 leading-snug"
-        [appEditableText]="'home/heading'"
-        editLabel="Home page heading"
-        [innerHTML]="heading() | safeHtml">
-      </h1>
-      <div
-        class="font-body text-gray-600 text-base leading-[1.85] fl-prose"
-        [appEditableText]="'home/body'"
-        editLabel="Introduction paragraph"
-        [innerHTML]="intro() | safeHtml">
+    <!-- Logo + wordmark -->
+    <a routerLink="/" class="flex items-center gap-3 group">
+      <img
+        [src]="webMenu.source"
+        [alt]="webMenu.alt"
+        class="h-9 w-auto object-contain" />
+      <div class="flex flex-col leading-tight">
+        <span class="font-display text-brand-gold text-lg font-semibold
+                      tracking-wide group-hover:text-white transition-colors">
+          Fric, Lowenstein &amp; Co.
+        </span>
+        <span class="font-sans text-white/60 text-[11px] uppercase tracking-widest">
+          Barristers &amp; Solicitors
+        </span>
       </div>
-    </section>
-
-    <!-- Why choose us -->
-    <section class="relative bg-brand-cream rounded-3xl p-7 overflow-hidden">
-      <div class="absolute top-0 right-0 w-28 h-28 bg-brand-gold/8
-                  rounded-bl-[3rem] pointer-events-none"></div>
-      <h2 class="font-display text-brand text-xl font-semibold mb-5">
-        Why Choose Us
-      </h2>
-      <div class="grid sm:grid-cols-2 gap-3">
-        @for (point of site().bulletpoints ?? []; track $index) {
-          <div class="flex gap-3 p-3.5 bg-white/60 rounded-xl hover:bg-white
-                      transition-colors duration-200">
-            <div class="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-brand-gold
-                        flex items-center justify-center">
-              <app-friclowenstein-icon name="check" class="w-2.5 h-2.5 text-white" />
-            </div>
-            <span
-              class="font-body text-gray-700 text-sm leading-relaxed fl-prose"
-              [appEditableText]="'home/bulletpoints/' + $index"
-              [innerHTML]="point | safeHtml">
-            </span>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- CTAs -->
-    <section class="flex flex-wrap gap-3">
-      
-        routerLink="/about-us"
-        class="inline-flex items-center gap-2 font-sans text-sm bg-brand
-               hover:bg-brand-light text-white font-medium px-6 py-3 rounded-xl
-               transition-all duration-200 hover:-translate-y-0.5
-               hover:shadow-lg shadow-brand/20">
-        Meet Our Team
-        <app-friclowenstein-icon name="arrow-right" class="w-4 h-4" />
-      </a>
-      
-        routerLink="/areas-of-law"
-        class="inline-flex items-center gap-2 font-sans text-sm border-2
-               border-brand text-brand hover:bg-brand hover:text-white
-               font-medium px-6 py-3 rounded-xl transition-all duration-200
-               hover:-translate-y-0.5">
-        Areas of Practice
-        <app-friclowenstein-icon name="arrow-right" class="w-4 h-4" />
-      </a>
-    </section>
-  </div>
-
-  <!-- Sidebar -->
-  <aside class="space-y-5">
-
-    <!-- Contact card -->
-    <div class="bg-brand rounded-3xl p-6 text-white overflow-hidden relative">
-      <div class="absolute -top-5 -right-5 w-24 h-24 bg-brand-light/30
-                  rounded-full pointer-events-none"></div>
-      <h3 class="font-display text-xl font-semibold mb-4 relative">
-        Contact Our Office
-      </h3>
-      <ul class="space-y-3.5 font-sans text-sm text-white/80 relative">
-        <li class="flex gap-3">
-          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center
-                      justify-center shrink-0">
-            <app-friclowenstein-icon name="map-pin" class="w-4 h-4 text-brand-gold" />
-          </div>
-          <span class="pt-1 leading-relaxed">
-            #750, 11012 Macleod Trail S.E.<br>Calgary, Alberta T2J 7E4
-          </span>
-        </li>
-        <li class="flex gap-3 items-center">
-          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center
-                      justify-center shrink-0">
-            <app-friclowenstein-icon name="phone" class="w-4 h-4 text-brand-gold" />
-          </div>
-          <a href="tel:+14032589455"
-             class="hover:text-white transition-colors">
-            (403) 258-9455
-          </a>
-        </li>
-        <li class="flex gap-3 items-center">
-          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center
-                      justify-center shrink-0">
-            <app-friclowenstein-icon name="envelope" class="w-4 h-4 text-brand-gold" />
-          </div>
-          <a href="mailto:info@friclowenstein.com"
-             class="hover:text-white transition-colors break-all">
-            info&#64;friclowenstein.com
-          </a>
-        </li>
-      </ul>
-      <div class="mt-5 pt-4 border-t border-white/15 relative">
-        <p class="font-sans text-[11px] text-white/40 uppercase tracking-wider mb-1.5">
-          Office Hours
-        </p>
-        <p class="font-sans text-sm text-white/80">Mon – Fri: 8:30 AM – 5:00 PM</p>
-        <p class="font-sans text-sm text-white/50">Sat – Sun: Closed</p>
-      </div>
-    </div>
-
-    <!-- Quote -->
-    <blockquote class="relative pl-5">
-      <div class="absolute left-0 top-0 bottom-0 w-[3px]
-                  bg-gradient-to-b from-brand-gold to-brand-gold/20 rounded-full">
-      </div>
-      <p class="font-display italic text-brand text-lg leading-relaxed">
-        "Whatever your specific legal needs may be, our team is devoted to
-        defending your rights."
-      </p>
-      <cite class="font-sans text-gray-400 text-xs mt-3 block not-italic">
-        — Fric, Lowenstein &amp; Co.
-      </cite>
-    </blockquote>
-
-    <!-- Blog link -->
-    
-      routerLink="/blog"
-      class="group flex items-center gap-3 p-4 bg-white rounded-2xl shadow-card
-             hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-      <div class="w-10 h-10 rounded-xl bg-brand/8 flex items-center
-                  justify-center shrink-0 group-hover:bg-brand transition-all duration-200">
-        <app-friclowenstein-icon name="document-text"
-                 class="w-5 h-5 text-brand group-hover:text-white transition-colors" />
-      </div>
-      <div class="flex-1 min-w-0">
-        <p class="font-sans text-xs uppercase tracking-wide text-gray-400 mb-0.5">
-          Legal Insights
-        </p>
-        <p class="font-display text-brand text-sm font-medium
-                  group-hover:text-brand-light transition-colors">
-          Read Our Blog
-        </p>
-      </div>
-      <app-friclowenstein-icon name="arrow-right"
-               class="w-4 h-4 text-gray-400 group-hover:text-brand
-                      group-hover:translate-x-1 transition-all duration-200" />
     </a>
 
-  </aside>
-</div>
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1">
+
+      <!-- Standard nav links -->
+      @for (link of navLinks; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="text-brand-gold border-b-2 border-brand-gold"
+          class="font-sans text-sm text-white/80 hover:text-white px-3 py-5
+                  border-b-2 border-transparent transition-colors duration-200">
+          {{ link.label }}
+        </a>
+      }
+
+      <!-- Contact Us nav link -->
+      <a
+        routerLink="/contact-us"
+        routerLinkActive="text-brand-gold border-b-2 border-brand-gold"
+        class="font-sans text-sm text-white/80 hover:text-white px-3 py-5
+                border-b-2 border-transparent transition-colors duration-200">
+        Contact Us
+      </a>
+
+      <!-- Inquiry pill — icon expands to button on hover -->
+      <div class="relative ml-2 group/inquiry">
+        <button
+          (click)="openInquiry()"
+          class="flex items-center overflow-hidden rounded-full
+                  bg-brand-gold/15 hover:bg-brand-gold
+                  border border-brand-gold/40 hover:border-brand-gold
+                  text-brand-gold hover:text-brand-dark
+                  transition-all duration-300 ease-out
+                  h-8
+                  w-8 hover:w-36
+                  px-2 hover:px-3.5"
+          aria-label="Make an Inquiry">
+
+          <!-- Icon — always visible -->
+          <app-friclowenstein-icon
+            name="envelope"
+            class="w-4 h-4 shrink-0 transition-transform duration-300
+                    group-hover/inquiry:scale-90" />
+
+          <!-- Label — fades in on hover -->
+          <span
+            class="font-sans text-sm font-semibold whitespace-nowrap
+                    overflow-hidden transition-all duration-300
+                    max-w-0 opacity-0 ml-0
+                    group-hover/inquiry:max-w-[120px]
+                    group-hover/inquiry:opacity-100
+                    group-hover/inquiry:ml-2">
+            Make an Inquiry
+          </span>
+        </button>
+      </div>
+
+    </nav>
+
+    <!-- Mobile toggle -->
+    <button
+      class="md:hidden p-1.5 rounded hover:bg-white/10 transition-colors
+              flex items-center justify-center"
+      (click)="toggleMenu()"
+      [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'">
+      @if (menuOpen()) {
+        <app-friclowenstein-icon name="x-mark" class="w-7 h-7 text-white" />
+      } @else {
+        <img
+          [src]="mobileMenu.source"
+          [alt]="mobileMenu.alt"
+          class="h-8 w-auto object-contain" />
+      }
+    </button>
+
+  </div>
+
+  <!-- Mobile drawer -->
+  @if (menuOpen()) {
+    <div class="md:hidden bg-brand-dark border-t border-white/10 animate-slide-down">
+
+      @for (link of navLinks; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="text-brand-gold"
+          class="block font-sans text-white/80 hover:text-white hover:bg-white/5
+                  px-6 py-3 text-sm border-b border-white/5 transition-colors"
+          (click)="menuOpen.set(false)">
+          {{ link.label }}
+        </a>
+      }
+
+      <!-- Contact Us as regular link in mobile drawer -->
+      <a
+        routerLink="/contact-us"
+        routerLinkActive="text-brand-gold"
+        class="block font-sans text-white/80 hover:text-white hover:bg-white/5
+                px-6 py-3 text-sm border-b border-white/5 transition-colors"
+        (click)="menuOpen.set(false)">
+        Contact Us
+      </a>
+
+      <!-- Make an Inquiry as a distinct CTA row in mobile drawer -->
+      <div class="px-6 py-4">
+        <button
+          (click)="openInquiry(); menuOpen.set(false)"
+          class="w-full flex items-center justify-center gap-2
+                  font-sans text-sm bg-brand-gold hover:bg-yellow-500
+                  text-brand-dark font-semibold py-2.5 rounded-xl
+                  transition-colors">
+          <app-friclowenstein-icon name="envelope" class="w-4 h-4" />
+          Make an Inquiry
+        </button>
+      </div>
+
+    </div>
+  }
+</header>
+
+<!-- Spacer -->
+<div class="h-16"></div>

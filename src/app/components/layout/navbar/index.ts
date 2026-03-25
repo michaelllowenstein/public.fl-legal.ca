@@ -22,11 +22,11 @@ export interface MenuIcon {
 export class NavbarComponent {
   private dialog = inject(DialogService);
   webMenu = signal<MenuIcon>({
-    source: '../../../../assets/site/branding/cropped-favicon-512-100x100', 
+    source: 'assets/site/branding/cropped-favicon-512-100x100.png', 
     alt: 'Fric, Lowenstein & Co. LLP'
   });
   mobileMenu = signal<MenuIcon>({
-    source: '../../../../assets/site/branding/logo-white-on-blue-small', 
+    source: 'assets/site/branding/logo-white-on-blue-small.png', 
     alt: 'Fric, Lowenstein & Co. LLP'
   });
 

@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, isDevMode } from '@angular/core';
 import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { NavbarComponent } from '@layout/navbar';
 import { SpinnerComponent } from '@ui/spinner';
 import { routerSlideAnimation, ROUTE_ORDER } from '@app/animations/app';
+import { StylusService } from '@services/stylus'
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class App {
   private directionInverse = '-100%';
 
   constructor() {
+    if (isDevMode()) inject(StylusService).init();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.isLoading.set(true);

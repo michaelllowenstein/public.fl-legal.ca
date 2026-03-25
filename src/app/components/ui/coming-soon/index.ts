@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
+import { FricLowensteinIcon } from '@friclowenstein/icon';
 
 @Component({
   selector: 'app-coming-soon',

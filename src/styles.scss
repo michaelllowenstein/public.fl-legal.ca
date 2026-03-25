@@ -123,6 +123,10 @@
   }
 }
 
+[data-profile] {
+  scroll-margin-top: 150px !important; /* 64px navbar + 16px breathing room */
+}
+
 /* ── Base resets ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -143,7 +147,7 @@ body {
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #f5f0e8; }
-::-webkit-scrollbar-thumb { background: #2d6a9f; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #4d545b; border-radius: 3px; }
 
 /* ── Prose helper for editable rich content ──────────────────── */
 .fl-prose {

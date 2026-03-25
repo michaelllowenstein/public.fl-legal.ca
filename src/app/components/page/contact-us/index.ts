@@ -16,7 +16,7 @@ import { env } from '@env/environment';
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContactUsComponent implements OnInit {
+export class ContactUsPage implements OnInit {
   private dialog                  = inject(DialogService);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
   private log                     = inject(LoggerService).child('contact-us');

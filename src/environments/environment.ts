@@ -2,14 +2,14 @@ export const env = {
   production: false,
   name: 'local',
   firebase: {
-    apiKey: "AIzaSyD2RW_s6meXPqWbE-zaVtER4dIKfSN4pzY",
-    authDomain: "fl-legal-b3315.firebaseapp.com",
-    databaseURL: 'https://fl-legal-b3315-default-rtdb.firebaseio.com',
-    projectId: "fl-legal-b3315",
-    storageBucket: "fl-legal-b3315.firebasestorage.app",
-    messagingSenderId: "406877056317",
-    appId: "1:406877056317:web:14e36115e79dd9e827e954",
-    measurementId: "G-NFBYEG85JS"
+    apiKey: "AIzaSyCKPoNctKhZjzs6agbBlQf67KZipOHc2mg",
+    authDomain: "friclowenstein.firebaseapp.com",
+    databaseURL: "https://friclowenstein-default-rtdb.firebaseio.com",
+    projectId: "friclowenstein",
+    storageBucket: "friclowenstein.firebasestorage.app",
+    messagingSenderId: "563955262438",
+    appId: "1:563955262438:web:0fc834875d58cd08feec27",
+    measurementId: "G-47T9PJ9D1Y"
   },
   mapsEmbedApiKey: "AIzaSyAsucFozvuHXMfyfWgb_Y6qpgu-S0wTWQ4",
   maps: {

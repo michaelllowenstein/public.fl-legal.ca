@@ -82,12 +82,16 @@ export class AboutUsComponent implements OnInit {
   isCardVisible(i: number) { return this.visibleCards().has(i); }
  
   selectProfile(id: string) {
-    this.log.info('Profile selected', { id, previous: this.activeProfile() });
     this.activeProfile.set(id);
     this.sidenavOpen.set(false);
+
     setTimeout(() => {
       const target = this.el.nativeElement.querySelector(`[data-profile="${id}"]`);
-      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!target) return;
+
+      const NAVBAR_HEIGHT = 166; // 64px header + 16px breathing room
+      const top = target.getBoundingClientRect().top + window.scrollY - NAVBAR_HEIGHT;
+      window.scrollTo({ top, behavior: 'smooth' });
     }, 50);
   }
  
