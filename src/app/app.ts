@@ -1,15 +1,15 @@
 import { Component, ChangeDetectionStrategy, inject, signal, isDevMode } from '@angular/core';
-import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-import { NgIf } from '@angular/common';
-import { NavbarComponent } from '@layout/navbar';
-import { SpinnerComponent } from '@ui/spinner';
-import { routerSlideAnimation, ROUTE_ORDER } from '@app/animations/app';
-import { StylusService } from '@services/stylus'
+import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Navigation} from '@angular/router';
+import { CommonModule, NgIf } from '@angular/common';
+import { NavbarComponent } from '@components/layout/navbar';
+import { SpinnerComponent } from '@components/ui/spinner';
+import { routerSlideAnimation, ROUTE_ORDER } from '@animations/app';
+import { StylusService } from '@core/services/stylus'
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, NavbarComponent, SpinnerComponent],
+  imports: [RouterOutlet, NgIf, NavbarComponent, SpinnerComponent, CommonModule],
   animations: [routerSlideAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -21,18 +21,25 @@ import { StylusService } from '@services/stylus'
       </main>
     </div>
   `,
-  styleUrl: '/app.scss'
+  styles: `
+    app-spinner {
+      position: fixed; top: 0; left: 0;
+      height: 100vh; width: 100vw;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.8); z-index: 1000;
+    }
+    `
 })
 export class App {
-  private readonly router = inject(Router);
+  private readonly router: Router = inject(Router);
 
   readonly isLoading = signal(false);
   private direction = '100%';
   private directionInverse = '-100%';
 
   constructor() {
-    if (isDevMode()) inject(StylusService).init();
-    this.router.events.subscribe(event => {
+    if (isDevMode()) (inject(StylusService) as StylusService).init();
+    this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
         this.isLoading.set(true);
       } else if (

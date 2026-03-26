@@ -1,4 +1,4 @@
-import { ProfileNav, Profile, SiteContent, PricingSection, FAQSection } from '@schema/models';
+import { ProfileNav, Profile, SiteContent, PricingSection, FAQSection } from '../models';
 
 export const MEMBERS: ProfileNav[] = [
   {

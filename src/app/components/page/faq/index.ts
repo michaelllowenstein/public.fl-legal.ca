@@ -7,26 +7,26 @@ import {
   computed
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { pageEnter, accordion } from '@app/animations/page';
-import { FricLowensteinIcon } from '@app/components/feature/friclowenstein/icon';
-import { EditableContentDirective } from '@app/core/directives/editable-content';
-import { SafeHtmlPipe } from '@app/core/pipes/safe-html';
-import { LoggerService } from '@app/core/services/logger';
-import { SiteService } from '@app/core/services/site';
-import { bodyText } from '@app/schema/utils';
+import { pageEnter, accordion } from '@animations/page';
+import { FLIcon } from '@components/ui/icon';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
+import { bodyText } from '@schema/utils';
 import { FAQ } from '@schema/constants';
 
 @Component({
   selector:    'app-faq',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, accordion],
 })
 export class FaqPage implements OnInit {
-  private siteService    = inject(SiteService);
-  private log            = inject(LoggerService).child('faq');
+  private siteService: SiteService    = inject(SiteService);
+  private log            = (inject(LoggerService) as LoggerService).child('faq');
  
   site      = signal(FAQ);
   loading   = signal(true);

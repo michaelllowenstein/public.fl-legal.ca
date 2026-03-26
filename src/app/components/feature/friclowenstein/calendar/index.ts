@@ -8,27 +8,27 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SlicePipe } from '@angular/common';
-import { DialogService } from '@factory/dialog/service';
-import { ConfirmDialog } from '@ui/dialog/confirm';
-import { CalendarService, CalendarEvent } from '@services/calendar';
-import { LoggerService } from '@services/logger';
-import { AuthService } from '@app/core/services/auth';
-import { NotificationDialog } from '@ui/dialog/notification';
-import { FricLowensteinIcon } from '../icon';
-import { SpinnerComponent } from '@app/components/ui/spinner';
+import { DialogService } from '@components/factory/dialog/service';
+import { ConfirmDialog } from '@components/ui/dialog/confirm';
+import { CalendarService, CalendarEvent } from '@core/services/calendar';
+import { LoggerService } from '@core/services/logger';
+import { AuthService } from '@core/services/auth';
+import { NotificationDialog } from '@components/ui/dialog/notification';
+import { FLIcon } from '@components/ui/icon';
+import { SpinnerComponent } from '@components/ui/spinner';
 
 @Component({
   selector:    'app-calendar',
   standalone:  true,
-  imports:     [FricLowensteinIcon, SpinnerComponent, SlicePipe],
+  imports:     [FLIcon, SpinnerComponent, SlicePipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FricLowensteinCalendar implements OnInit {
-  private auth     = inject(AuthService);
-  private calendar = inject(CalendarService);
-  private dialog   = inject(DialogService);
-  private router   = inject(Router);
+  private auth: AuthService     = inject(AuthService);
+  private calendar: CalendarService = inject(CalendarService);
+  private dialog: DialogService   = inject(DialogService);
+  private router: Router   = inject(Router);
   private log      = inject(LoggerService).child('calendar');
  
   events  = signal<CalendarEvent[]>([]);

@@ -12,10 +12,9 @@
  */
 import {
   Component, ChangeDetectionStrategy, OnInit, OnDestroy,
-  signal, ChangeDetectorRef, inject,
 } from '@angular/core';
-import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { injectDialogData, injectDialogClose } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -42,7 +41,7 @@ const STYLE_MAP: Record<NotificationType, string> = {
 @Component({
   selector:    'app-notification',
   standalone:  true,
-  imports:     [FricLowensteinIcon],
+  imports:     [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
   styles: [`
@@ -53,15 +52,14 @@ const STYLE_MAP: Record<NotificationType, string> = {
   `],
 })
 export class NotificationDialog implements OnInit, OnDestroy {
+  type = injectDialogData<NotificationData>().type;
   data  = injectDialogData<NotificationData>();
   close = injectDialogClose();
 
   private timer?: ReturnType<typeof setTimeout>;
-
-  readonly type       = this.data.type ?? 'info';
-  readonly duration   = this.data.duration ?? 3500;
-  readonly iconName   = ICON_MAP[this.type];
-  readonly panelClass = STYLE_MAP[this.type];
+  readonly duration: number   = this.data.duration ?? 3500;
+  readonly iconName: string   = ICON_MAP[this.type as NotificationType];
+  readonly panelClass: string = STYLE_MAP[this.type as NotificationType];
 
   ngOnInit() {
     if (this.duration > 0) {

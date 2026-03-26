@@ -59,8 +59,8 @@
                   px-2 hover:px-3.5"
           aria-label="Make an Inquiry">
 
-          <!-- Icon — always visible -->
-          <app-friclowenstein-icon
+          <!-- FLIcon — always visible -->
+          <app-fl-icon
             name="envelope"
             class="w-4 h-4 shrink-0 transition-transform duration-300
                     group-hover/inquiry:scale-90" />
@@ -73,7 +73,7 @@
                     group-hover/inquiry:max-w-[120px]
                     group-hover/inquiry:opacity-100
                     group-hover/inquiry:ml-2">
-            Make an Inquiry
+            Inquiry?
           </span>
         </button>
       </div>
@@ -87,7 +87,7 @@
       (click)="toggleMenu()"
       [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'">
       @if (menuOpen()) {
-        <app-friclowenstein-icon name="x-mark" class="w-7 h-7 text-white" />
+        <app-fl-icon name="x-mark" class="w-7 h-7 text-white" />
       } @else {
         <img
           [src]="mobileMenu().source"
@@ -131,7 +131,7 @@
                   font-sans text-sm bg-brand-gold hover:bg-yellow-500
                   text-brand-dark font-semibold py-2.5 rounded-xl
                   transition-colors">
-          <app-friclowenstein-icon name="envelope" class="w-4 h-4" />
+          <app-fl-icon name="envelope" class="w-4 h-4" />
           Make an Inquiry
         </button>
       </div>

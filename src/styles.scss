@@ -121,6 +121,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  .fl-cal-label {
+    @apply block font-sans text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide;
+  }
+  .fl-cal-input {
+    @apply w-full border border-gray-300 rounded-lg px-3 py-2.5 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-brand-light focus:border-transparent transition;
+  }
 }
 
 [data-profile] {

@@ -1,6 +1,6 @@
-import * as Constant from '@schema/constants';
-import * as Model from '@schema/models';
-import * as Utils from '@schema/utils';
+import * as Constant from './constants';
+import * as Model from './models';
+import * as Utils from './utils';
 
 export type Schema = {
     Constant: typeof Constant;
