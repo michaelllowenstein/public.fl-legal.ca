@@ -10,6 +10,7 @@ import { LoggerService } from '@core/services/logger';
 import { ABOUTUS, PROFILES } from '@schema/constants';
 import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/page';
 import { bodyText } from '@schema/utils';
+import { SeoService } from '@core/services/seo';
 
 @Component({
   selector:    'app-about-us',
@@ -20,6 +21,7 @@ import { bodyText } from '@schema/utils';
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
 })
 export class AboutUsPage implements OnInit {
+  private seo: SeoService =    inject(SeoService);
   private siteService: SiteService = inject(SiteService);
   private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
   private log          = (inject(LoggerService) as LoggerService).child('about-us');
@@ -54,6 +56,10 @@ export class AboutUsPage implements OnInit {
  
   async ngOnInit() {
     this.log.debug('About Us page initialising');
+    this.seo.set({
+      title: 'About Our Firm',
+      description: 'Meet the lawyers at Fric, Lowenstein & Co. LLP. Our Calgary legal team brings decades of experience in family law, litigation, and real estate.',
+    });
     try {
       const content = await this.siteService.getSection('aboutUs');
       if (content) {

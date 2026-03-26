@@ -4,54 +4,51 @@ import { firstValueFrom } from 'rxjs';
 import { env } from '@env/environment';
 import { LoggerService } from './logger';
 
+const TOKEN_KEY = 'fl_editor_token';
+
 @Injectable({ providedIn: 'root' })
 export class EditorService {
   private http = inject(HttpClient);
   private log  = inject(LoggerService).child('editor-auth');
 
   private _authenticated = signal(false);
-  private _token         = signal<string | null>(null);
   private _tokenIssuedAt = signal<number | null>(null);
 
-  isAuthenticated() { return this._authenticated(); }
-  token() { return this._token(); }
+  // Restore from sessionStorage on init — survives page refresh within same tab
+  private _token = signal<string | null>(
+    typeof sessionStorage !== 'undefined'
+      ? sessionStorage.getItem(TOKEN_KEY)
+      : null,
+  );
+
+  isAuthenticated() { return !!this._token(); }
+  token()           { return this._token(); }
 
   async login(password: string): Promise<void> {
     const t0 = performance.now();
     this.log.info('Editor login attempt');
 
-    try {
-      const res = await firstValueFrom(
-        this.http.post<{ token: string }>(`${env.apiURL}/api/auth/editor`, { password })
-      );
-      const ms = Math.round(performance.now() - t0);
-
-      this._token.set(res.token);
-      this._authenticated.set(true);
-      this._tokenIssuedAt.set(Date.now());
-      this.log.info('Editor login successful', { ms });
-    } catch (e: unknown) {
-      const err = e as HttpErrorResponse;
-      const ms  = Math.round(performance.now() - t0);
-
-      if (err?.status === 401) {
-        this.log.warn('Editor login failed — wrong password', { ms });
-      } else {
-        this.log.error('Editor login error', { ms, status: err?.status, message: err?.message });
-      }
-      throw e;
-    }
+    // Fix: correct endpoint is /api/auth/editor
+    const res = await firstValueFrom(
+      this.http.post<{ token: string }>(
+        `${env.apiURL}/api/auth/editor`,
+        { password },
+      )
+    );
+    this._token.set(res.token);
+    sessionStorage.setItem(TOKEN_KEY, res.token);
   }
 
   logout() {
     this.log.info('Editor logged out');
-    this._authenticated.set(false);
-    this._tokenIssuedAt.set(null);
     this._token.set(null);
+    this._tokenIssuedAt.set(null);
+    this._authenticated.set(false);
+    sessionStorage.removeItem(TOKEN_KEY);
   }
 
   /** Warn if the editor session is approaching expiry (within 10 minutes) */
-  checkTokenExpiry(expiryMs = 4 * 60 * 60 * 1000): void {
+  checkTokenExpiryStatus(expiryMs = 4 * 60 * 60 * 1000): void {
     const issued = this._tokenIssuedAt();
     if (!issued) return;
 
@@ -66,5 +63,18 @@ export class EditorService {
         remainingMinutes: Math.round(remaining / 60000),
       });
     }
+  }
+
+  checkTokenExpiry(): boolean {
+    const token = this._token();
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp * 1000 <= Date.now()) {
+        this.logout();
+        return false;
+      }
+      return true;
+    } catch { return true; }
   }
 }

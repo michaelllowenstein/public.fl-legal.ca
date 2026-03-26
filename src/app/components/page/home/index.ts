@@ -15,6 +15,7 @@ import {
 import { LoggerService } from '@core/services/logger';
 import { SiteService } from '@core/services/site';
 import { sectionText, bodyText } from '@schema/utils/section-text';
+import { SeoService } from '@core/services/seo';
 
 @Component({
   selector:    'app-home',
@@ -25,6 +26,7 @@ import { sectionText, bodyText } from '@schema/utils/section-text';
   templateUrl: './index.html',
 })
 export class HomePage implements OnInit {
+  private seo: SeoService =    inject(SeoService);
   private siteService: SiteService = inject(SiteService);
   private el: ElementRef<HTMLElement>          = inject(ElementRef<HTMLElement>);
   private log        = (inject(LoggerService) as LoggerService).child('home');
@@ -55,6 +57,10 @@ export class HomePage implements OnInit {
   ];
 
   async ngOnInit() {
+  this.seo.set({
+    title: 'Calgary Family & Civil Law Firm',
+    description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in family law, civil litigation, real estate, and wills & estates. Book a consultation today.',
+  });
     try {
       const content = await this.siteService.getSection('home');
       if (content) this.site.set({ ...HOME, ...content });
