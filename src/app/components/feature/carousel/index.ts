@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, signal, input,
   ChangeDetectionStrategy, computed,
 } from '@angular/core';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { FLIcon } from '@components/ui/icon';
 
 export interface CarouselSlide {
   imageUrl: string;

@@ -3,11 +3,11 @@ import {
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { pageEnter } from 'src/app/animations/page';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { LoggerService } from 'src/app/core/services/logger';
-import { SiteService } from 'src/app/core/services/site';
+import { pageEnter } from '@animations/page';
+import { FLIcon } from '@components/ui/icon';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
 
 @Component({
   selector:    'app-article',
@@ -18,9 +18,9 @@ import { SiteService } from 'src/app/core/services/site';
   animations:  [pageEnter],
 })
 export class ArticlePage implements OnInit, OnDestroy {
-  private route          = inject(ActivatedRoute);
+  private route: ActivatedRoute          = inject(ActivatedRoute);
   private siteService: SiteService    = inject(SiteService);
-  private log            = inject(LoggerService).child('article');
+  private log            = (inject(LoggerService) as LoggerService).child('article');
  
   entry         = signal<any>(null);
   loading       = signal(true);

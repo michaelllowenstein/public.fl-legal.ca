@@ -13,8 +13,8 @@
  *   const confirmed = await ref.closed;  // boolean | undefined
  */
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { injectDialogData, injectDialogClose } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
 
 export interface ConfirmData {
   title?:         string;

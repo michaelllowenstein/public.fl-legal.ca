@@ -8,14 +8,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SlicePipe } from '@angular/common';
-import { DialogService } from 'src/app/components/factory/dialog/service';
-import { ConfirmDialog } from 'src/app/components/ui/dialog/confirm';
-import { CalendarService, CalendarEvent } from 'src/app/core/services/calendar';
-import { LoggerService } from 'src/app/core/services/logger';
-import { AuthService } from 'src/app/core/services/auth';
-import { NotificationDialog } from 'src/app/components/ui/dialog/notification';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { SpinnerComponent } from 'src/app/components/ui/spinner';
+import { DialogService } from '@components/factory/dialog/service';
+import { ConfirmDialog } from '@components/ui/dialog/confirm';
+import { CalendarService, CalendarEvent } from '@core/services/calendar';
+import { LoggerService } from '@core/services/logger';
+import { AuthService } from '@core/services/auth';
+import { NotificationDialog } from '@components/ui/dialog/notification';
+import { FLIcon } from '@components/ui/icon';
+import { SpinnerComponent } from '@components/ui/spinner';
 
 @Component({
   selector:    'app-calendar',

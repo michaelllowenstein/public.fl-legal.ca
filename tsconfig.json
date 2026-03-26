@@ -1,27 +1,44 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "forceConsistentCasingInFileNames": false,
-    "strict": false,
-    "noImplicitOverride": false,
-    "noPropertyAccessFromIndexSignature": false,
-    "noImplicitReturns": false,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
-    "declaration": false,
+    "skipLibCheck": true,
+    "isolatedModules": true,
     "experimentalDecorators": true,
-    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022",
-    "useDefineForClassFields": false,
-    "ignoreDeprecations": "5.0",
-    "baseUrl": "./"
+    "module": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "@app/*":          ["src/app/*"],
+      "@core/*":         ["src/app/core/*"],
+      "@components/*":   ["src/app/components/*"],
+      "@page/*":         ["src/app/components/page/*"],
+      "@ui/*":           ["src/app/components/ui/*"],
+      "@layout/*":       ["src/app/components/layout/*"],
+      "@feature/*":      ["src/app/components/feature/*"],
+      "@factory/*":      ["src/app/components/factory/*"],
+      "@schema/*":       ["src/app/schema/*"],
+      "@schema":         ["src/app/schema"],
+      "@animations/*":   ["src/app/animations/*"],
+      "@env/*":          ["src/environments/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
+    "typeCheckHostBindings": true,
     "strictTemplates": true
-  }
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
 }

@@ -7,14 +7,14 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LoggerService } from 'src/app/core/services/logger';
-import { SiteService } from 'src/app/core/services/site';
-import { AREASOFLAW } from 'src/app/schema/constants';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { EditableContentDirective } from 'src/app/core/directives/editable-content';
-import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { pageEnter, listStagger } from 'src/app/animations/page';
-import { bodyText } from 'src/app/schema/utils';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
+import { AREASOFLAW } from '@schema/constants';
+import { FLIcon } from '@components/ui/icon';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { pageEnter, listStagger } from '@animations/page';
+import { bodyText } from '@schema/utils';
  
 const AREA_ICONS: Record<string, string> = {
   'civil': 'scale', 'real': 'document-text', 'family': 'user',
@@ -42,7 +42,7 @@ function iconForArea(label: string): string {
 })
 export class AreasOfLawPage implements OnInit {
   private contentService: SiteService = inject(SiteService);
-  private log            = inject(LoggerService).child('areas-of-law');
+  private log            = (inject(LoggerService) as LoggerService).child('areas-of-law');
  
   site    = signal(AREASOFLAW);
   loading = signal(true);

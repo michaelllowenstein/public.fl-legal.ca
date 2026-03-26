@@ -7,10 +7,10 @@ import {
   computed
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LoggerService } from 'src/app/core/services/logger';
-import { listStagger, pageEnter } from 'src/app/animations/page';
-import { SiteService } from 'src/app/core/services/site';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { LoggerService } from '@core/services/logger';
+import { listStagger, pageEnter } from '@animations/page';
+import { SiteService } from '@core/services/site';
+import { FLIcon } from '@components/ui/icon';
  
 export interface BlogEntry {
   id:        string;

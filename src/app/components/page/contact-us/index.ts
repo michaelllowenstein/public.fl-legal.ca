@@ -1,13 +1,14 @@
 import {
   Component, ChangeDetectionStrategy, inject, OnInit,
+  signal,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { DialogService } from 'src/app/components/factory/dialog/service';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { MapsLinkComponent } from 'src/app/components/feature/maps-link';
-import { InquiryDialog } from 'src/app/components/ui/dialog/inquiry';
-import { LoggerService } from 'src/app/core/services/logger';
-import { env } from 'src/environments/environment';
+import { DialogService } from '@components/factory/dialog/service';
+import { FLIcon } from '@components/ui/icon';
+import { MapsLinkComponent } from '@components/feature/maps-link';
+import { InquiryDialog } from '@components/ui/dialog/inquiry';
+import { LoggerService } from '@core/services/logger';
+import { env } from '@env/environment';
 
 @Component({
   selector:    'app-contact-us',
@@ -17,18 +18,21 @@ import { env } from 'src/environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactUsPage implements OnInit {
-  private dialog                  = inject(DialogService);
+  private dialog: DialogService                  = inject(DialogService);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
-  private log                     = inject(LoggerService).child('contact-us');
+  private log                     = (inject(LoggerService) as LoggerService).child('contact-us');
  
   readonly officeName = env.maps?.pointOfInterest ?? 'Southcentre Executive Tower';
-  readonly officeLat  = env.maps?.latitude  ?? 50.955083;
-  readonly officeLong = env.maps?.longitude ?? -114.069988;
+  readonly officeLatitude  = env.maps?.latitude  ?? 50.955083;
+  readonly officeLongitude = env.maps?.longitude ?? -114.069988;
+
+  readonly officeLat = signal<number>(this.officeLatitude);
+  readonly officeLong = signal<number>(this.officeLongitude);
  
   readonly mapsEmbedUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
     env.mapsEmbedApiKey
       ? `https://www.google.com/maps/embed/v1/place?key=${env.mapsEmbedApiKey}&q=${encodeURIComponent(this.officeName)}`
-      : `https://www.openstreetmap.org/export/embed.html?bbox=${this.officeLong - 0.005},${this.officeLat - 0.003},${this.officeLong + 0.005},${this.officeLat + 0.003}&layer=mapnik&marker=${this.officeLat},${this.officeLong}`,
+      : `https://www.openstreetmap.org/export/embed.html?bbox=${this.officeLong() - 0.005},${this.officeLat() - 0.003},${this.officeLong() + 0.005},${this.officeLat() + 0.003}&layer=mapnik&marker=${this.officeLat},${this.officeLong()}`,
   );
  
   ngOnInit() {

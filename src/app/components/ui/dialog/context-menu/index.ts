@@ -6,8 +6,8 @@ import {
   OnInit,
   ElementRef,
 } from '@angular/core';
-import { injectDialogClose, injectDialogData } from 'src/app/components/factory/dialog/tokens';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { injectDialogClose, injectDialogData } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
  
 export interface ContextMenuItem {
   label:    string;

@@ -6,8 +6,8 @@ import {
   computed,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { injectDialogData, injectDialogClose } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
 
 export interface InlineEditData {
   fieldKey:      string;

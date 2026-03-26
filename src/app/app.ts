@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, signal, isDevMode } from '@angular/core';
-import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Navigation} from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
-import { NavbarComponent } from 'src/app/components/layout/navbar';
-import { SpinnerComponent } from 'src/app/components/ui/spinner';
-import { routerSlideAnimation, ROUTE_ORDER } from 'src/app/animations/app';
-import { StylusService } from 'src/app/core/services/stylus'
+import { NavbarComponent } from '@components/layout/navbar';
+import { SpinnerComponent } from '@components/ui/spinner';
+import { routerSlideAnimation, ROUTE_ORDER } from '@animations/app';
+import { StylusService } from '@core/services/stylus'
 
 @Component({
   selector: 'app-root',
@@ -21,18 +21,25 @@ import { StylusService } from 'src/app/core/services/stylus'
       </main>
     </div>
   `,
-  styleUrl: '/app.scss'
+  styles: `
+    app-spinner {
+      position: fixed; top: 0; left: 0;
+      height: 100vh; width: 100vw;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.8); z-index: 1000;
+    }
+    `
 })
 export class App {
-  private readonly router = inject(Router);
+  private readonly router: Router = inject(Router);
 
   readonly isLoading = signal(false);
   private direction = '100%';
   private directionInverse = '-100%';
 
   constructor() {
-    if (isDevMode()) inject(StylusService).init();
-    this.router.events.subscribe(event => {
+    if (isDevMode()) (inject(StylusService) as StylusService).init();
+    this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
         this.isLoading.set(true);
       } else if (

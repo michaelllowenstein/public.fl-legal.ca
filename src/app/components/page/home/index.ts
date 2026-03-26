@@ -4,17 +4,17 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CarouselComponent, CarouselSlide } from 'src/app/components/feature/carousel';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { EditableContentDirective } from 'src/app/core/directives/editable-content';
-import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { HOME } from 'src/app/schema/constants';
+import { CarouselComponent, CarouselSlide } from '@components/feature/carousel';
+import { FLIcon } from '@components/ui/icon';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { HOME } from '@schema/constants';
 import {
   pageEnter, listStagger, fadeIn,
-} from 'src/app/animations/page';
-import { LoggerService } from 'src/app/core/services/logger';
-import { SiteService } from 'src/app/core/services/site';
-import { sectionText, bodyText } from 'src/app/schema/utils/section-text';
+} from '@animations/page';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
+import { sectionText, bodyText } from '@schema/utils/section-text';
 
 @Component({
   selector:    'app-home',
@@ -25,9 +25,9 @@ import { sectionText, bodyText } from 'src/app/schema/utils/section-text';
   templateUrl: './index.html',
 })
 export class HomePage implements OnInit {
-  private siteService = inject(SiteService);
-  private el          = inject(ElementRef<HTMLElement>);
-  private log        = inject(LoggerService).child('home');
+  private siteService: SiteService = inject(SiteService);
+  private el: ElementRef<HTMLElement>          = inject(ElementRef<HTMLElement>);
+  private log        = (inject(LoggerService) as LoggerService).child('home');
 
   site                = signal(HOME);
   loading             = signal(true);

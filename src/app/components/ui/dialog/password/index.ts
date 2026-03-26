@@ -5,9 +5,9 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EditorService } from 'src/app/core/services/editor';
-import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { EditorService } from '@core/services/editor';
+import { injectDialogClose } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
 import { CommonModule } from '@angular/common';
 
 @Component({

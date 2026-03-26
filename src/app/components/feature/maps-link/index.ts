@@ -1,5 +1,5 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { FLIcon } from 'src/app/components/ui/icon';
+import { Component, input, ChangeDetectionStrategy, signal , computed} from '@angular/core';
+import { FLIcon } from '@components/ui/icon';
 
 @Component({
   selector: 'app-maps-link',
@@ -9,15 +9,14 @@ import { FLIcon } from 'src/app/components/ui/icon';
   templateUrl: './index.html'
 })
 export class MapsLinkComponent {
-  latitude        = input.required<number>();
-  longitude       = input.required<number>();
+  lat             = input<number>(0);
+  long            = input<number>(0);
   pointOfInterest = input<string>('');
-  label           = input<string>('');
+  label           = input<string>('Get Directions');
 
-  mapsUrl() {
-    const q = this.pointOfInterest()
-      ? encodeURIComponent(this.pointOfInterest())
-      : `${this.latitude()},${this.longitude()}`;
-    return `https://www.google.com/maps/search/?api=1&query=${q}`;
-  }
+  mapsUrl = computed(() =>
+    `https://www.google.com/maps/search/?api=1&query=${
+      encodeURIComponent(this.pointOfInterest())
+    }&ll=${this.lat()},${this.long()}`
+  );
 }

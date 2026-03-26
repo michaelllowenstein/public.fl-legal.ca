@@ -7,14 +7,14 @@ import {
   computed
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { pageEnter, accordion } from 'src/app/animations/page';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { EditableContentDirective } from 'src/app/core/directives/editable-content';
-import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { LoggerService } from 'src/app/core/services/logger';
-import { SiteService } from 'src/app/core/services/site';
-import { bodyText } from 'src/app/schema/utils';
-import { FAQ } from 'src/app/schema/constants';
+import { pageEnter, accordion } from '@animations/page';
+import { FLIcon } from '@components/ui/icon';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
+import { bodyText } from '@schema/utils';
+import { FAQ } from '@schema/constants';
 
 @Component({
   selector:    'app-faq',
@@ -25,8 +25,8 @@ import { FAQ } from 'src/app/schema/constants';
   animations:  [pageEnter, accordion],
 })
 export class FaqPage implements OnInit {
-  private siteService    = inject(SiteService);
-  private log            = inject(LoggerService).child('faq');
+  private siteService: SiteService    = inject(SiteService);
+  private log            = (inject(LoggerService) as LoggerService).child('faq');
  
   site      = signal(FAQ);
   loading   = signal(true);

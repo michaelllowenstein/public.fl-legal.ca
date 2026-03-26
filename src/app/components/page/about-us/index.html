@@ -111,7 +111,7 @@
         <button
           class="w-full flex items-center justify-between px-4 py-3 bg-white
                  rounded-xl shadow-card border border-gray-100"
-          (click)="sidenavOpen.update(v => !v)">
+          (click)="toggleNav()">
           <span class="font-sans text-sm font-medium text-brand">
             {{ activeProfileData()?.name ?? 'Select team member' }}
           </span>

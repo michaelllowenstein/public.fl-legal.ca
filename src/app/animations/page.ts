@@ -1,5 +1,5 @@
 /**
- * src/app/core/animations/page.animations.ts
+ * @core/animations/page.animations.ts
  *
  * Reusable Angular animation triggers used across all page components.
  * Import what you need; unused triggers are tree-shaken.

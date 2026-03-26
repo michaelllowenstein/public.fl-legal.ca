@@ -2,14 +2,14 @@ import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
 } from '@angular/core';
-import { EditableContentDirective } from 'src/app/core/directives/editable-content';
-import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { SiteService } from 'src/app/core/services/site';
-import { LoggerService } from 'src/app/core/services/logger';
-import { ABOUTUS, PROFILES } from 'src/app/schema/constants';
-import { pageEnter, listStagger, slideInLeft, slideInRight } from 'src/app/animations/page';
-import { bodyText } from 'src/app/schema/utils';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { FLIcon } from '@components/ui/icon';
+import { SiteService } from '@core/services/site';
+import { LoggerService } from '@core/services/logger';
+import { ABOUTUS, PROFILES } from '@schema/constants';
+import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/page';
+import { bodyText } from '@schema/utils';
 
 @Component({
   selector:    'app-about-us',
@@ -20,9 +20,9 @@ import { bodyText } from 'src/app/schema/utils';
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
 })
 export class AboutUsPage implements OnInit {
-  private siteService = inject(SiteService);
-  private el             = inject(ElementRef<HTMLElement>);
-  private log            = inject(LoggerService).child('about-us');
+  private siteService: SiteService = inject(SiteService);
+  private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
+  private log          = (inject(LoggerService) as LoggerService).child('about-us');
  
   @HostListener('window:scroll')
   checkCards() {
@@ -76,6 +76,10 @@ export class AboutUsPage implements OnInit {
       });
       setTimeout(() => this.checkCards(), 150);
     }
+  }
+
+  toggleNav(): void {
+    this.sidenavOpen.update((v: boolean) => !v);
   }
  
   isCardVisible(i: number) { return this.visibleCards().has(i); }

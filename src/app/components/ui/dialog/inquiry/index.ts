@@ -8,9 +8,9 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { FLIcon } from 'src/app/components/ui/icon';
-import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { env } from 'src/environments/environment';
+import { FLIcon } from '@components/ui/icon';
+import { injectDialogClose } from '@components/factory/dialog/tokens';
+import { env } from '@env/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
  
