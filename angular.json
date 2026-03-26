@@ -43,6 +43,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "outputPath": "dist/fl-legal",
             "polyfills": ["zone.js"],
             "main": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
@@ -67,7 +68,9 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "buildOptimizer": true,
               "optimization": true,
+              "vendorChunk": false,
               "extractLicenses": true,
               "sourceMap": {
                 "hidden": false,
@@ -78,13 +81,17 @@
               "outputHashing": "all"
             },
             "development": {
+              "buildOptimizer": false,
               "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
             },
             "local": {
+              "buildOptimizer": false,
               "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
