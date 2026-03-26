@@ -46,6 +46,7 @@
             "outputPath": "dist/fl-legal",
             "polyfills": ["zone.js"],
             "main": "src/main.ts",
+            "index": "src/index.html",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
