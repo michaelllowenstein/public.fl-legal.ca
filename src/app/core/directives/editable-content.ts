@@ -33,9 +33,9 @@ import {
 } from '@components/ui/dialog/password';
 
 import {
-  InlineEditDialog,
   InlineEditData,
   InlineEditResult,
+  InlineEditDialog,
 } from '@components/ui/dialog/inline-edit';
 
 import {
@@ -62,8 +62,16 @@ export class EditableContentDirective {
   @HostListener('contextmenu', ['$event'])
   async onContextMenu(event: MouseEvent) {
     event.preventDefault();
+
     const key = this.appEditableText();
     this.log.debug('Context menu opened', { key, label: this.editLabel() });
+    
+    // ── Step 1: show context menu and wait for user action ──────────────────
+    // const menuRef: DialogRef<"edit" | null> = this.dialog.open<
+    //   ContextMenuDialog,
+    //   { x: number; y: number },
+    //   'edit' | null
+    // >(ContextMenuDialog, { data: { x: event.clientX, y: event.clientY } });
  
     const menuRef = this.dialog.open<ContextMenuDialog, ContextMenuData>(
       ContextMenuDialog,
@@ -88,8 +96,42 @@ export class EditableContentDirective {
         },
       },
     );
+
+    // ── Step 2: authenticate if needed ─────────────────────────────────────
+    if (!this.auth.isAuthenticated() || !this.auth.checkTokenExpiry()) {
+      const pwRef = this.dialog.open<PasswordDialog, unknown, boolean>(
+        PasswordDialog,
+      );
+      const authed = await pwRef.closed;
+      if (!authed) return;
+    }
+
+    // ── Step 3: open inline editor ──────────────────────────────────────────
+    const editRef = this.dialog.open<
+      InlineEditDialog,
+      { fieldKey: string; currentValue: string; label: string },
+      { key: string; value: string } | null
+    >(InlineEditDialog, {
+      data: {
+        fieldKey:     this.appEditableText(),
+        currentValue: this.el.nativeElement.innerHTML,
+        label:        this.editLabel() || this.appEditableText(),
+      },
+    });
  
-    const result = await menuRef.closed;
+    const result: any = await menuRef.closed;
+    if (!result) return;
+
+    // ── Step 4: persist to API → Firebase ───────────────────────────────────
+    try {
+      await this.siteService.updateField(result.key, result.value);
+      // Optimistic DOM update — reflects immediately without waiting for
+      // the next Firebase read cycle
+      this.el.nativeElement.innerHTML = result.value;
+      this.notify('Content saved.', 'success');
+    } catch {
+      this.notify('Save failed — please check your connection and try again.', 'error');
+    }
     this.log.trace('Context menu closed', { key, selected: result !== undefined });
   }
  

@@ -15,6 +15,7 @@ import { EditableContentDirective } from '@core/directives/editable-content';
 import { SafeHtmlPipe } from '@core/pipes/safe-html';
 import { pageEnter, listStagger } from '@animations/page';
 import { bodyText } from '@schema/utils';
+import { SeoService } from '@core/services/seo';
  
 const AREA_ICONS: Record<string, string> = {
   'civil': 'scale', 'real': 'document-text', 'family': 'user',
@@ -41,6 +42,7 @@ function iconForArea(label: string): string {
   animations:  [pageEnter, listStagger],
 })
 export class AreasOfLawPage implements OnInit {
+  private seo: SeoService = inject(SeoService);
   private contentService: SiteService = inject(SiteService);
   private log            = (inject(LoggerService) as LoggerService).child('areas-of-law');
  
@@ -60,6 +62,10 @@ export class AreasOfLawPage implements OnInit {
  
   async ngOnInit() {
     this.log.debug('Areas of Law initialising');
+    this.seo.set({
+      title: 'Areas of Law',
+      description: 'Fric, Lowenstein & Co. LLP practises family law, civil litigation, residential real estate, and wills & estates in Calgary, Alberta.',
+    });
     try {
       const content = await this.contentService.getSection('areasOfLaw');
       if (content) this.site.set({ ...AREASOFLAW, ...content });

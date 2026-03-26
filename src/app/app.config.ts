@@ -17,7 +17,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([jwtInterceptor])),
-    // Single Firebase init — fixes the duplicate initializeApp() in FirebaseService/SiteService
     provideFirebaseApp(() => initializeApp(env.firebase)),
     provideDatabase(() => getDatabase()),
   ],

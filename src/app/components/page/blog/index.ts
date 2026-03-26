@@ -11,6 +11,7 @@ import { LoggerService } from '@core/services/logger';
 import { listStagger, pageEnter } from '@animations/page';
 import { SiteService } from '@core/services/site';
 import { FLIcon } from '@components/ui/icon';
+import { SeoService } from '@core/services/seo';
  
 export interface BlogEntry {
   id:        string;
@@ -31,6 +32,7 @@ export interface BlogEntry {
   animations:  [pageEnter, listStagger],
 })
 export class BlogPage implements OnInit {
+  private seo: SeoService =    inject(SeoService);
   private contentService = inject(SiteService);
   private log            = inject(LoggerService).child('blog');
  
