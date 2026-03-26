@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:install": "npm install --legacy-peer-deps",
     "local": "ng serve --configuration local --port 4422",
     "build:local": "ng build --configuration local",
     "watch": "ng build --watch --configuration local",
