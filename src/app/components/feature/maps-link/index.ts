@@ -1,10 +1,10 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { Icon } from 'src/app/components/ui/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
 @Component({
   selector: 'app-maps-link',
   standalone: true,
-  imports: [Icon],
+  imports: [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

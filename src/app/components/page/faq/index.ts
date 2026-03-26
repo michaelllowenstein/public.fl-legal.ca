@@ -7,19 +7,19 @@ import {
   computed
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { pageEnter, accordion } from '@app/animations/page';
-import { Icon } from 'src/app/components/ui/icon';
-import { EditableContentDirective } from '@app/core/directives/editable-content';
-import { SafeHtmlPipe } from '@app/core/pipes/safe-html';
-import { LoggerService } from '@app/core/services/logger';
-import { SiteService } from '@app/core/services/site';
-import { bodyText } from '@app/schema/utils';
+import { pageEnter, accordion } from 'src/app/animations/page';
+import { FLIcon } from 'src/app/components/ui/icon';
+import { EditableContentDirective } from 'src/app/core/directives/editable-content';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
+import { LoggerService } from 'src/app/core/services/logger';
+import { SiteService } from 'src/app/core/services/site';
+import { bodyText } from 'src/app/schema/utils';
 import { FAQ } from 'src/app/schema/constants';
 
 @Component({
   selector:    'app-faq',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, Icon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, accordion],

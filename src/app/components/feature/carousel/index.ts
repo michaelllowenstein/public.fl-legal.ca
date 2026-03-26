@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, signal, input,
   ChangeDetectionStrategy, computed,
 } from '@angular/core';
-import { Icon } from 'src/app/components/ui/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
 export interface CarouselSlide {
   imageUrl: string;
@@ -13,7 +13,7 @@ export interface CarouselSlide {
 @Component({
   selector: 'app-carousel',
   standalone: true,
-  imports: [Icon],
+  imports: [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
   styles: `

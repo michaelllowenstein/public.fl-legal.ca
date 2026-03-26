@@ -7,7 +7,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { injectDialogClose, injectDialogData } from 'src/app/components/factory/dialog/tokens';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
  
 export interface ContextMenuItem {
   label:    string;
@@ -26,7 +26,7 @@ export interface ContextMenuData {
 @Component({
   selector:    'app-context-menu-dialog',
   standalone:  true,
-  imports:     [Icon],
+  imports:     [FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

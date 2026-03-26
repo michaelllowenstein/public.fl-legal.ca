@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DialogService } from 'src/app/components/factory/dialog/service';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 import { MapsLinkComponent } from 'src/app/components/feature/maps-link';
 import { InquiryDialog } from 'src/app/components/ui/dialog/inquiry';
 import { LoggerService } from 'src/app/core/services/logger';
@@ -12,7 +12,7 @@ import { env } from 'src/environments/environment';
 @Component({
   selector:    'app-contact-us',
   standalone:  true,
-  imports:     [MapsLinkComponent, Icon],
+  imports:     [MapsLinkComponent, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -12,23 +12,23 @@ import { DialogService } from 'src/app/components/factory/dialog/service';
 import { ConfirmDialog } from 'src/app/components/ui/dialog/confirm';
 import { CalendarService, CalendarEvent } from 'src/app/core/services/calendar';
 import { LoggerService } from 'src/app/core/services/logger';
-import { AuthService } from '@app/core/services/auth';
+import { AuthService } from 'src/app/core/services/auth';
 import { NotificationDialog } from 'src/app/components/ui/dialog/notification';
-import { Icon } from '../../../ui/icon';
-import { SpinnerComponent } from '@app/components/ui/spinner';
+import { FLIcon } from 'src/app/components/ui/icon';
+import { SpinnerComponent } from 'src/app/components/ui/spinner';
 
 @Component({
   selector:    'app-calendar',
   standalone:  true,
-  imports:     [Icon, SpinnerComponent, SlicePipe],
+  imports:     [FLIcon, SpinnerComponent, SlicePipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FricLowensteinCalendar implements OnInit {
-  private auth     = inject(AuthService);
-  private calendar = inject(CalendarService);
-  private dialog   = inject(DialogService);
-  private router   = inject(Router);
+  private auth: AuthService     = inject(AuthService);
+  private calendar: CalendarService = inject(CalendarService);
+  private dialog: DialogService   = inject(DialogService);
+  private router: Router   = inject(Router);
   private log      = inject(LoggerService).child('calendar');
  
   events  = signal<CalendarEvent[]>([]);

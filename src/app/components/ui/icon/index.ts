@@ -1,7 +1,7 @@
 /**
- * app-icon.component.ts
+ * app-fl-icon.component.ts
  * Inline SVG icon component that replaces <mat-icon>.
- * Usage: <app-icon name="chevron-right" class="w-5 h-5" />
+ * Usage: <app-fl-icon name="chevron-right" class="w-5 h-5" />
  *
  * Supported names (add more as needed):
  *   chevron-right | chevron-left | chevron-down | chevron-up
@@ -35,12 +35,12 @@ const ICONS: Record<string, string> = {
 };
 
 @Component({
-  selector: 'app-icon',
+  selector: 'app-fl-icon',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<span class="inline-flex items-center justify-center" [innerHTML]="svg()"></span>`,
 })
-export class Icon {
+export class FLIcon {
   name = input.required<string>();
 
   private sanitizer = inject(DomSanitizer);

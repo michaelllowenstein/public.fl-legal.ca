@@ -1,11 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
 @Component({
   selector: 'app-coming-soon',
   standalone: true,
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

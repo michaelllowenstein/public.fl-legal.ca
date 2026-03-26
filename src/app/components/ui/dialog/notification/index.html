@@ -11,8 +11,8 @@
                flex items-start gap-3 px-4 py-3.5"
         [class]="panelClass">
  
-        <!-- Icon -->
-        <app-icon [name]="iconName" class="w-5 h-5 shrink-0 mt-0.5" />
+        <!-- FLIcon -->
+        <app-fl-icon [name]="iconName" class="w-5 h-5 shrink-0 mt-0.5" />
  
         <!-- Message -->
         <p class="font-sans text-sm font-medium leading-snug flex-1 pt-0.5">
@@ -24,7 +24,7 @@
           class="shrink-0 opacity-60 hover:opacity-100 transition-opacity -mr-1 -mt-0.5 p-1 rounded"
           aria-label="Dismiss"
           (click)="close()">
-          <app-icon name="x-mark" class="w-4 h-4" />
+          <app-fl-icon name="x-mark" class="w-4 h-4" />
         </button>
  
         <!-- Progress bar (shown when auto-dismiss is active) -->

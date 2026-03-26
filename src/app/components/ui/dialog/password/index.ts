@@ -7,13 +7,14 @@ import {
 import { FormsModule } from '@angular/forms';
 import { EditorService } from 'src/app/core/services/editor';
 import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { AppIcon } from 'src/app/components/ui/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector:    'app-password-dialog',
   standalone:  true,
   templateUrl: './index.html',
-  imports:     [FormsModule, Icon],
+  imports:     [FormsModule, FLIcon, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordDialog {

@@ -4,18 +4,17 @@ import {
 } from '@angular/core';
 import { EditableContentDirective } from 'src/app/core/directives/editable-content';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 import { SiteService } from 'src/app/core/services/site';
 import { LoggerService } from 'src/app/core/services/logger';
 import { ABOUTUS, PROFILES } from 'src/app/schema/constants';
 import { pageEnter, listStagger, slideInLeft, slideInRight } from 'src/app/animations/page';
-import { Profile } from 'src/app/schema/models';
 import { bodyText } from 'src/app/schema/utils';
 
 @Component({
   selector:    'app-about-us',
   standalone:  true,
-  imports:     [Icon, EditableContentDirective, SafeHtmlPipe],
+  imports:     [FLIcon, EditableContentDirective, SafeHtmlPipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],

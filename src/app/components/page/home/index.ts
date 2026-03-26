@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CarouselComponent, CarouselSlide } from 'src/app/components/feature/carousel';
-import { Icon } from 'src/app/components/ui/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 import { EditableContentDirective } from 'src/app/core/directives/editable-content';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
 import { HOME } from 'src/app/schema/constants';
@@ -19,7 +19,7 @@ import { sectionText, bodyText } from 'src/app/schema/utils/section-text';
 @Component({
   selector:    'app-home',
   standalone:  true,
-  imports:     [RouterLink, CarouselComponent, Icon, EditableContentDirective, SafeHtmlPipe],
+  imports:     [RouterLink, CarouselComponent, FLIcon, EditableContentDirective, SafeHtmlPipe],
   animations:  [pageEnter, listStagger, fadeIn],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
@@ -27,24 +27,24 @@ import { sectionText, bodyText } from 'src/app/schema/utils/section-text';
 export class HomePage implements OnInit {
   private siteService = inject(SiteService);
   private el          = inject(ElementRef<HTMLElement>);
-  private log         = inject(LoggerService).child('home');
- 
+  private log        = inject(LoggerService).child('home');
+
   site                = signal(HOME);
   loading             = signal(true);
-  visible             = signal<Set<string>>(new Set()); 
+  visible             = signal<Set<string>>(new Set());
   intro               = computed(() => bodyText(this.site()));
   heading             = computed(() => sectionText(this.site().header));
   subheader           = computed(() => sectionText(this.site().subheader));
- 
+
   // Track time-to-interactive
   private _initStart = performance.now();
- 
+
   readonly slides: CarouselSlide[] = [
     { imageUrl: 'assets/site/images/oxfordpropsv1.jpg', heading: 'Experienced Legal Counsel',  subheading: 'Since 1982 — Calgary, Alberta'                        },
     { imageUrl: 'assets/site/images/oxfordpropslobbyv1.jpg', heading: 'Protecting Your Rights',     subheading: 'Trusted by individuals and businesses across Alberta' },
     { imageUrl: 'assets/site/images/oxfordpropslobbyv2.jpg', heading: 'Dedicated to Your Success',  subheading: 'Personal attention. Professional results.'            },
   ];
- 
+
   readonly practiceAreas = [
     { icon: 'scale',         label: 'Civil Litigation'  },
     { icon: 'document-text', label: 'Real Estate Law'   },
@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
       this.loading.set(false);
     }
   }
- 
+
   @HostListener('window:scroll')
   checkVisibility() {
     const sections = this.el.nativeElement.querySelectorAll('[data-reveal]');
@@ -77,6 +77,6 @@ export class HomePage implements OnInit {
     });
     if (next.size !== this.visible().size) this.visible.set(next);
   }
- 
+
   isVisible(id: string) { return this.visible().has(id); }
 }

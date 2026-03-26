@@ -9,8 +9,8 @@ import {
 import { RouterLink } from '@angular/router';
 import { LoggerService } from 'src/app/core/services/logger';
 import { SiteService } from 'src/app/core/services/site';
-import { AREASOFLAW } from '@app/schema/constants';
-import { Icon } from '@friclowenstein/icon';
+import { AREASOFLAW } from 'src/app/schema/constants';
+import { FLIcon } from 'src/app/components/ui/icon';
 import { EditableContentDirective } from 'src/app/core/directives/editable-content';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
 import { pageEnter, listStagger } from 'src/app/animations/page';
@@ -35,13 +35,13 @@ function iconForArea(label: string): string {
 @Component({
   selector:    'app-areas-of-law',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, Icon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })
 export class AreasOfLawPage implements OnInit {
-  private contentService = inject(SiteService);
+  private contentService: SiteService = inject(SiteService);
   private log            = inject(LoggerService).child('areas-of-law');
  
   site    = signal(AREASOFLAW);

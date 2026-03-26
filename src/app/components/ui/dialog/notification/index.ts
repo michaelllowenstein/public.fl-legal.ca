@@ -12,10 +12,9 @@
  */
 import {
   Component, ChangeDetectionStrategy, OnInit, OnDestroy,
-  signal, ChangeDetectorRef, inject,
 } from '@angular/core';
 import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -42,7 +41,7 @@ const STYLE_MAP: Record<NotificationType, string> = {
 @Component({
   selector:    'app-notification',
   standalone:  true,
-  imports:     [Icon],
+  imports:     [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
   styles: [`

@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/core/services/auth';
 import { LoggerService } from 'src/app/core/services/logger';
-import { Icon } from '../../../ui/icon';
+import { FLIcon } from '../../../ui/icon';
 
 @Component({
   selector:    'app-login',
   standalone:  true,
-  imports:     [FormsModule, Icon],
+  imports:     [FormsModule, FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
 })

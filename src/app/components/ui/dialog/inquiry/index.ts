@@ -8,7 +8,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
 import { env } from 'src/environments/environment';
 
@@ -39,7 +39,7 @@ const PRACTICE_AREAS = [
 @Component({
   selector:    'app-inquiry-dialog',
   standalone:  true,
-  imports:     [Icon, FormsModule],
+  imports:     [FLIcon, FormsModule],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`

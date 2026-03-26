@@ -14,7 +14,7 @@
  */
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
-import { Icon } from '@friclowenstein/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
 export interface ConfirmData {
   title?:         string;
@@ -28,7 +28,7 @@ export interface ConfirmData {
 @Component({
   selector:    'app-confirm-dialog',
   standalone:  true,
-  imports:     [Icon],
+  imports:     [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

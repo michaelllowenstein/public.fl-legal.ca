@@ -5,9 +5,9 @@ import {
 import { RouterLink } from '@angular/router';
 import { DialogService } from 'src/app/components/factory/dialog/service';
 import { InquiryDialog } from 'src/app/components/ui/dialog/inquiry';
-import { Icon } from 'src/app/components/ui/icon';
+import { FLIcon } from 'src/app/components/ui/icon';
 
-export interface MenuIcon {
+export interface MenuFLIcon {
   source: string;
   alt: string;
 }
@@ -15,17 +15,17 @@ export interface MenuIcon {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [Icon, RouterLink],
+  imports: [FLIcon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })
 export class NavbarComponent {
   private dialog = inject(DialogService);
-  webMenu = signal<MenuIcon>({
+  webMenu = signal<MenuFLIcon>({
     source: 'assets/site/branding/cropped-favicon-512-100x100.png', 
     alt: 'Fric, Lowenstein & Co. LLP'
   });
-  mobileMenu = signal<MenuIcon>({
+  mobileMenu = signal<MenuFLIcon>({
     source: 'assets/site/branding/logo-white-on-blue-small.png', 
     alt: 'Fric, Lowenstein & Co. LLP'
   });

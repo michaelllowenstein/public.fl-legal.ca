@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, isDevMode } from '@angular/core';
 import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { NavbarComponent } from 'src/app/components/layout/navbar';
 import { SpinnerComponent } from 'src/app/components/ui/spinner';
 import { routerSlideAnimation, ROUTE_ORDER } from 'src/app/animations/app';
@@ -9,7 +9,7 @@ import { StylusService } from 'src/app/core/services/stylus'
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, NavbarComponent, SpinnerComponent],
+  imports: [RouterOutlet, NgIf, NavbarComponent, SpinnerComponent, CommonModule],
   animations: [routerSlideAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
