@@ -13,6 +13,7 @@ import { SiteService } from '@core/services/site';
 import { PRICING } from '@schema/constants';
 import { PricingSection } from '@schema/models';
 import { sectionText } from '@schema/utils';
+import { SeoService } from '@core/services/seo';
 
 @Component({
   selector:    'app-pricing',
@@ -23,6 +24,7 @@ import { sectionText } from '@schema/utils';
   animations:  [pageEnter, listStagger],
 })
 export class PricingPage {
+  private seo: SeoService =    inject(SeoService);
   private siteService    = inject(SiteService);
   private log            = inject(LoggerService).child('pricing');
  
@@ -55,6 +57,10 @@ export class PricingPage {
  
   async ngOnInit() {
     this.log.debug('Pricing page initialising');
+    this.seo.set({
+      title: 'Legal Fees & Pricing',
+      description: 'Transparent legal fee information from Fric, Lowenstein & Co. LLP. Understand the cost of your legal matter before you begin.',
+    });
     try {
       const content = await this.siteService.getSection('pricing');
       if (content) {

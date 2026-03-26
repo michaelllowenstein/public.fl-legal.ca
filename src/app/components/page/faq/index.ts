@@ -15,6 +15,7 @@ import { LoggerService } from '@core/services/logger';
 import { SiteService } from '@core/services/site';
 import { bodyText } from '@schema/utils';
 import { FAQ } from '@schema/constants';
+import { SeoService } from '@core/services/seo';
 
 @Component({
   selector:    'app-faq',
@@ -25,6 +26,7 @@ import { FAQ } from '@schema/constants';
   animations:  [pageEnter, accordion],
 })
 export class FaqPage implements OnInit {
+  private seo: SeoService =    inject(SeoService);
   private siteService: SiteService    = inject(SiteService);
   private log            = (inject(LoggerService) as LoggerService).child('faq');
  
@@ -42,7 +44,10 @@ export class FaqPage implements OnInit {
  
   async ngOnInit() {
     this.log.debug('FAQ page initialising');
- 
+    this.seo.set({
+      title: 'Frequently Asked Questions',
+      description: 'Answers to common legal questions from the team at Fric, Lowenstein & Co. LLP, Calgary.',
+    });
     try {
       const content = await this.siteService.getSection('faq');
       if (content) {

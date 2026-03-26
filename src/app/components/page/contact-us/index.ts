@@ -8,6 +8,7 @@ import { FLIcon } from '@components/ui/icon';
 import { MapsLinkComponent } from '@components/feature/maps-link';
 import { InquiryDialog } from '@components/ui/dialog/inquiry';
 import { LoggerService } from '@core/services/logger';
+import { SeoService } from '@core/services/seo';
 import { env } from '@env/environment';
 
 @Component({
@@ -18,6 +19,7 @@ import { env } from '@env/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactUsPage implements OnInit {
+  private seo: SeoService =    inject(SeoService);
   private dialog: DialogService                  = inject(DialogService);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
   private log                     = (inject(LoggerService) as LoggerService).child('contact-us');
@@ -36,6 +38,10 @@ export class ContactUsPage implements OnInit {
   );
  
   ngOnInit() {
+    this.seo.set({
+      title: 'Contact Us',
+      description: 'Get in touch with Fric, Lowenstein & Co. LLP. Our Calgary law office is available to discuss your legal needs.',
+    });
     const mapProvider = env.mapsEmbedApiKey ? 'google' : 'openstreetmap';
     this.log.info('Contact Us page loaded', {
       mapProvider,

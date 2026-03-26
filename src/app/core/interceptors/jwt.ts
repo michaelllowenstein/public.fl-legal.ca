@@ -15,7 +15,7 @@ import { inject } from '@angular/core';
  */
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   // Only intercept requests to our own API
-  if (!req.url.startsWith(env.apiURL)) return next(req);
+  if (!req.url.includes('/api/')) return next(req);
 
   const auth: AuthService = inject(AuthService);
   const editor: EditorService = inject(EditorService);
