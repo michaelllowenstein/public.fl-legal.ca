@@ -4,17 +4,17 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CarouselComponent, CarouselSlide } from '@feature/carousel';
-import { Icon } from '@ui/icon';
-import { EditableContentDirective } from '@directives/editable-content';
-import { SafeHtmlPipe } from '@pipes/safe-html';
-import { HOME } from '@schema/constants';
+import { CarouselComponent, CarouselSlide } from 'src/app/components/feature/carousel';
+import { Icon } from 'src/app/components/ui/icon';
+import { EditableContentDirective } from 'src/app/core/directives/editable-content';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
+import { HOME } from 'src/app/schema/constants';
 import {
   pageEnter, listStagger, fadeIn,
-} from '@animations/page';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
-import { sectionText, bodyText } from '@schema/utils/section-text';
+} from 'src/app/animations/page';
+import { LoggerService } from 'src/app/core/services/logger';
+import { SiteService } from 'src/app/core/services/site';
+import { sectionText, bodyText } from 'src/app/schema/utils/section-text';
 
 @Component({
   selector:    'app-home',

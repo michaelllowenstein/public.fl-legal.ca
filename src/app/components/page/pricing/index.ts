@@ -6,13 +6,13 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { pageEnter, listStagger } from '@animations/page';
+import { pageEnter, listStagger } from 'src/app/animations/page';
 import { Icon } from '@friclowenstein/icon';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
-import { PRICING } from '@schema/constants';
-import { PricingSection } from '@schema/models';
-import { sectionText } from '@schema/utils';
+import { LoggerService } from 'src/app/core/services/logger';
+import { SiteService } from 'src/app/core/services/site';
+import { PRICING } from 'src/app/schema/constants';
+import { PricingSection } from 'src/app/schema/models';
+import { sectionText } from 'src/app/schema/utils';
 
 @Component({
   selector:    'app-pricing',

@@ -7,14 +7,14 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
+import { LoggerService } from 'src/app/core/services/logger';
+import { SiteService } from 'src/app/core/services/site';
 import { AREASOFLAW } from '@app/schema/constants';
 import { Icon } from '@friclowenstein/icon';
-import { EditableContentDirective } from '@directives/editable-content';
-import { SafeHtmlPipe } from '@pipes/safe-html';
-import { pageEnter, listStagger } from '@animations/page';
-import { bodyText } from '@schema/utils';
+import { EditableContentDirective } from 'src/app/core/directives/editable-content';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
+import { pageEnter, listStagger } from 'src/app/animations/page';
+import { bodyText } from 'src/app/schema/utils';
  
 const AREA_ICONS: Record<string, string> = {
   'civil': 'scale', 'real': 'document-text', 'family': 'user',

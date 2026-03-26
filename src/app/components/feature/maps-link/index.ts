@@ -1,5 +1,5 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { Icon } from '@ui/icon';
+import { Icon } from 'src/app/components/ui/icon';
 
 @Component({
   selector: 'app-maps-link',

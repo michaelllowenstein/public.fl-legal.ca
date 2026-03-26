@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy, HostListener,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DialogService } from '@factory/dialog/service';
-import { InquiryDialog } from '@ui/dialog/inquiry';
-import { Icon } from '@friclowenstein/icon';
+import { DialogService } from 'src/app/components/factory/dialog/service';
+import { InquiryDialog } from 'src/app/components/ui/dialog/inquiry';
+import { Icon } from 'src/app/components/ui/icon';
 
 export interface MenuIcon {
   source: string;

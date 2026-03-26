@@ -19,29 +19,29 @@ import {
   Directive, HostListener, inject,
   ElementRef, input,
 } from '@angular/core';
-import { DialogService } from '@factory/dialog/service';
-import { EditorService } from '@services/editor';
-import { SiteService } from '@services/site';
+import { DialogService } from 'src/app/components/factory/dialog/service';
+import { EditorService } from 'src/app/core/services/editor';
+import { SiteService } from 'src/app/core/services/site';
 
 import {
   ContextMenuDialog,
   ContextMenuData,
-} from '@ui/dialog/context-menu';
+} from 'src/app/components/ui/dialog/context-menu';
 
 import {
   PasswordDialog,
-} from '@ui/dialog/password';
+} from 'src/app/components/ui/dialog/password';
 
 import {
   InlineEditDialog,
   InlineEditData,
   InlineEditResult,
-} from '@ui/dialog/inline-edit';
+} from 'src/app/components/ui/dialog/inline-edit';
 
 import {
   NotificationDialog,
   NotificationData,
-} from '@ui/dialog/notification';
+} from 'src/app/components/ui/dialog/notification';
 import { LoggerService } from '../services/logger';
 
 @Directive({

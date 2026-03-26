@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, signal, isDevMode } from '@angular/core';
 import { RouterOutlet, Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { NavbarComponent } from '@layout/navbar';
-import { SpinnerComponent } from '@ui/spinner';
-import { routerSlideAnimation, ROUTE_ORDER } from '@app/animations/app';
-import { StylusService } from '@services/stylus'
+import { NavbarComponent } from 'src/app/components/layout/navbar';
+import { SpinnerComponent } from 'src/app/components/ui/spinner';
+import { routerSlideAnimation, ROUTE_ORDER } from 'src/app/animations/app';
+import { StylusService } from 'src/app/core/services/stylus'
 
 @Component({
   selector: 'app-root',

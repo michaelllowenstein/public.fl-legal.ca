@@ -8,12 +8,12 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SlicePipe } from '@angular/common';
-import { DialogService } from '@factory/dialog/service';
-import { ConfirmDialog } from '@ui/dialog/confirm';
-import { CalendarService, CalendarEvent } from '@services/calendar';
-import { LoggerService } from '@services/logger';
+import { DialogService } from 'src/app/components/factory/dialog/service';
+import { ConfirmDialog } from 'src/app/components/ui/dialog/confirm';
+import { CalendarService, CalendarEvent } from 'src/app/core/services/calendar';
+import { LoggerService } from 'src/app/core/services/logger';
 import { AuthService } from '@app/core/services/auth';
-import { NotificationDialog } from '@ui/dialog/notification';
+import { NotificationDialog } from 'src/app/components/ui/dialog/notification';
 import { Icon } from '../../../ui/icon';
 import { SpinnerComponent } from '@app/components/ui/spinner';
 

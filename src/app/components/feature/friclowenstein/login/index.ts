@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@services/auth';
-import { LoggerService } from '@services/logger';
+import { AuthService } from 'src/app/core/services/auth';
+import { LoggerService } from 'src/app/core/services/logger';
 import { Icon } from '../../../ui/icon';
 
 @Component({

@@ -2,12 +2,12 @@ import {
   Component, ChangeDetectionStrategy, inject, OnInit,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { DialogService } from '@factory/dialog/service';
+import { DialogService } from 'src/app/components/factory/dialog/service';
 import { Icon } from '@friclowenstein/icon';
-import { MapsLinkComponent } from '@feature/maps-link';
-import { InquiryDialog } from '@ui/dialog/inquiry';
-import { LoggerService } from '@services/logger';
-import { env } from '@env/environment';
+import { MapsLinkComponent } from 'src/app/components/feature/maps-link';
+import { InquiryDialog } from 'src/app/components/ui/dialog/inquiry';
+import { LoggerService } from 'src/app/core/services/logger';
+import { env } from 'src/environments/environment';
 
 @Component({
   selector:    'app-contact-us',

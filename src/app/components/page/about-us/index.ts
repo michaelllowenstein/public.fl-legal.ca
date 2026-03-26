@@ -2,15 +2,15 @@ import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
 } from '@angular/core';
-import { EditableContentDirective } from '@directives/editable-content';
-import { SafeHtmlPipe } from '@pipes/safe-html';
+import { EditableContentDirective } from 'src/app/core/directives/editable-content';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
 import { Icon } from '@friclowenstein/icon';
-import { SiteService } from '@services/site';
-import { LoggerService } from '@services/logger';
-import { ABOUTUS, PROFILES } from '@schema/constants';
-import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/page';
-import { Profile } from '@schema/models';
-import { bodyText } from '@schema/utils';
+import { SiteService } from 'src/app/core/services/site';
+import { LoggerService } from 'src/app/core/services/logger';
+import { ABOUTUS, PROFILES } from 'src/app/schema/constants';
+import { pageEnter, listStagger, slideInLeft, slideInRight } from 'src/app/animations/page';
+import { Profile } from 'src/app/schema/models';
+import { bodyText } from 'src/app/schema/utils';
 
 @Component({
   selector:    'app-about-us',

@@ -24,7 +24,7 @@
  *   2. Add to app.config.ts or AppComponent constructor (dev only):
  *
  *     import { isDevMode } from '@angular/core';
- *     import { StyleInspectorService } from '@services/stylus';
+ *     import { StyleInspectorService } from 'src/app/core/services/stylus';
  *
  *     // In AppComponent:
  *     constructor() {

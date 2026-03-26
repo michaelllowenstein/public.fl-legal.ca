@@ -10,29 +10,29 @@
     "fl-legal.ca": {
       "projectType": "application",
       "schematics": {
-        "@schematics/angular:component": {
+        "src/app/schematics/angular:component": {
           "style": "scss",
           "skipTests": true
         },
-        "@schematics/angular:class": {
+        "src/app/schematics/angular:class": {
           "skipTests": true
         },
-        "@schematics/angular:directive": {
+        "src/app/schematics/angular:directive": {
           "skipTests": true
         },
-        "@schematics/angular:guard": {
+        "src/app/schematics/angular:guard": {
           "skipTests": true
         },
-        "@schematics/angular:interceptor": {
+        "src/app/schematics/angular:interceptor": {
           "skipTests": true
         },
-        "@schematics/angular:pipe": {
+        "src/app/schematics/angular:pipe": {
           "skipTests": true
         },
-        "@schematics/angular:resolver": {
+        "src/app/schematics/angular:resolver": {
           "skipTests": true
         },
-        "@schematics/angular:service": {
+        "src/app/schematics/angular:service": {
           "skipTests": true
         }
       },

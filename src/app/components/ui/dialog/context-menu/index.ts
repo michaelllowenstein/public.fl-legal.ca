@@ -6,7 +6,7 @@ import {
   OnInit,
   ElementRef,
 } from '@angular/core';
-import { injectDialogClose, injectDialogData } from '@factory/dialog/tokens';
+import { injectDialogClose, injectDialogData } from 'src/app/components/factory/dialog/tokens';
 import { Icon } from '@friclowenstein/icon';
  
 export interface ContextMenuItem {

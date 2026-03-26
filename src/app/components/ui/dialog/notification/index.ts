@@ -14,7 +14,7 @@ import {
   Component, ChangeDetectionStrategy, OnInit, OnDestroy,
   signal, ChangeDetectorRef, inject,
 } from '@angular/core';
-import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
+import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
 import { Icon } from '@friclowenstein/icon';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';

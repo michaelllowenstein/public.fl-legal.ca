@@ -7,9 +7,9 @@ import {
   computed
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LoggerService } from '@services/logger';
-import { listStagger, pageEnter } from '@animations/page';
-import { SiteService } from '@services/site';
+import { LoggerService } from 'src/app/core/services/logger';
+import { listStagger, pageEnter } from 'src/app/animations/page';
+import { SiteService } from 'src/app/core/services/site';
 import { Icon } from '@friclowenstein/icon';
  
 export interface BlogEntry {

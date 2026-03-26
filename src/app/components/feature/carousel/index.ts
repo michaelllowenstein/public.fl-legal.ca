@@ -2,7 +2,7 @@ import {
   Component, OnInit, OnDestroy, signal, input,
   ChangeDetectionStrategy, computed,
 } from '@angular/core';
-import { Icon } from '@ui/icon';
+import { Icon } from 'src/app/components/ui/icon';
 
 export interface CarouselSlide {
   imageUrl: string;

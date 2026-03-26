@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { pageEnter, accordion } from '@app/animations/page';
-import { Icon } from '@ui/icon';
+import { Icon } from 'src/app/components/ui/icon';
 import { EditableContentDirective } from '@app/core/directives/editable-content';
 import { SafeHtmlPipe } from '@app/core/pipes/safe-html';
 import { LoggerService } from '@app/core/services/logger';
 import { SiteService } from '@app/core/services/site';
 import { bodyText } from '@app/schema/utils';
-import { FAQ } from '@schema/constants';
+import { FAQ } from 'src/app/schema/constants';
 
 @Component({
   selector:    'app-faq',

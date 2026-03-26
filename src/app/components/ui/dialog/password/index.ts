@@ -5,9 +5,9 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EditorService } from '@services/editor';
-import { injectDialogClose } from '@factory/dialog/tokens';
-import { AppIcon } from '@ui/icon';
+import { EditorService } from 'src/app/core/services/editor';
+import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
+import { AppIcon } from 'src/app/components/ui/icon';
 
 @Component({
   selector:    'app-password-dialog',

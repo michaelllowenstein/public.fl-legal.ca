@@ -5,9 +5,9 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { pageEnter } from '@app/animations/page';
 import { Icon } from '@friclowenstein/icon';
-import { SafeHtmlPipe } from '@pipes/safe-html';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html';
+import { LoggerService } from 'src/app/core/services/logger';
+import { SiteService } from 'src/app/core/services/site';
 
 @Component({
   selector:    'app-article',

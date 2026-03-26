@@ -1,4 +1,4 @@
-import { SiteSection } from '@schema/models';
+import { SiteSection } from 'src/app/schema/models';
 /**
  * Helpers for safely reading fields from SiteContent / SiteSection objects.
  * Use these in computed() properties rather than accessing nested fields

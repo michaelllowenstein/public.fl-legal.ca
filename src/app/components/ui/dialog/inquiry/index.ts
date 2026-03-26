@@ -9,8 +9,8 @@ import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Icon } from '@friclowenstein/icon';
-import { injectDialogClose } from '@factory/dialog/tokens';
-import { env } from '@env/environment';
+import { injectDialogClose } from 'src/app/components/factory/dialog/tokens';
+import { env } from 'src/environments/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
  

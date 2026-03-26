@@ -6,7 +6,7 @@ import {
   computed,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
+import { injectDialogData, injectDialogClose } from 'src/app/components/factory/dialog/tokens';
 import { Icon } from '@friclowenstein/icon';
 
 export interface InlineEditData {
