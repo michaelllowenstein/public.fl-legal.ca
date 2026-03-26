@@ -5,7 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { jwtInterceptor } from 'src/app/core/interceptors/jwt';
-import { env } from '@env/environment';
+import { env } from 'src/environments/environment';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {

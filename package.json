@@ -1,6 +1,7 @@
 {
   "name": "fl-legal.ca",
   "version": "3.0.0",
+  "description": "",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

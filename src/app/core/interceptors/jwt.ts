@@ -1,6 +1,6 @@
 
 import { HttpInterceptorFn } from '@angular/common/http';
-import { env } from '@env/environment';
+import { env } from 'src/environments/environment';
 import { EditorService } from 'src/app/core/services/editor';
 import { AuthService } from 'src/app/core/services/auth';
 import { inject } from '@angular/core';

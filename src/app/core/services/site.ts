@@ -8,32 +8,32 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { env } from '@env/environment';
+import { env } from 'src/environments/environment';
 import { LoggerService } from './logger';
 
 @Injectable({ providedIn: 'root' })
 export class SiteService {
   private http = inject(HttpClient);
   private log  = inject(LoggerService).child('site');
- 
+
   // ── Content ──────────────────────────────────────────────────────────────
- 
+
   async getSection(section: string): Promise<any> {
     const t0 = performance.now();
     this.log.debug('Fetching section', { section });
- 
+
     try {
       const data = await firstValueFrom(
         this.http.get(`${env.apiURL}/api/content/${section}`)
       );
- 
+
       const ms = Math.round(performance.now() - t0);
       this.log.info('Section fetched', { section, ms, keys: Object.keys(data as object).length });
- 
+
       if (ms > 1000) {
         this.log.warn('Slow content fetch', { section, ms, threshold: 1000 });
       }
- 
+
       return data;
     } catch (e: unknown) {
       const ms  = Math.round(performance.now() - t0);
@@ -48,12 +48,12 @@ export class SiteService {
       return null;
     }
   }
- 
+
   async updateField(key: string, value: string): Promise<void> {
     const t0      = performance.now();
     const preview = value.length > 60 ? value.slice(0, 60) + '…' : value;
     this.log.info('Saving content field', { key, preview });
- 
+
     try {
       await firstValueFrom(
         this.http.patch(`${env.apiURL}/api/content`, { key, value })
@@ -70,13 +70,13 @@ export class SiteService {
       throw e;
     }
   }
- 
+
   // ── Blog ─────────────────────────────────────────────────────────────────
- 
+
   async getBlogEntries(): Promise<any[]> {
     const t0 = performance.now();
     this.log.debug('Fetching blog entries');
- 
+
     try {
       const entries = await firstValueFrom(
         this.http.get<any[]>(`${env.apiURL}/api/blog`)
@@ -90,11 +90,11 @@ export class SiteService {
       return [];
     }
   }
- 
+
   async getBlogEntry(id: string): Promise<any> {
     const t0 = performance.now();
     this.log.debug('Fetching blog entry', { id });
- 
+
     try {
       const entry = await firstValueFrom(
         this.http.get(`${env.apiURL}/api/blog/${id}`)

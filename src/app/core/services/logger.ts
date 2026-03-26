@@ -29,7 +29,7 @@ import {
   Injectable, inject, signal, isDevMode, OnDestroy,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { env } from '@env/environment';
+import { env } from 'src/environments/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
