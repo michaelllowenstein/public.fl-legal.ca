@@ -7,12 +7,12 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
-import { AREASOFLAW } from '@app/schema/constants';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
-import { EditableContentDirective } from '@directives/editable-content';
-import { SafeHtmlPipe } from '@pipes/safe-html';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
+import { AREASOFLAW } from '@schema/constants';
+import { FLIcon } from '@components/ui/icon';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
 import { pageEnter, listStagger } from '@animations/page';
 import { bodyText } from '@schema/utils';
  
@@ -35,14 +35,14 @@ function iconForArea(label: string): string {
 @Component({
   selector:    'app-areas-of-law',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })
 export class AreasOfLawPage implements OnInit {
-  private contentService = inject(SiteService);
-  private log            = inject(LoggerService).child('areas-of-law');
+  private contentService: SiteService = inject(SiteService);
+  private log            = (inject(LoggerService) as LoggerService).child('areas-of-law');
  
   site    = signal(AREASOFLAW);
   loading = signal(true);

@@ -13,8 +13,8 @@
  *   const confirmed = await ref.closed;  // boolean | undefined
  */
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { injectDialogData, injectDialogClose } from '@factory/dialog/tokens';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
+import { injectDialogData, injectDialogClose } from '@components/factory/dialog/tokens';
+import { FLIcon } from '@components/ui/icon';
 
 export interface ConfirmData {
   title?:         string;
@@ -28,7 +28,7 @@ export interface ConfirmData {
 @Component({
   selector:    'app-confirm-dialog',
   standalone:  true,
-  imports:     [FricLowensteinIcon],
+  imports:     [FLIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })

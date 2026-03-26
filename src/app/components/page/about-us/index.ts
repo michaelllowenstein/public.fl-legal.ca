@@ -2,28 +2,27 @@ import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
 } from '@angular/core';
-import { EditableContentDirective } from '@directives/editable-content';
-import { SafeHtmlPipe } from '@pipes/safe-html';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
-import { SiteService } from '@services/site';
-import { LoggerService } from '@services/logger';
+import { EditableContentDirective } from '@core/directives/editable-content';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { FLIcon } from '@components/ui/icon';
+import { SiteService } from '@core/services/site';
+import { LoggerService } from '@core/services/logger';
 import { ABOUTUS, PROFILES } from '@schema/constants';
 import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/page';
-import { Profile } from '@schema/models';
 import { bodyText } from '@schema/utils';
 
 @Component({
   selector:    'app-about-us',
   standalone:  true,
-  imports:     [FricLowensteinIcon, EditableContentDirective, SafeHtmlPipe],
+  imports:     [FLIcon, EditableContentDirective, SafeHtmlPipe],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
 })
 export class AboutUsPage implements OnInit {
-  private siteService = inject(SiteService);
-  private el             = inject(ElementRef<HTMLElement>);
-  private log            = inject(LoggerService).child('about-us');
+  private siteService: SiteService = inject(SiteService);
+  private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
+  private log          = (inject(LoggerService) as LoggerService).child('about-us');
  
   @HostListener('window:scroll')
   checkCards() {
@@ -77,6 +76,10 @@ export class AboutUsPage implements OnInit {
       });
       setTimeout(() => this.checkCards(), 150);
     }
+  }
+
+  toggleNav(): void {
+    this.sidenavOpen.update((v: boolean) => !v);
   }
  
   isCardVisible(i: number) { return this.visibleCards().has(i); }

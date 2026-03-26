@@ -20,11 +20,11 @@
  *   7. Press Esc or Alt+Shift+S to close
  *
  * Install:
- *   1. Drop this file in  src/app/core/services/stylus.ts
+ *   1. Drop this file in  @core/services/stylus.ts
  *   2. Add to app.config.ts or AppComponent constructor (dev only):
  *
  *     import { isDevMode } from '@angular/core';
- *     import { StyleInspectorService } from '@services/stylus';
+ *     import { StyleInspectorService } from '@core/services/stylus';
  *
  *     // In AppComponent:
  *     constructor() {

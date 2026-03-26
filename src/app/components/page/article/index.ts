@@ -3,24 +3,24 @@ import {
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { pageEnter } from '@app/animations/page';
-import { FricLowensteinIcon } from '@friclowenstein/icon';
-import { SafeHtmlPipe } from '@pipes/safe-html';
-import { LoggerService } from '@services/logger';
-import { SiteService } from '@services/site';
+import { pageEnter } from '@animations/page';
+import { FLIcon } from '@components/ui/icon';
+import { SafeHtmlPipe } from '@core/pipes/safe-html';
+import { LoggerService } from '@core/services/logger';
+import { SiteService } from '@core/services/site';
 
 @Component({
   selector:    'app-article',
   standalone:  true,
-  imports:     [RouterLink, SafeHtmlPipe, FricLowensteinIcon],
+  imports:     [RouterLink, SafeHtmlPipe, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter],
 })
 export class ArticlePage implements OnInit, OnDestroy {
-  private route          = inject(ActivatedRoute);
-  private siteService    = inject(SiteService);
-  private log            = inject(LoggerService).child('article');
+  private route: ActivatedRoute          = inject(ActivatedRoute);
+  private siteService: SiteService    = inject(SiteService);
+  private log            = (inject(LoggerService) as LoggerService).child('article');
  
   entry         = signal<any>(null);
   loading       = signal(true);

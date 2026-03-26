@@ -7,12 +7,12 @@
       [attr.aria-describedby]="'confirm-body'"
       (click)="$event.stopPropagation()">
 
-      <!-- Icon + Title -->
+      <!-- FLIcon + Title -->
       <div class="flex items-start gap-4 mb-4">
         <div
           class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center mt-0.5"
           [class]="data.danger ? 'bg-red-100' : 'bg-brand/10'">
-          <app-friclowenstein-icon
+          <app-fl-icon
             [name]="data.danger ? 'x-mark' : 'document-text'"
             class="w-5 h-5"
             [class]="data.danger ? 'text-red-600' : 'text-brand'" />

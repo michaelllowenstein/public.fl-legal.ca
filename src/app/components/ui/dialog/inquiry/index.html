@@ -10,7 +10,7 @@
       @if (submitted()) {
         <div class="p-8 text-center animate-fade-in">
           <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-5">
-            <app-friclowenstein-icon name="check" class="w-8 h-8 text-emerald-600" />
+            <app-fl-icon name="check" class="w-8 h-8 text-emerald-600" />
           </div>
           <h3 class="font-display text-brand text-xl font-semibold mb-2">
             Message Sent
@@ -46,7 +46,7 @@
             class="text-gray-300 hover:text-gray-500 p-1 rounded transition-colors -mt-1 -mr-1"
             aria-label="Close"
             (click)="close()">
-            <app-friclowenstein-icon name="x-mark" class="w-5 h-5" />
+            <app-fl-icon name="x-mark" class="w-5 h-5" />
           </button>
         </div>
  
@@ -156,7 +156,7 @@
           <!-- Server error -->
           @if (serverError()) {
             <p class="font-sans text-xs text-red-500 flex items-center gap-1.5 animate-fade-in">
-              <app-friclowenstein-icon name="x-mark" class="w-3 h-3 shrink-0" />
+              <app-fl-icon name="x-mark" class="w-3 h-3 shrink-0" />
               {{ serverError() }}
             </p>
           }
@@ -175,7 +175,7 @@
               <span class="w-4 h-4 rounded-full border-2 border-current/30 border-t-current animate-spin"></span>
             } @else {
               {{ isPriority() ? '★ Send Priority Inquiry' : 'Send Inquiry' }}
-              <app-friclowenstein-icon name="arrow-right" class="w-4 h-4" />
+              <app-fl-icon name="arrow-right" class="w-4 h-4" />
             }
           </button>
  
