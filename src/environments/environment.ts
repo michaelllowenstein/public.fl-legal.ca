@@ -24,7 +24,7 @@ export const env = {
     baseContentUrl: "https://api.goperigon.com/v1/all?apiKey=41fe7898-8ec4-4480-9a62-c8347503c98a&q=Real%20Estate%20Legal%20in%20Canada"
   },
   siteContent: {
-    apiUrl: 'https://localhost:6666/api/',
+    apiUrl: 'https://localhost:6666//',
   },
   apiURL: 'https://localhost:6666',
 };
