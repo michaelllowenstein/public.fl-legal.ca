@@ -6,6 +6,7 @@ import {
   computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { EditableContentDirective } from '@core/directives/editable-content';
 import { pageEnter, listStagger } from '@animations/page';
 import { FLIcon } from '@components/ui/icon';
 import { LoggerService } from '@core/services/logger';
@@ -19,7 +20,7 @@ import { SeoService } from '@core/services/seo';
   selector:    'app-pricing',
   standalone:  true,
   templateUrl: './index.html',
-  imports: [RouterLink, FLIcon],
+  imports: [RouterLink, FLIcon, EditableContentDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
 })

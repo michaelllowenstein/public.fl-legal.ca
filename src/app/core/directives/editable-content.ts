@@ -96,43 +96,6 @@ export class EditableContentDirective {
         },
       },
     );
-
-    // ── Step 2: authenticate if needed ─────────────────────────────────────
-    if (!this.auth.isAuthenticated() || !this.auth.checkTokenExpiry()) {
-      const pwRef = this.dialog.open<PasswordDialog, unknown, boolean>(
-        PasswordDialog,
-      );
-      const authed = await pwRef.closed;
-      if (!authed) return;
-    }
-
-    // ── Step 3: open inline editor ──────────────────────────────────────────
-    const editRef = this.dialog.open<
-      InlineEditDialog,
-      { fieldKey: string; currentValue: string; label: string },
-      { key: string; value: string } | null
-    >(InlineEditDialog, {
-      data: {
-        fieldKey:     this.appEditableText(),
-        currentValue: this.el.nativeElement.innerHTML,
-        label:        this.editLabel() || this.appEditableText(),
-      },
-    });
- 
-    const result: any = await menuRef.closed;
-    if (!result) return;
-
-    // ── Step 4: persist to API → Firebase ───────────────────────────────────
-    try {
-      await this.siteService.updateField(result.key, result.value);
-      // Optimistic DOM update — reflects immediately without waiting for
-      // the next Firebase read cycle
-      this.el.nativeElement.innerHTML = result.value;
-      this.notify('Content saved.', 'success');
-    } catch {
-      this.notify('Save failed — please check your connection and try again.', 'error');
-    }
-    this.log.trace('Context menu closed', { key, selected: result !== undefined });
   }
  
   private async openEditor() {
@@ -160,6 +123,10 @@ export class EditableContentDirective {
     }
  
     // ── Step 2: open editor ─────────────────────────────────────────────────
+    await this.continueEditing(key);
+  }
+
+  private async continueEditing(key: string): Promise<void> {
     const currentLength = this.el.nativeElement.innerHTML.length;
     this.log.debug('Opening inline editor', { key, currentLength });
  
@@ -180,7 +147,6 @@ export class EditableContentDirective {
     );
  
     const result = await editRef.closed;
- 
     if (!result) {
       this.log.debug('Inline editor cancelled', { key });
       return;

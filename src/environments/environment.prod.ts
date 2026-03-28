@@ -28,4 +28,3 @@ export const env = {
   },
   apiURL: 'https://localhostapi.ca',
 };
-    

@@ -194,7 +194,7 @@ export const PROFILES: Profile[] = [
     University of Calgary, J.D. (2023).`,
     calltobar: 'Alberta 2024',
     workexperience: `Bronwyn joined Fric, Lowenstein & Co. LLP in 2025. Prior to joining the firm,
-    Bronwyn gained experience in civil litigation, wills and estates, and family law.Her practice now
+    Bronwyn gained experience in civil litigation, wills and estates, and Personal Injury.Her practice now
     focuses on a wide range of areas including wills & estates, real estate, foreclosures, litigation,
     as well as cohabitation and prenuptial agreements.Bronwyn works closely with clients to navigate
     legal matters, with a focus on providing practical and effective solutions across diverse practice
@@ -555,7 +555,7 @@ export const FAQSECTIONS: FAQSection[] = [
       question: 'Can I call for a free initial telephone discussion?',
       answer:   'Yes. We will take your initial call at no charge and let you know whether '
               + 'we can assist with your matter. For areas outside our practice — such as '
-              + 'criminal or family law — we work closely with other trusted lawyers and '
+              + 'criminal or Personal Injury — we work closely with other trusted lawyers and '
               + 'can provide a direct referral. If it is a matter we can handle ourselves, '
               + 'we will give you a clear estimate of anticipated costs before any work begins.',
     },
