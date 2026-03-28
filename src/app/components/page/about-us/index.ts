@@ -25,7 +25,7 @@ export class AboutUsPage implements OnInit {
   private siteService: SiteService = inject(SiteService);
   private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
   private log          = (inject(LoggerService) as LoggerService).child('about-us');
- 
+
   @HostListener('window:scroll')
   checkCards() {
     const cards = this.el.nativeElement.querySelectorAll('[data-profile-card]');
@@ -38,27 +38,27 @@ export class AboutUsPage implements OnInit {
     });
     if (next.size !== this.visibleCards().size) this.visibleCards.set(next);
   }
- 
+
   site          = signal(ABOUTUS);
   loading       = signal(true);
   activeProfile = signal<string | null>(null);
   sidenavOpen   = signal(false);
   visibleCards  = signal<Set<number>>(new Set());
- 
+
   // ── Computed string properties ──────────────────────────────────────────
   firmIntro = computed(() => bodyText(this.site()));
- 
+
   // Profiles live in the PROFILES constant (separate from SiteContent)
   // — merge them in from the constant directly
   readonly profiles = PROFILES;
- 
+
   private _initStart = performance.now();
- 
+
   async ngOnInit() {
     this.log.debug('About Us page initialising');
     this.seo.set({
       title: 'About Our Firm',
-      description: 'Meet the lawyers at Fric, Lowenstein & Co. LLP. Our Calgary legal team brings decades of experience in family law, litigation, and real estate.',
+      description: 'Meet the lawyers at Fric, Lowenstein & Co. LLP. Our Calgary legal team brings decades of experience in Personal Injury, litigation, and real estate.',
     });
     try {
       const content = await this.siteService.getSection('aboutUs');
@@ -87,9 +87,9 @@ export class AboutUsPage implements OnInit {
   toggleNav(): void {
     this.sidenavOpen.update((v: boolean) => !v);
   }
- 
+
   isCardVisible(i: number) { return this.visibleCards().has(i); }
- 
+
   selectProfile(id: string) {
     this.activeProfile.set(id);
     this.sidenavOpen.set(false);
@@ -103,7 +103,7 @@ export class AboutUsPage implements OnInit {
       window.scrollTo({ top, behavior: 'smooth' });
     }, 50);
   }
- 
+
   activeProfileData = computed(() =>
     this.profiles.find(p => p.id === this.activeProfile()) ?? null
   );

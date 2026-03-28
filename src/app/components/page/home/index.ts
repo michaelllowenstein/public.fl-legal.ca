@@ -24,6 +24,11 @@ import { SeoService } from '@core/services/seo';
   animations:  [pageEnter, listStagger, fadeIn],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',
+  styles: `
+    .hover-link:hover {
+      border: 2px solid azure;
+    }
+  `
 })
 export class HomePage implements OnInit {
   private seo: SeoService =    inject(SeoService);
@@ -50,7 +55,7 @@ export class HomePage implements OnInit {
   readonly practiceAreas = [
     { icon: 'scale',         label: 'Civil Litigation'  },
     { icon: 'document-text', label: 'Real Estate Law'   },
-    { icon: 'user',          label: 'Family Law'        },
+    { icon: 'user',          label: 'Personal Injury'        },
     { icon: 'scale',         label: 'Estate Planning'   },
     { icon: 'document-text', label: 'Corporate Law'     },
     { icon: 'scale',         label: 'Employment Law'    },
@@ -59,7 +64,7 @@ export class HomePage implements OnInit {
   async ngOnInit() {
   this.seo.set({
     title: 'Calgary Family & Civil Law Firm',
-    description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in family law, civil litigation, real estate, and wills & estates. Book a consultation today.',
+    description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in Personal Injury, civil litigation, real estate, and wills & estates. Book a consultation today.',
   });
     try {
       const content = await this.siteService.getSection('home');

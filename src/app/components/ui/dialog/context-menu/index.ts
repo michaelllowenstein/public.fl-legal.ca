@@ -23,7 +23,7 @@ export interface ContextMenuData {
   items:  ContextMenuItem[];
 }
 
-export type ContextMenuResult = 'edit' | null;
+// export type ContextMenuResult = 'edit' | null;
 
 @Component({
   selector:    'app-context-menu-dialog',
@@ -33,11 +33,10 @@ export type ContextMenuResult = 'edit' | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContextMenuDialog implements OnInit {
-  closeFn = inject<(r: ContextMenuResult) => void>('DIALOG_CLOSE_FN' as any);
   data  = injectDialogData<ContextMenuData>();
   close = injectDialogClose();
 
-  select(action: ContextMenuResult) { this.closeFn(action); }
+  // select(action: ContextMenuResult) { this.closeFn(action); }
 
   private elRef = inject(ElementRef<HTMLElement>);
 
