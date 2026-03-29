@@ -7,7 +7,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map, tap } from 'rxjs';
 import { env } from '@env/environment';
 import { LoggerService } from './logger';
 
@@ -24,7 +24,10 @@ export class SiteService {
 
     try {
       const data = await firstValueFrom(
-        this.http.get(`${env.apiURL}/api/content/${section}`)
+        this.http.get(`${env.apiURL}/api/content/${section}`).pipe(
+          tap((data: any) => console.log(data)),
+          map((data: any) => data)
+        )
       );
 
       const ms = Math.round(performance.now() - t0);
