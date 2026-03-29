@@ -62,10 +62,10 @@ export class HomePage implements OnInit {
   ];
 
   async ngOnInit() {
-  this.seo.set({
-    title: 'Calgary Family & Civil Law Firm',
-    description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in Personal Injury, civil litigation, real estate, and wills & estates. Book a consultation today.',
-  });
+    this.seo.set({
+      title: 'Calgary Family & Civil Law Firm',
+      description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in Personal Injury, civil litigation, real estate, and wills & estates. Book a consultation today.',
+    });
     try {
       const content = await this.siteService.getSection('home');
       if (content) this.site.set({ ...HOME, ...content });

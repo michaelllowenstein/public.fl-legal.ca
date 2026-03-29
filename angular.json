@@ -90,11 +90,6 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "ssl": true,
-            "sslKey": "cert/staging/staging.key",
-            "sslCert": "cert/staging/staging.cert"
-          },
           "configurations": {
             "production": {
               "buildTarget": "fl-legal.ca:build:production"
@@ -103,7 +98,10 @@
               "buildTarget": "fl-legal.ca:build:development"
             },
             "local": {
-              "buildTarget": "fl-legal.ca:build:local"
+              "buildTarget": "fl-legal.ca:build:local",
+              "ssl": true,
+              "sslCert": "cert/local/localhost.crt",
+              "sslKey":  "cert/local/localhost.decrypted.key"
             }
           },
           "defaultConfiguration": "local"
