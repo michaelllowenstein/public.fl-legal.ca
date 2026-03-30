@@ -16,11 +16,19 @@ import { LoggerService } from '@core/services/logger';
 import { SiteService } from '@core/services/site';
 import { sectionText, bodyText } from '@schema/utils/section-text';
 import { SeoService } from '@core/services/seo';
+import { AutoContrastDirective } from '@core/directives/auto-contrast';
 
 @Component({
   selector:    'app-home',
   standalone:  true,
-  imports:     [RouterLink, CarouselComponent, FLIcon, EditableContentDirective, SafeHtmlPipe],
+  imports: [
+    RouterLink,
+    CarouselComponent,
+    FLIcon,
+    EditableContentDirective,
+    AutoContrastDirective,
+    SafeHtmlPipe,
+  ],
   animations:  [pageEnter, listStagger, fadeIn],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html',

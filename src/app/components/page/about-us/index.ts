@@ -1,3 +1,4 @@
+
 import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
@@ -11,11 +12,12 @@ import { ABOUTUS, PROFILES } from '@schema/constants';
 import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/page';
 import { bodyText } from '@schema/utils';
 import { SeoService } from '@core/services/seo';
+import { AutoContrastDirective } from "@app/core/directives/auto-contrast";
 
 @Component({
   selector:    'app-about-us',
   standalone:  true,
-  imports:     [FLIcon, EditableContentDirective, SafeHtmlPipe],
+  imports: [FLIcon, EditableContentDirective, SafeHtmlPipe, AutoContrastDirective],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
@@ -25,19 +27,6 @@ export class AboutUsPage implements OnInit {
   private siteService: SiteService = inject(SiteService);
   private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
   private log          = (inject(LoggerService) as LoggerService).child('about-us');
-
-  @HostListener('window:scroll')
-  checkCards() {
-    const cards = this.el.nativeElement.querySelectorAll('[data-profile-card]');
-    const next  = new Set(this.visibleCards());
-    cards.forEach((card: Element, i: number) => {
-      if (!next.has(i) && card.getBoundingClientRect().top < window.innerHeight * 0.9) {
-        next.add(i);
-        this.log.trace('Profile card revealed', { index: i });
-      }
-    });
-    if (next.size !== this.visibleCards().size) this.visibleCards.set(next);
-  }
 
   site          = signal(ABOUTUS);
   loading       = signal(true);
@@ -54,38 +43,31 @@ export class AboutUsPage implements OnInit {
 
   private _initStart = performance.now();
 
+  activeProfileData = computed(() =>
+    this.profiles.find(p => p.id === this.activeProfile()) ?? null
+  );
+
   async ngOnInit() {
-    this.log.debug('About Us page initialising');
-    this.seo.set({
-      title: 'About Our Firm',
-      description: 'Meet the lawyers at Fric, Lowenstein & Co. LLP. Our Calgary legal team brings decades of experience in Personal Injury, litigation, and real estate.',
-    });
     try {
       const content = await this.siteService.getSection('aboutUs');
-      if (content) {
-        this.site.set({ ...ABOUTUS, ...content });
-        this.log.debug('About Us content applied');
-      }
-      const first = this.profiles[0];
-      if (first) this.activeProfile.set(first.id);
-    } catch (ex: any) {
-      this.loading.set(false);
-      if (ex) {
-        this.site.set({ ...ABOUTUS });
-        this.log.warn('About Us content not found - fallback to hard-coded content.', ex.message);
-      }
+      if (content) this.site.set({ ...ABOUTUS, ...content });
+      if (this.profiles[0]) this.activeProfile.set(this.profiles[0].id);
     } finally {
       this.loading.set(false);
-      this.log.info('About Us page ready', {
-        tti: Math.round(performance.now() - this._initStart),
-        profileCount: this.profiles.length,
-      });
       setTimeout(() => this.checkCards(), 150);
     }
   }
 
-  toggleNav(): void {
-    this.sidenavOpen.update((v: boolean) => !v);
+  @HostListener('window:scroll')
+  checkCards() {
+    const cards = this.el.nativeElement.querySelectorAll('[data-profile-card]');
+    const next  = new Set(this.visibleCards());
+    cards.forEach((card: Element, i: number) => {
+      if (!next.has(i) && card.getBoundingClientRect().top < window.innerHeight * 0.92) {
+        next.add(i);
+      }
+    });
+    if (next.size !== this.visibleCards().size) this.visibleCards.set(next);
   }
 
   isCardVisible(i: number) { return this.visibleCards().has(i); }
@@ -104,7 +86,7 @@ export class AboutUsPage implements OnInit {
     }, 50);
   }
 
-  activeProfileData = computed(() =>
-    this.profiles.find(p => p.id === this.activeProfile()) ?? null
-  );
+  toggleSidenav(): void {
+    this.sidenavOpen.update((v: boolean) => !v);
+  }
 }
