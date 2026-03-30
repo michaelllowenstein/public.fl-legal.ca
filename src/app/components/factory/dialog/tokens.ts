@@ -17,9 +17,8 @@
 import { InjectionToken, inject } from '@angular/core';
 
 // ── Raw tokens (used internally by DialogService) ────────────────────────────
-
-export const DIALOG_DATA      = new InjectionToken<unknown>('fl.dialog.data');
-export const DIALOG_CLOSE_FN  = new InjectionToken<(result?: unknown) => void>('fl.dialog.close');
+export const DIALOG_DATA     = new InjectionToken<unknown>('DIALOG_DATA');
+export const DIALOG_CLOSE_FN = new InjectionToken<Function>('DIALOG_CLOSE_FN');
 
 // ── Typed helpers (use these in dialog components) ───────────────────────────
 

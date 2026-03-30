@@ -16,6 +16,7 @@ import { SafeHtmlPipe } from '@core/pipes/safe-html';
 import { pageEnter, listStagger } from '@animations/page';
 import { bodyText } from '@schema/utils';
 import { SeoService } from '@core/services/seo';
+import { AutoContrastDirective } from '@core/directives/auto-contrast';
 
 const AREA_ICONS: Record<string, string> = {
   'civil': 'scale', 'real': 'document-text', 'family': 'user',
@@ -36,7 +37,7 @@ function iconForArea(label: string): string {
 @Component({
   selector:    'app-areas-of-law',
   standalone:  true,
-  imports:     [RouterLink, EditableContentDirective, SafeHtmlPipe, FLIcon],
+  imports:     [EditableContentDirective, SafeHtmlPipe, AutoContrastDirective, FLIcon],
   templateUrl: './index.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:  [pageEnter, listStagger],
