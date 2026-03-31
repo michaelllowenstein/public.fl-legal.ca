@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const ROUTE_ORDER = [
   'HomePage', 'AboutUsPage', 'AreasOfLawPage', 'PricingPage',
-  'BlogPage', 'FaqComponent', 'ContactUsPage',
+  'BlogPage', 'FaqPage', 'ContactUsPage',
 ];
 
 export const routes: Routes = [
@@ -40,7 +40,7 @@ export const routes: Routes = [
   {
     path: 'faq',
     loadComponent: () => import('@components/page/faq').then(m => m.FaqPage),
-    data: { animation: 'FaqComponent' },
+    data: { animation: 'FaqPage' },
   },
   {
     path: 'contact-us',
