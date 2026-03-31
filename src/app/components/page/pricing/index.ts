@@ -4,6 +4,7 @@ import {
   signal,
   inject,
   computed,
+  DestroyRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EditableContentDirective } from '@core/directives/editable-content';
@@ -12,7 +13,7 @@ import { FLIcon } from '@components/ui/icon';
 import { LoggerService } from '@core/services/logger';
 import { SiteService } from '@core/services/site';
 import { PRICING } from '@schema/constants';
-import { PricingSection } from '@schema/models';
+import { PricingSection, SiteContent, SiteSection } from '@schema/models';
 import { sectionText } from '@schema/utils';
 import { SeoService } from '@core/services/seo';
 import { AutoContrastDirective } from '@core/directives/auto-contrast';
@@ -51,10 +52,12 @@ const DEFAULT_META = {
   `
 })
 export class PricingPage {
-  private seo: SeoService =    inject(SeoService);
-  private siteService    = inject(SiteService);
-  private log            = inject(LoggerService).child('pricing');
-  private sanitizer      = inject(DomSanitizer);
+  private seo: SeoService   = inject(SeoService);
+  private siteService       = inject(SiteService);
+  private destroy           = inject(DestroyRef);
+  private log               = inject(LoggerService).child('pricing');
+  private sanitizer         = inject(DomSanitizer);
+
   site    = signal(PRICING);
   loading = signal(true);
   header    = computed(() => sectionText(this.site().header));
@@ -68,6 +71,11 @@ export class PricingPage {
 
   async ngOnInit() {
     this.log.debug('Pricing page initialising');
+    const unsub = this.siteService.watchSection('home',
+      (data: SiteContent | SiteSection | null) => {
+        if (data) this.site.set(data as SiteContent);
+      }
+    );
     this.seo.set({
       title: 'Legal Fees & Pricing',
       description: 'Transparent legal fee information from Fric, Lowenstein & Co. LLP. Understand the cost of your legal matter before you begin.',
@@ -78,6 +86,8 @@ export class PricingPage {
     } finally {
       this.loading.set(false);
     }
+    // Clean up on component destroy
+    this.destroy.onDestroy(unsub);
   }
 
   metaFor(section: PricingSection) {

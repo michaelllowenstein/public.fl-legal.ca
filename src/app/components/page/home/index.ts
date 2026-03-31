@@ -1,7 +1,7 @@
 import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, QueryList, ViewChildren,
-  computed,
+  computed, DestroyRef
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CarouselComponent, CarouselSlide } from '@components/feature/carousel';
@@ -17,6 +17,7 @@ import { SiteService } from '@core/services/site';
 import { sectionText, bodyText } from '@schema/utils/section-text';
 import { SeoService } from '@core/services/seo';
 import { AutoContrastDirective } from '@core/directives/auto-contrast';
+import { SiteContent, SiteSection } from '@app/schema/models';
 
 @Component({
   selector:    'app-home',
@@ -39,10 +40,11 @@ import { AutoContrastDirective } from '@core/directives/auto-contrast';
   `
 })
 export class HomePage implements OnInit {
-  private seo: SeoService =    inject(SeoService);
-  private siteService: SiteService = inject(SiteService);
-  private el: ElementRef<HTMLElement>          = inject(ElementRef<HTMLElement>);
-  private log        = (inject(LoggerService) as LoggerService).child('home');
+  private destroy                     = inject(DestroyRef);
+  private seo: SeoService             = inject(SeoService);
+  private siteService: SiteService    = inject(SiteService);
+  private el: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
+  private log                         = (inject(LoggerService) as LoggerService).child('home');
 
   site                = signal(HOME);
   loading             = signal(true);
@@ -70,16 +72,22 @@ export class HomePage implements OnInit {
   ];
 
   async ngOnInit() {
+    const unsub = this.siteService.watchSection('home',
+      (data: SiteContent | SiteSection | null) => {
+        if (data) this.site.set(data as SiteContent);
+      }
+    );
     this.seo.set({
       title: 'Calgary Family & Civil Law Firm',
       description: 'Fric, Lowenstein & Co. LLP — experienced Calgary lawyers in Personal Injury, civil litigation, real estate, and wills & estates. Book a consultation today.',
     });
     try {
       const content = await this.siteService.getSection('home');
-      if (content) this.site.set({ ...HOME, ...content });
+      if (content) this.site.set({ ...HOME, ...content } as SiteContent);
     } finally {
       this.loading.set(false);
     }
+    this.destroy.onDestroy(unsub);
   }
 
   @HostListener('window:scroll')

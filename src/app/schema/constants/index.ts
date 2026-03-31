@@ -1,5 +1,13 @@
 import { ProfileNav, Profile, SiteContent, PricingSection, FAQSection, BlogArticle, BlogEntry } from '../models';
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+export const DB_ROOT          = 'public';
+export const CONTENT_ROOT     = `${DB_ROOT}/siteContent`;
+export const BLOG_ROOT        = `${DB_ROOT}/blog`;
+export const PROFILES_ROOT    = `${DB_ROOT}/profiles`;
+export const NAV_MEMBERS_PATH = `${DB_ROOT}/nav/members`;
+
 export const MEMBERS: ProfileNav[] = [
   {
     display: 'William H. Fric',
@@ -391,6 +399,7 @@ Will, EPA and PD package – $895.00 plus GST ||
 Codicil – $275.00 plus GST`
         },
         {
+          id: 'marriedcouple',
           label: "Married Couple",
           content: `Will – $975.00 plus GST ||
 EPA – $395.00 plus GST ||
@@ -400,6 +409,7 @@ Will, EPA and PD package – $1175.00 plus GST ||
 Codicil – $400.00 plus GST`
         },
         {
+          id: 'estateprobateandadministrationfees',
           label: "Estate Probate and Administration Fees",
           content: `This fee is for core services generally required. ||
 Fee: Estates up to $150,000.00: $2,250.00 plus ½% of the value of the estate; plus disbursements ||
@@ -407,11 +417,13 @@ Estates over $150,000.00: $2,250.00 plus 1% of the value of the estate plus disb
 For estates over $1,000,000.00, fees will vary with complexity and size. Please contact us for a quote.`
         },
         {
+          id: 'personalinjurycases',
           label: "Personal Injury Cases",
           content: `Usually we charge a contingency fee of 25% to 35% for personal injury cases. ||
 That is, our fee is a percentage of the amount recovered, and we receive no fee until you are paid.`
         },
         {
+          id: 'notaryfeescommissioningfees',
           label: "Notary Fees/Commissioning Fees",
           content: `One (1) document notarized: $60.00 ||
 Each additional: $5.00 – $20.00 ||
@@ -423,6 +435,7 @@ One (1) document commissioned: $40.00 ||
 Each additional: $5.00 – $20.00`
         },
         {
+          id: 'otherpotentialfeesforextraservices',
           content: `Other Potential Fees for Extra Services: ||
 RUSH FEE: $200.00 – $500.00 ||
 EXTRA SIGNING APPOINTMENT FEE: $200.00 / extra appointment ||
@@ -432,6 +445,7 @@ WIRE FEES: Outgoing wire fee: $150.00 Incoming bank wire fee: $35.00 ||
 Mortgages that are FCT or FNF are an extra $250.00`
         },
         {
+          id: 'disclaimer',
           content: `Fees & Disbursements above are estimated. We cannot give a firm amount until we have the file opened and have all information and details`
         },
       ]
