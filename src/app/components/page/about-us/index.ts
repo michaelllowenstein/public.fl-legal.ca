@@ -2,6 +2,7 @@
 import {
   Component, OnInit, signal, inject,
   ChangeDetectionStrategy, HostListener, ElementRef, computed,
+  DestroyRef,
 } from '@angular/core';
 import { EditableContentDirective } from '@core/directives/editable-content';
 import { SafeHtmlPipe } from '@core/pipes/safe-html';
@@ -13,6 +14,7 @@ import { pageEnter, listStagger, slideInLeft, slideInRight } from '@animations/p
 import { bodyText } from '@schema/utils';
 import { SeoService } from '@core/services/seo';
 import { AutoContrastDirective } from "@app/core/directives/auto-contrast";
+import { SiteContent, SiteSection } from '@app/schema/models';
 
 @Component({
   selector:    'app-about-us',
@@ -23,6 +25,7 @@ import { AutoContrastDirective } from "@app/core/directives/auto-contrast";
   animations:  [pageEnter, listStagger, slideInLeft, slideInRight],
 })
 export class AboutUsPage implements OnInit {
+  private destroy = inject(DestroyRef);
   private seo: SeoService =    inject(SeoService);
   private siteService: SiteService = inject(SiteService);
   private el: ElementRef<HTMLElement>             = inject(ElementRef<HTMLElement>);
@@ -48,14 +51,20 @@ export class AboutUsPage implements OnInit {
   );
 
   async ngOnInit() {
+    const unsub = this.siteService.watchSection('aboutUs',
+      (data: SiteContent | SiteSection | null) => {
+        if (data) this.site.set(data as SiteContent);
+      }
+    );
     try {
       const content = await this.siteService.getSection('aboutUs');
-      if (content) this.site.set({ ...ABOUTUS, ...content });
+      if (content) this.site.set({ ...ABOUTUS, ...content } as SiteContent);
       if (this.profiles[0]) this.activeProfile.set(this.profiles[0].id);
     } finally {
       this.loading.set(false);
       setTimeout(() => this.checkCards(), 150);
     }
+    this.destroy.onDestroy(unsub);
   }
 
   @HostListener('window:scroll')

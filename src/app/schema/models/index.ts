@@ -80,34 +80,6 @@ export interface News {
   date?: Date;
 }
 
-export interface SiteSection {
-  contents?: { sections: SiteSection[] };
-  content?: string | string[];
-  label?: string;
-  options?: any;
-  id?: any;
-}
-
-export interface SiteContent {
-  id: string;
-  page: string;
-  section?: string;
-  position?: string;
-  bulletpoints?: string[];
-  tag?: string;
-  title?: SiteSection | string;
-  subtitle?: SiteSection | string;
-  body: SiteSection;
-  footer?: SiteSection;
-  images?: string[];
-  links?: SiteSection | string[];
-  lastupdated?: string;
-  approved?: boolean;
-  header?: SiteSection;
-  subheader?: SiteSection;
-  faqs?: FAQSection[];
-}
-
 export interface FAQSection {
   question: string;
   answer: string;
@@ -122,18 +94,6 @@ export interface TeamMember {
   professionalAssociations: string[];
   communityInvolvement: string[];
   imageUrl: string;
-}
-
-export interface Profile {
-  id: string;
-  image: any;
-  name: string;
-  role?: string;
-  education?: string;
-  calltobar?:  string;
-  workexperience?: string;
-  achievements?: string[];
-  community?: string[];
 }
 
 export interface ProfileNav {
@@ -235,4 +195,82 @@ export interface SiteMetadata {
     [k: string]: unknown;
   };
   [k: string]: unknown;
+}
+
+export interface SimpleSection {
+  content: string;
+}
+
+
+export interface SiteContent {
+  id?: string;
+  page?: string;
+  section?: string;
+  position?: string;
+  bulletpoints?: string[];
+  tag?: string;
+  title?: SiteSection | SimpleSection;
+  subtitle?: SiteSection | SimpleSection;
+  body?: SiteSection | SimpleSection | ContentSection;
+  footer?: SiteSection | SimpleSection;
+  images?: string[];
+  links?: SiteSection | string[];
+  lastupdated?: string;
+  approved?: boolean;
+  header?: SiteSection | SimpleSection;
+  subheader?: SiteSection | SimpleSection;
+  faqs?: FAQSection[];
+}
+
+
+export interface SiteSection {
+  id:            string;
+  page?:         string;
+  header?:       string;
+  subheader?:    string;
+  body?:         string;
+  intro?:        string;
+  footer?:       string;
+  bulletpoints?: string[];
+  faqs?:         { question: string; answer: string }[];
+  sections?:     { id?: string; label: string; rows: string[] }[];
+  [key: string]: unknown;
+  contents?: { sections: SiteSection[] };
+  content?: string | string[];
+  label?: string;
+  options?: any;
+}
+
+
+export interface ContentSection {
+  contents?: { sections: SiteSection[] };
+  content?: string | string[];
+  label?: string;
+  options?: any;
+  id?: any;
+}
+
+
+export interface BlogPost {
+  id:        string;
+  title:     string;
+  date:      string;
+  author:    string;
+  category:  string;
+  excerpt:   string;
+  content:   string;
+  imageUrl?: string;
+  createdAt: string;
+}
+
+export interface Profile {
+  id:             string;
+  name:           string;
+  image?:          string;
+  role?:           string;
+  education?:      string;
+  calltobar?:      string;
+  workexperience?: string;
+  achievements?:   string[];
+  community?:      string[];
 }
