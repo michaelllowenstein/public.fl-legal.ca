@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "moduleDetection": "force",
+    "strict": true,
+    "outDir": "dist",
+    "types": ["node"],
+    "baseUrl": "./",
+    "paths": {
+      "@config": ["src/config"],
+      "@services/*": ["src/services/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@plugins/*": ["src/plugins/*"],
+      "@routes/*": ["src/routes/*"],
+      "@schema/*": ["src/schema/*"],
+      "@schema": ["src/schema"]
+    },
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "build.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "./public",
+    "*.mock.ts",
+    "*.data.ts",
+    "dist",
+    "test"
+  ]
+}
