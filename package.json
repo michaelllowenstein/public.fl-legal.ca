@@ -1,59 +1,27 @@
 {
   "name": "fl-legal.ca",
-  "version": "3.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:install": "npm install --legacy-peer-deps",
-    "local": "ng serve --configuration local --port 4422",
-    "build:local": "ng build --configuration local",
-    "watch": "ng build --watch --configuration local",
-    "build:prod": "ng build --configuration production",
-    "ngo:service": "node scripts/gen.mjs --service",
-    "ngo:guard": "node scripts/gen.mjs --guard",
-    "ngo:pipe": "node scripts/gen.mjs --pipe",
-    "ngo:comp": "node scripts/gen.mjs",
-    "ngo": "node scripts/gen.mjs",
-    "test": "ng test"
-  },
   "private": true,
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
-  "dependencies": {
-    "@angular/animations": "^21.2.6",
-    "@angular/common": "^20.1.0",
-    "@angular/compiler": "^20.1.0",
-    "@angular/core": "^20.1.0",
-    "@angular/fire": "^20.0.1",
-    "@angular/forms": "^20.1.0",
-    "@angular/platform-browser": "^20.1.0",
-    "@angular/router": "^20.1.0",
-    "@floating-ui/dom": "^1.7.6",
-    "@ng-icons/core": "^33.0.0",
-    "@ng-icons/heroicons": "^33.0.0",
-    "@tailwindcss/postcss": "^4.2.2",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+  "scripts": {
+    "build:all": "npm run build:client",
+    "build:client": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
+    "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
+    "local:api": "cd server && npm run local",
+    "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
+    "start": "cd client && node dist/client/",
+    "start:api": "cd server && esbuild"
   },
   "devDependencies": {
-    "@angular/build": "^20.1.1",
-    "@angular/cli": "^20.1.1",
-    "@angular/compiler-cli": "^20.1.0",
-    "@tailwindcss/vite": "^4.2.2",
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8",
-    "prettier": "^3.8.1",
-    "tailwindcss": "^3.4.19",
-    "typescript": "~5.8.2"
+    "concurrently": "^8.2.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "@vercel/node": "^5.7.0",
+    "dotenv": "^17.4.1",
+    "fastify": "^5.8.4"
   }
 }

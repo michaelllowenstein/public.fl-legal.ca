@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build:app",
+  "outputDirectory": "client/dist/fl-legal.ca/browser",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 15
+    }
+  }
+}
