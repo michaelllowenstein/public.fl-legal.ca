@@ -4,7 +4,7 @@
   "scripts": {
     "install:api": "cd server && npm install",
     "install:client": "cd client && npm ci --legacy-peer-deps",
-    "build:client": "npm run install:client && npm run build -- --configuration production",
+    "build:client": "npm run install:client && npm run build:prod",
     "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
