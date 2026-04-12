@@ -22,7 +22,7 @@ export interface MenuFLIcon {
 export class NavbarComponent {
   private dialog = inject(DialogService);
   webMenu = signal<MenuFLIcon>({
-    source: 'assets/site/branding/cropped-favicon-512-100x100.png', 
+    source: 'assets/site/branding/logo-white-on-blue-small.png',
     alt: 'Fric, Lowenstein & Co. LLP'
   });
   mobileMenu = signal<MenuFLIcon>({
