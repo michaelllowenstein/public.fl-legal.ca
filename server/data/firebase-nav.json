@@ -1,0 +1,88 @@
+{
+  "public": {
+    "members": [
+      {
+        "display": "William H. Fric",
+        "value": "bill",
+        "order": 0
+      },
+      {
+        "display": "Howard M. Lowenstein",
+        "value": "howard",
+        "order": 1
+      },
+      {
+        "display": "Anthony J. Di Lello",
+        "value": "anthony",
+        "order": 2
+      },
+      {
+        "display": "Tami Fric",
+        "value": "tami",
+        "order": 3
+      },
+      {
+        "display": "York Campbell",
+        "value": "york",
+        "order": 4
+      },
+      {
+        "display": "Marc Lowenstein",
+        "value": "marc",
+        "order": 5
+      },
+      {
+        "display": "Bronwyn E. Cram",
+        "value": "bronwyn",
+        "order": 6
+      },
+      {
+        "display": "Tracy Hildenbrand",
+        "value": "tracy",
+        "order": 7
+      }
+    ],
+    "priceSections": [
+      {
+        "display": "PURCHASE & MORTGAGE FEES",
+        "value": "purchase-mortgage",
+        "order": 0
+      },
+      {
+        "display": "CASH PURCHASE FEES",
+        "value": "cash-purchase",
+        "order": 1
+      },
+      {
+        "display": "SALES",
+        "value": "sales",
+        "order": 2
+      },
+      {
+        "display": "REFINANCES",
+        "value": "refinances",
+        "order": 3
+      },
+      {
+        "display": "INTERIM FINANCING",
+        "value": "interim-financing",
+        "order": 4
+      },
+      {
+        "display": "TRANSFER OF LAND",
+        "value": "transfer-of-land",
+        "order": 5
+      },
+      {
+        "display": "CORPORATE FEES",
+        "value": "corporate",
+        "order": 6
+      },
+      {
+        "display": "WILLS, EPA & PERSONAL REPRESENTATIVE DOCUMENTS",
+        "value": "wills-epa",
+        "order": 7
+      }
+    ]
+  }
+}
