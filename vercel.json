@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:app",
+  "buildCommand": "npm run build:prod",
   "outputDirectory": "client/dist/fl-legal.ca/browser",
   "rewrites": [
     {
