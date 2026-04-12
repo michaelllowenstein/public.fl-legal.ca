@@ -1,12 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:app",
-  "outputDirectory": "client/dist/fl-legal.ca",
+  "buildCommand": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
+  "outputDirectory": "client/dist/fl-legal.ca/browser",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
-    }
+    { "source": "/api/(.*)", "destination": "/api/index" }
   ],
   "functions": {
     "api/index.ts": {
