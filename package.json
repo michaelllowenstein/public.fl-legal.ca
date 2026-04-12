@@ -4,13 +4,13 @@
   "scripts": {
     "install:api": "cd server && npm install",
     "install:client": "cd client && npm ci --legacy-peer-deps",
-    "build:client": "npm run install:client && npm run build:prod",
+    "build:client": "npm run install:prod && npm run build:prod",
     "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
     "start": "cd client && node dist/client/",
     "build:api": "cd server && esbuild",
-    "install:prod": "npm run install:client",
+    "install:prod": "npm ci --legacy-peer-deps",
     "build:prod": "npm run build:client"
   },
   "devDependencies": {
