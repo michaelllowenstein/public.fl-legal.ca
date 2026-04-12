@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:prod",
-  "outputDirectory": "client/dist/fl-legal.ca/browser",
+  "buildCommand": "npm run build:app",
+  "outputDirectory": "client/dist/fl-legal.ca",
   "rewrites": [
     {
       "source": "/api/(.*)",
