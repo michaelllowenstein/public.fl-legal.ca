@@ -2,13 +2,13 @@
   "name": "fl-legal.ca",
   "private": true,
   "scripts": {
-    "build:all": "npm run build:client",
+    "build:all": "npm run build:prod",
     "build:client": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
     "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
     "start": "cd client && node dist/client/",
-    "start:api": "cd server && esbuild"
+    "build:api": "cd server && esbuild"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
