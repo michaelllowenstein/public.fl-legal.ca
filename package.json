@@ -2,12 +2,12 @@
   "name": "fl-legal.ca",
   "private": true,
   "scripts": {
-    "build:app":    "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
+    "build:app": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
     "build:client": "cd client && npm run build -- --configuration production",
     "install:prod": "npm ci --legacy-peer-deps",
-    "local":        "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
-    "local:api":    "cd server && npm run local",
-    "local:app":    "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json"
+    "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
+    "local:api": "cd server && npm run local",
+    "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
@@ -21,6 +21,7 @@
     "@fastify/rate-limit": "^10.3.0",
     "@vercel/node": "^5.7.0",
     "dotenv": "^17.4.1",
-    "fastify": "^5.8.4"
+    "fastify": "^5.8.4",
+    "tsconfig-paths": "^4.2.0"
   }
 }

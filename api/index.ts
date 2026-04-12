@@ -22,7 +22,7 @@ import Fastify from 'fastify';
 import cors      from '@fastify/cors';
 import helmet    from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
- 
+
 import authPlugin        from '../server/src/plugins/auth';
 import { authRoutes }    from '../server/src/routes/auth';
 import { contentRoutes } from '../server/src/routes/content';
@@ -32,7 +32,7 @@ import { profileRoutes } from '../server/src/routes/profile';
 import { logRoutes }     from '../server/src/routes/logs';
 import { calendarRoutes } from '../server/src/routes/calendar';
 import { initFirebase }  from '../server/src/services/firebase';
-import { config }        from '../server/src/config';
+import { config }        from '../server/src/config/index';
  
 // ── Fastify instance — cached across warm Vercel invocations ─────────────────
  
