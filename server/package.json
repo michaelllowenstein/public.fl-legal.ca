@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "private": true,
-  "type": "module",
   "description": "Fastify API for Fric, Lowenstein & Co. LLP website",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/api.ts",
@@ -37,6 +36,7 @@
     "tokens",
     "passwordless"
   ],
+  "type": "commonjs",
   "author": "Michael Lowenstein",
   "license": "UNLICENSED",
   "devDependencies": {
