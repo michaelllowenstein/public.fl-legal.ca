@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { DialogService } from '@components/factory/dialog/service';
 import { InquiryDialog } from '@components/ui/dialog/inquiry';
 import { FLIcon } from '@components/ui/icon';
+import { NotificationBell } from '@components/ui/notifications';
 
 export interface MenuFLIcon {
   source: string;
@@ -15,7 +16,7 @@ export interface MenuFLIcon {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [FLIcon, RouterLink],
+  imports: [FLIcon, RouterLink, NotificationBell],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './index.html'
 })
