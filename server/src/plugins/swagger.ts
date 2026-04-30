@@ -130,84 +130,9 @@ async function swaggerPlugin(fastify: FastifyInstance): Promise<void> {
     staticCSP: true,
     transformStaticCSP: (header) => header,
   });
-    
-      // ── Swagger — register BEFORE routes so all schemas are collected ─────────
-    
-    //   await fastify.register(swagger, {
-    //     openapi: {
-    //       openapi: '3.0.3',
-    //       info: {
-    //         title:       'FL Legal API',
-    //         description: 'REST API for Fric, Lowenstein & Co. LLP website',
-    //         version:     '3.0.0',
-    //         contact: {
-    //           name:  'Michael Lowenstein',
-    //           email: 'michael@lowenstein.ca',
-    //         },
-    //       },
-    //       servers: [
-    //         {
-    //           url:         `${protocol}://localhost:${config.port}`,
-    //           description: config.isDev   ? 'Local (development)'
-    //                      : config.isStage ? 'Staging'
-    //                      :                  'Production',
-    //         },
-    //       ],
-    //       components: {
-    //         securitySchemes: {
-    //           BearerAuth: {
-    //             type:         'http',
-    //             scheme:       'bearer',
-    //             bearerFormat: 'JWT',
-    //             description:
-    //               'Editor JWT  → POST /api/auth/editor\n' +
-    //               'Lawyer JWT  → POST /api/auth/lawyer/password',
-    //           },
-    //         },
-    //       },
-    //       tags: [
-    //         { name: 'Auth',     description: 'Authentication — obtain JWTs'            },
-    //         { name: 'Content',  description: 'Site content read / edit'                },
-    //         { name: 'Profile',  description: 'Site profiles read'                      },
-    //         { name: 'Blog',     description: 'Blog posts'                              },
-    //         { name: 'Inquiry',  description: 'Client inquiry emails'                   },
-    //         { name: 'Calendar', description: 'Firm calendar (lawyer access only)'      },
-    //         { name: 'Health',   description: 'Liveness probe'                          },
-    //       ],
-    //     },
-    //   });
-    
-    //   await fastify.register(swaggerUi, {
-    //     routePrefix: '/api/docs',
-    //     uiConfig: {
-    //       docExpansion:    'list',
-    //       deepLinking:     true,
-    //       tryItOutEnabled: true,
-    //     },
-    //     staticCSP:          true,
-    //     transformStaticCSP: (header) => header,
-    //     logo: {
-    //       type:    'image/svg+xml',
-    //       content: Buffer.from(
-    //         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-    //               stroke="#b8932a" stroke-width="1.5">
-    //            <path stroke-linecap="round" stroke-linejoin="round"
-    //              d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0
-    //                 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291
-    //                 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62
-    //                 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0
-    //                 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703
-    //                 -.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377
-    //                 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.59 1.202a5.989
-    //                 5.989 0 01-2.031.352 5.989 5.989 0
-    //                 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"/>
-    //          </svg>`,
-    //       ).toString('base64'),
-    //     },
-    //   });
 }
 
 export default fp(swaggerPlugin, {
     name: 'swagger',
-    dependencies: [],
+    dependencies: []
 });
