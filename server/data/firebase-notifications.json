@@ -1,0 +1,37 @@
+{
+  "notifications": {
+    "notif-example-01": {
+      "id": "notif-example-01",
+      "title": "Calendar Module Is Live",
+      "body": "Lawyers can now view, add, and manage appointments directly from the portal. Real-time sync is included — changes reflect immediately across all sessions.",
+      "type": "feature",
+      "audience": "lawyers",
+      "status": "active",
+      "cta": {
+        "label": "Open Calendar",
+        "url": "/portal/calendar"
+      },
+      "createdAt": "2026-04-29T10:00:00.000Z"
+    },
+    "notif-example-02": {
+      "id": "notif-example-02",
+      "title": "Inline CMS Editor Updated",
+      "body": "The content editor now supports undo history, live preview, and keyboard shortcuts. Press Ctrl+Z to undo, Ctrl+S to save.",
+      "type": "feature",
+      "audience": "editors",
+      "status": "active",
+      "createdAt": "2026-04-28T09:00:00.000Z"
+    },
+    "notif-example-03": {
+      "id": "notif-example-03",
+      "title": "Scheduled Maintenance — May 2nd",
+      "body": "The portal will be briefly unavailable on May 2nd between 02:00 – 03:00 AM MST for infrastructure upgrades. No action required.",
+      "type": "warning",
+      "audience": "all",
+      "status": "active",
+      "expiresAt": "2026-05-03T00:00:00.000Z",
+      "createdAt": "2026-04-27T12:00:00.000Z"
+    }
+  },
+  "notificationReads": {}
+}

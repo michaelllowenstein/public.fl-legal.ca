@@ -274,3 +274,35 @@ export interface Profile {
   achievements?:   string[];
   community?:      string[];
 }
+
+export type NotificationAudience = 'all' | 'lawyers' | 'editors';
+export type NotificationType = 'feature' | 'info' | 'warning';
+export type NotificationStatus = 'active' | 'archived';
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  body: string;
+  type: NotificationType;
+  audience: NotificationAudience;
+  status: NotificationStatus;
+  cta?: {
+    label: string;
+    url: string;
+  };
+  createdAt: string; // ISO
+  expiresAt?: string; // ISO — optional TTL
+  authorId?: string;
+}
+
+/** Shape stored in Firebase under /notificationReads/{uid}/{notifId} */
+export interface NotificationReadRecord {
+  readAt: string;
+  uid: string;
+}
+ 
+/** Client-side enriched model */
+export interface NotificationViewModel extends AppNotification {
+  isRead: boolean;
+  isDismissed: boolean; // session-only, not persisted
+}

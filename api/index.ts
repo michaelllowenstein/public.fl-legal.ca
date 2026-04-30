@@ -32,6 +32,7 @@ import { profileRoutes } from '../server/src/routes/profile';
 import { logRoutes }     from '../server/src/routes/logs';
 import { calendarRoutes } from '../server/src/routes/calendar';
 import { initFirebase }  from '../server/src/services/firebase';
+import { notificationRoutes } from '../server/src/routes/notifications';
 import { config }        from '../server/src/config/index';
  
 // ── Fastify instance — cached across warm Vercel invocations ─────────────────
@@ -90,13 +91,14 @@ async function getApp() {
     reply.send({ ok: true, ts: new Date().toISOString() })
   );
  
-  fastify.register(authRoutes,     { prefix: '/api/auth'      });
-  fastify.register(contentRoutes,  { prefix: '/api/content'   });
-  fastify.register(blogRoutes,     { prefix: '/api/blog'      });
-  fastify.register(inquiryRoutes,  { prefix: '/api/inquiries' });
-  fastify.register(profileRoutes,  { prefix: '/api/profiles'  });
-  fastify.register(calendarRoutes, { prefix: '/api/calendar'  });
-  fastify.register(logRoutes,      { prefix: '/api/logs'      });
+  fastify.register(authRoutes,                { prefix: '/api/auth'      });
+  fastify.register(contentRoutes,             { prefix: '/api/content'   });
+  fastify.register(blogRoutes,                { prefix: '/api/blog'      });
+  fastify.register(inquiryRoutes,             { prefix: '/api/inquiries' });
+  fastify.register(profileRoutes,             { prefix: '/api/profiles'  });
+  fastify.register(calendarRoutes,            { prefix: '/api/calendar'  });
+  fastify.register(logRoutes,                 { prefix: '/api/logs'      });
+  fastify.register(notificationsRoutes,       { prefix: '/api/notifications'      });
  
   await fastify.ready();
   _app = fastify;
