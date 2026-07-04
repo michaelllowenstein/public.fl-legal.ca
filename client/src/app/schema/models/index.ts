@@ -306,3 +306,26 @@ export interface NotificationViewModel extends AppNotification {
   isRead: boolean;
   isDismissed: boolean; // session-only, not persisted
 }
+
+export type TabId =
+  | 'purchase-mortgage'
+  | 'cash-purchase'
+  | 'sale'
+  | 'refinance'
+  | 'wills'
+  | 'incorporation';
+
+export interface ResultLine {
+  label: string;
+  value: number;
+  muted?: boolean;
+}
+
+export interface CalcResult {
+  lines: ResultLine[];
+  total: number;
+  quoteOnly?: boolean;
+  quoteNote?: string;
+  footnote?: string;
+}
+

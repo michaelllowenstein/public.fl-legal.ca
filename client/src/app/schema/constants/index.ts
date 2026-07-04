@@ -1,4 +1,4 @@
-import { ProfileNav, Profile, SiteContent, PricingSection, FAQSection, BlogArticle, BlogEntry } from '../models';
+import { ProfileNav, Profile, SiteContent, PricingSection, FAQSection, BlogArticle, BlogEntry, TabId } from '../models';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -781,3 +781,24 @@ export const POSTS: BlogArticle[] = [
 ];
 
 export const INQUIRY_SUB_PREFIX = 'INQUIRY FROM WEBSITE:';
+
+// Fee Calculator
+export const TABS: { id: TabId; label: string }[] = [
+  { id: 'purchase-mortgage', label: 'Buying (Mortgage)' },
+  { id: 'cash-purchase',     label: 'Buying (Cash)'     },
+  { id: 'sale',              label: 'Selling'           },
+  { id: 'refinance',         label: 'Refinance'         },
+  { id: 'wills',             label: 'Wills & EPA'       },
+  { id: 'incorporation',     label: 'Incorporation'     },
+];
+
+export const WILL_LABELS: Record<string, string> = {
+  will:        'Will Only',
+  epa:         'Enduring Power of Attorney Only',
+  pd:          'Personal Directive Only',
+  willPlusOne: 'Will + EPA or Personal Directive',
+  package:     'Will + EPA + Personal Directive (Full Package)',
+  codicil:     'Codicil (Will Update)',
+};
+
+export const GST_RATE = 0.05;
