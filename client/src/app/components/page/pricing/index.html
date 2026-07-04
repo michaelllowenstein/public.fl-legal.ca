@@ -22,6 +22,32 @@
     class="font-body text-lg leading-relaxed text-center max-w-3xl mx-auto">
     {{ intro() }}
   </p>
+ 
+  <!-- ── Fee Calculator — launcher ────────────────────────────────────── -->
+  <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-8 sm:p-10
+              flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+    <div class="shrink-0 w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/25
+                flex items-center justify-center mx-auto sm:mx-0">
+      <app-fl-icon name="scale" class="w-7 h-7 text-brand-gold" />
+    </div>
+    <div class="flex-1">
+      <h2 class="font-display text-brand text-xl font-semibold">Estimate Your Costs</h2>
+      <p class="font-body text-gray-500 text-sm mt-1 leading-relaxed max-w-md">
+        Answer a few quick questions to approximate legal fees and disbursements for your matter
+        — then export a PDF summary to keep or share.
+      </p>
+    </div>
+    <button
+      type="button"
+      (click)="openCalculator()"
+      class="shrink-0 inline-flex items-center gap-2 font-sans text-sm font-medium
+             bg-brand hover:bg-brand-light text-white px-6 py-3 rounded-xl
+             transition-all duration-200 hover:-translate-y-0.5
+             hover:shadow-lg shadow-brand/20">
+      <app-fl-icon name="document-text" class="w-4 h-4" />
+      Open Calculator
+    </button>
+  </div>
 
   <!-- ── Loading skeleton ──────────────────────────────────────────────── -->
   @if (loading()) {

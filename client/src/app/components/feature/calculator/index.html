@@ -1,0 +1,347 @@
+<div
+  class="bg-white rounded-2xl shadow-dialog w-full max-w-3xl animate-scale-in flex flex-col"
+  style="max-height: 90vh;"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="calc-title"
+  (click)="$event.stopPropagation()">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="flex items-start justify-between px-7 sm:px-8 pt-7 pb-5 border-b border-gray-100 shrink-0">
+    <div class="flex items-start gap-4">
+      <div class="shrink-0 w-11 h-11 rounded-xl bg-brand-gold/10 border border-brand-gold/25
+                  flex items-center justify-center mt-0.5">
+        <app-fl-icon name="scale" class="w-5 h-5 text-brand-gold" />
+      </div>
+      <div>
+        <h2 id="calc-title" class="font-display text-brand text-xl font-semibold">
+          Estimate Your Costs
+        </h2>
+        <p class="font-sans text-gray-400 text-sm mt-1">
+          A quick approximation — not a firm quote.
+        </p>
+      </div>
+    </div>
+    <button
+      class="text-gray-300 hover:text-gray-500 p-1 rounded transition-colors -mt-1 -mr-1 shrink-0"
+      aria-label="Close"
+      (click)="close()">
+      <app-fl-icon name="x-mark" class="w-5 h-5" />
+    </button>
+  </div>
+
+  <!-- ── Scrollable body ─────────────────────────────────────────────────── -->
+  <div class="overflow-y-auto px-7 sm:px-8 py-6 flex-1">
+
+    <!-- Tabs -->
+    <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 mb-6">
+      @for (tab of tabs; track tab.id) {
+        <button
+          type="button"
+          (click)="activeTab.set(tab.id)"
+          class="shrink-0 font-sans text-xs font-semibold uppercase tracking-wide
+                 px-4 py-2.5 rounded-xl border transition-all duration-200"
+          [class]="activeTab() === tab.id
+            ? 'bg-brand text-white border-brand shadow-md shadow-brand/20'
+            : 'bg-white text-gray-500 border-gray-200 hover:border-brand-gold/40 hover:text-brand'">
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- Inputs -->
+      <div class="space-y-5">
+        @switch (activeTab()) {
+
+          @case ('purchase-mortgage') {
+            <div>
+              <label for="calc-price" class="fl-label">Property Purchase Price</label>
+              <input
+                id="calc-price"
+                type="number" min="0" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="fl-input" />
+              <input
+                type="range" min="100000" max="2000000" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="w-full mt-2.5 accent-brand-gold" />
+            </div>
+            <div>
+              <label for="calc-mortgage" class="fl-label">Mortgage Amount</label>
+              <input
+                id="calc-mortgage"
+                type="number" min="0" step="5000"
+                [ngModel]="mortgageAmount()" (ngModelChange)="onMortgageAmount($event)"
+                class="fl-input" />
+              <p class="fl-hint">The amount being financed — usually less than the purchase price.</p>
+            </div>
+            <div>
+              <label for="calc-other-1" class="fl-label">Other Disbursements (est.)</label>
+              <input
+                id="calc-other-1"
+                type="number" min="0" step="25"
+                [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                class="fl-input" />
+              <p class="fl-hint">Title insurance, tax certificate, courier and file-specific costs — adjust to suit your file.</p>
+            </div>
+          }
+
+          @case ('cash-purchase') {
+            <div>
+              <label for="calc-price-2" class="fl-label">Property Purchase Price</label>
+              <input
+                id="calc-price-2"
+                type="number" min="0" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="fl-input" />
+              <input
+                type="range" min="100000" max="2000000" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="w-full mt-2.5 accent-brand-gold" />
+            </div>
+            <div>
+              <label for="calc-other-2" class="fl-label">Other Disbursements (est.)</label>
+              <input
+                id="calc-other-2"
+                type="number" min="0" step="25"
+                [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                class="fl-input" />
+              <p class="fl-hint">Title insurance, tax certificate, courier and file-specific costs — adjust to suit your file.</p>
+            </div>
+          }
+
+          @case ('sale') {
+            <div>
+              <label for="calc-price-3" class="fl-label">Sale Price</label>
+              <input
+                id="calc-price-3"
+                type="number" min="0" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="fl-input" />
+              <input
+                type="range" min="100000" max="2000000" step="5000"
+                [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
+                class="w-full mt-2.5 accent-brand-gold" />
+            </div>
+            <label
+              class="flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-colors select-none"
+              [class]="hasMortgage()
+                ? 'bg-brand-gold/10 border-brand-gold/40'
+                : 'bg-white border-gray-200 hover:border-brand-gold/40'">
+              <input
+                type="checkbox"
+                [ngModel]="hasMortgage()" (ngModelChange)="hasMortgage.set($event)"
+                class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0" />
+              <span class="font-sans text-sm text-gray-600 leading-snug">
+                There's an existing mortgage to discharge
+              </span>
+            </label>
+            <div>
+              <label for="calc-other-3" class="fl-label">Other Disbursements (est.)</label>
+              <input
+                id="calc-other-3"
+                type="number" min="0" step="25"
+                [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                class="fl-input" />
+              <p class="fl-hint">Tax certificate, payout statement fees and other file-specific costs.</p>
+            </div>
+          }
+
+          @case ('refinance') {
+            <div>
+              <label for="calc-refi-amount" class="fl-label">New Mortgage Amount</label>
+              <input
+                id="calc-refi-amount"
+                type="number" min="0" step="5000"
+                [ngModel]="refinanceAmount()" (ngModelChange)="onRefinanceAmount($event)"
+                class="fl-input" />
+              <input
+                type="range" min="50000" max="2000000" step="5000"
+                [ngModel]="refinanceAmount()" (ngModelChange)="onRefinanceAmount($event)"
+                class="w-full mt-2.5 accent-brand-gold" />
+            </div>
+            <div>
+              <label for="calc-payouts" class="fl-label">Number of Payouts</label>
+              <input
+                id="calc-payouts"
+                type="number" min="1" step="1"
+                [ngModel]="payoutCount()" (ngModelChange)="onPayoutCount($event)"
+                class="fl-input" />
+              <p class="fl-hint">The base fee includes 1 payout; +$175 for each additional payout.</p>
+            </div>
+            <div>
+              <label for="calc-other-4" class="fl-label">Other Disbursements (est.)</label>
+              <input
+                id="calc-other-4"
+                type="number" min="0" step="25"
+                [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                class="fl-input" />
+            </div>
+          }
+
+          @case ('wills') {
+            <div>
+              <label class="fl-label">Preparing For</label>
+              <div class="flex gap-2">
+                <button
+                  type="button" (click)="willParty.set('single')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="willParty() === 'single'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  Single Person
+                </button>
+                <button
+                  type="button" (click)="willParty.set('couple')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="willParty() === 'couple'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  Married Couple
+                </button>
+              </div>
+            </div>
+            <div>
+              <label for="calc-will-package" class="fl-label">Documents Needed</label>
+              <select
+                id="calc-will-package"
+                class="fl-input"
+                [ngModel]="willPackage()" (ngModelChange)="willPackage.set($event)">
+                <option value="will">Will Only</option>
+                <option value="epa">Enduring Power of Attorney Only</option>
+                <option value="pd">Personal Directive Only</option>
+                <option value="willPlusOne">Will + EPA or Personal Directive</option>
+                <option value="package">Will + EPA + Personal Directive (Full Package)</option>
+                <option value="codicil">Codicil (Will Update)</option>
+              </select>
+            </div>
+          }
+
+          @case ('incorporation') {
+            <div>
+              <label class="fl-label">Structure</label>
+              <div class="flex gap-2">
+                <button
+                  type="button" (click)="corpType.set('standard')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="corpType() === 'standard'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  Standard
+                </button>
+                <button
+                  type="button" (click)="corpType.set('professional')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="corpType() === 'professional'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  Professional Corp.
+                </button>
+              </div>
+            </div>
+            <div>
+              <label for="calc-incorp-disb" class="fl-label">Disbursements (est.)</label>
+              <input
+                id="calc-incorp-disb"
+                type="number" min="0" step="10"
+                [ngModel]="incorpDisbursements()" (ngModelChange)="onIncorpDisbursements($event)"
+                class="fl-input" />
+              <p class="fl-hint">Name search / NUANS report and other filing-related costs.</p>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Results -->
+      <div>
+        @if (result().quoteOnly) {
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 h-full flex flex-col items-start justify-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+              <app-fl-icon name="document-text" class="w-5 h-5 text-amber-600" />
+            </div>
+            <p class="font-body text-sm text-amber-800 leading-relaxed">
+              {{ result().quoteNote }}
+            </p>
+            <button
+              type="button"
+              (click)="goToContact()"
+              class="inline-flex items-center gap-2 font-sans text-sm font-medium text-brand hover:text-brand-light hover:underline">
+              Contact Us for a Quote
+              <app-fl-icon name="arrow-right" class="w-4 h-4" />
+            </button>
+          </div>
+        } @else {
+          <div class="bg-brand-cream rounded-2xl border border-brand-gold/25 p-6 h-full flex flex-col">
+            <p class="font-sans text-[11px] uppercase tracking-wide text-gray-400 font-semibold mb-4">
+              Estimated Breakdown
+            </p>
+
+            <div class="space-y-2.5 flex-1">
+              @for (line of result().lines; track line.label) {
+                <div class="flex items-baseline justify-between gap-4">
+                  <span
+                    class="font-body text-sm"
+                    [class]="line.muted ? 'text-gray-500' : 'text-gray-700 font-medium'">
+                    {{ line.label }}
+                  </span>
+                  <span
+                    class="font-sans text-sm shrink-0"
+                    [class]="line.muted ? 'text-gray-500' : 'text-brand font-semibold'">
+                    {{ fmt(line.value) }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            <div class="border-t border-brand-gold/25 mt-4 pt-4 flex items-baseline justify-between">
+              <span class="font-display text-brand font-semibold text-base">Estimated Total</span>
+              <span class="font-display text-brand text-2xl font-bold">{{ fmt(result().total) }}</span>
+            </div>
+
+            @if (result().footnote) {
+              <p class="font-sans text-[11px] text-gray-400 leading-relaxed mt-3">
+                {{ result().footnote }}
+              </p>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <div class="px-7 sm:px-8 py-5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+    <p class="font-sans text-[11px] text-gray-400 max-w-xs leading-relaxed">
+      Fees &amp; disbursements are estimated. We cannot give a firm amount until we have
+      the file opened and reviewed.
+    </p>
+    <div class="flex items-center gap-3">
+      @if (pdfBlocked()) {
+        <span class="font-sans text-xs text-red-500">Please allow pop-ups to export a PDF.</span>
+      }
+      <button
+        type="button"
+        [disabled]="result().quoteOnly"
+        (click)="exportPdf()"
+        class="inline-flex items-center gap-2 font-sans text-sm font-medium
+               border border-gray-300 text-brand hover:border-brand-gold/40 hover:bg-brand-cream/40
+               px-5 py-2.5 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        <app-fl-icon name="document-text" class="w-4 h-4" />
+        Export to PDF
+      </button>
+      <button
+        type="button"
+        (click)="goToContact()"
+        class="inline-flex items-center gap-2 font-sans text-sm font-medium
+               bg-brand hover:bg-brand-light text-white px-5 py-2.5 rounded-xl
+               transition-all duration-200 hover:-translate-y-0.5 shadow-md shadow-brand/15">
+        <app-fl-icon name="envelope" class="w-4 h-4" />
+        Get an Exact Quote
+      </button>
+    </div>
+  </div>
+
+</div>
