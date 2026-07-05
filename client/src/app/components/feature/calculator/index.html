@@ -1,5 +1,5 @@
 <div
-  class="bg-white rounded-2xl shadow-dialog w-full max-w-3xl animate-scale-in flex flex-col"
+  class="bg-white rounded-2xl shadow-dialog w-full max-w-4xl animate-scale-in flex flex-col"
   style="max-height: 90vh;"
   role="dialog"
   aria-modal="true"
@@ -34,13 +34,13 @@
   <div class="overflow-y-auto px-7 sm:px-8 py-6 flex-1">
 
     <!-- Tabs -->
-    <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 mb-6">
+    <div class="flex gap-1.5 overflow-x-auto pb-2 -mx-1 px-1 mb-6">
       @for (tab of tabs; track tab.id) {
         <button
           type="button"
           (click)="activeTab.set(tab.id)"
-          class="shrink-0 font-sans text-xs font-semibold uppercase tracking-wide
-                 px-4 py-2.5 rounded-xl border transition-all duration-200"
+          class="shrink-0 font-sans text-[11px] sm:text-xs font-semibold uppercase tracking-wide
+                 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border transition-all duration-200"
           [class]="activeTab() === tab.id
             ? 'bg-brand text-white border-brand shadow-md shadow-brand/20'
             : 'bg-white text-gray-500 border-gray-200 hover:border-brand-gold/40 hover:text-brand'">
@@ -84,7 +84,7 @@
                 type="number" min="0" step="25"
                 [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
                 class="fl-input" />
-              <p class="fl-hint">Title insurance, tax certificate, courier and file-specific costs — adjust to suit your file.</p>
+              <p class="fl-hint">Tax certificate, courier and other file-specific costs — adjust to suit your file.</p>
             </div>
           }
 
@@ -125,6 +125,48 @@
                 [ngModel]="propertyValue()" (ngModelChange)="onPropertyValue($event)"
                 class="w-full mt-2.5 accent-brand-gold" />
             </div>
+            <div>
+              <label class="fl-label">Property Type</label>
+              <div class="flex gap-2">
+                <button
+                  type="button" (click)="propertyKind.set('house')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="propertyKind() === 'house'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  House
+                </button>
+                <button
+                  type="button" (click)="propertyKind.set('condo')"
+                  class="flex-1 font-sans text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors"
+                  [class]="propertyKind() === 'condo'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-white text-gray-500 border-gray-300 hover:border-brand-gold/40'">
+                  Condominium
+                </button>
+              </div>
+            </div>
+            @if (propertyKind() === 'house') {
+              <div>
+                <label for="calc-rpr" class="fl-label">Real Property Report (est.)</label>
+                <input
+                  id="calc-rpr"
+                  type="number" min="0" step="25"
+                  [ngModel]="rprFee()" (ngModelChange)="onRprFee($event)"
+                  class="fl-input" />
+                <p class="fl-hint">A new RPR typically runs ~$850 if one isn't already on file and current.</p>
+              </div>
+            } @else {
+              <div>
+                <label for="calc-estoppel" class="fl-label">Condominium Estoppel Certificate (est.)</label>
+                <input
+                  id="calc-estoppel"
+                  type="number" min="0" step="10"
+                  [ngModel]="condoEstoppelFee()" (ngModelChange)="onCondoEstoppelFee($event)"
+                  class="fl-input" />
+                <p class="fl-hint">Estoppel certificates typically cost $150–$350, depending on the condo corporation.</p>
+              </div>
+            }
             <label
               class="flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-colors select-none"
               [class]="hasMortgage()
@@ -281,14 +323,10 @@
             <div class="space-y-2.5 flex-1">
               @for (line of result().lines; track line.label) {
                 <div class="flex items-baseline justify-between gap-4">
-                  <span
-                    class="font-body text-sm"
-                    [class]="line.muted ? 'text-gray-500' : 'text-gray-700 font-medium'">
+                  <span class="font-body text-sm text-gray-500">
                     {{ line.label }}
                   </span>
-                  <span
-                    class="font-sans text-sm shrink-0"
-                    [class]="line.muted ? 'text-gray-500' : 'text-brand font-semibold'">
+                  <span class="font-sans text-sm text-gray-500 shrink-0">
                     {{ fmt(line.value) }}
                   </span>
                 </div>
@@ -314,9 +352,10 @@
 
   <!-- ── Footer ──────────────────────────────────────────────────────────── -->
   <div class="px-7 sm:px-8 py-5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
-    <p class="font-sans text-[11px] text-gray-400 max-w-xs leading-relaxed">
+    <p class="font-sans text-[11px] text-gray-400 max-w-sm leading-relaxed">
       Fees &amp; disbursements are estimated. We cannot give a firm amount until we have
-      the file opened and reviewed.
+      the file opened and reviewed. Title insurance is not included in this estimate and
+      may vary by lender, bank and/or circumstance.
     </p>
     <div class="flex items-center gap-3">
       @if (pdfBlocked()) {
