@@ -50,6 +50,11 @@ export class Calculator {
     hasMortgage = signal(true);
     otherDisbursements = signal(250);
 
+    // Sale-specific ────────────────────────────────────────────────────────────
+    propertyKind = signal<'house' | 'condo'>('house');
+    rprFee = signal(850);
+    condoEstoppelFee = signal(250);
+
     // Refinance ──────────────────────────────────────────────────────────────
     refinanceAmount = signal(400000);
     payoutCount = signal(1);
@@ -85,6 +90,8 @@ export class Calculator {
     onPropertyValue(v: unknown) { this.propertyValue.set(Math.max(0, Number(v) || 0)); }
     onMortgageAmount(v: unknown) { this.mortgageAmount.set(Math.max(0, Number(v) || 0)); }
     onOtherDisbursements(v: unknown) { this.otherDisbursements.set(Math.max(0, Number(v) || 0)); }
+    onRprFee(v: unknown) { this.rprFee.set(Math.max(0, Number(v) || 0)); }
+    onCondoEstoppelFee(v: unknown) { this.condoEstoppelFee.set(Math.max(0, Number(v) || 0)); }
     onRefinanceAmount(v: unknown) { this.refinanceAmount.set(Math.max(0, Number(v) || 0)); }
     onPayoutCount(v: unknown) { this.payoutCount.set(Math.max(1, Math.round(Number(v)) || 1)); }
     onIncorpDisbursements(v: unknown) { this.incorpDisbursements.set(Math.max(0, Number(v) || 0)); }
@@ -146,12 +153,12 @@ export class Calculator {
 
             const rows = r.lines
                 .map(line => {
-                    const cls = line.muted ? 'muted' : 'main';
-
+                    // All line entries share the same light treatment now —
+                    // only the total row is emphasized (see .total-row below).
                     return `
           <tr>
-            <td class="${cls}">${esc(line.label)}</td>
-            <td class="${cls}" style="text-align:right; white-space:nowrap;">
+            <td class="line">${esc(line.label)}</td>
+            <td class="line" style="text-align:right; white-space:nowrap;">
               ${esc(this.fmt(line.value))}
             </td>
           </tr>`;
@@ -209,12 +216,7 @@ export class Calculator {
           border-top: 1px solid #eeeeee;
         }
 
-        .pdf-estimate .main {
-          color: #1a3a5c;
-          font-weight: 600;
-        }
-
-        .pdf-estimate .muted {
+        .pdf-estimate .line {
           color: #6b7280;
           font-weight: 400;
         }
@@ -224,13 +226,14 @@ export class Calculator {
           padding-top: 16px;
           font-size: 18px;
           font-weight: 700;
+          color: #1a3a5c;
         }
 
         .pdf-estimate .footnote {
           font-size: 11px;
           color: #9ca3af;
-          margin-top: 22px;
           line-height: 1.6;
+          margin-top: 18px;
         }
 
         .pdf-estimate .contact {
@@ -314,10 +317,17 @@ element.remove();
         } catch (err) {
             console.error('[PDF] failed:', err);
             this.pdfBlocked.set(true);
-        } 
+        }
     }
 
     // ── Calculators (fee tiers sourced from the firm's published PRICING schedule) ──
+    //
+    // GST (5%) applies to legal fees and disbursements (RPR, condo estoppel
+    // certificates, and other file-specific disbursements). GST is EXEMPT on
+    // Land Titles Office registration/discharge fees, since those are
+    // government charges, not taxable supplies. Title insurance is NOT part
+    // of the calculation — see the per-tab footnotes, which disclose that it
+    // varies by lender/bank/circumstance and isn't included in the estimate.
 
     private purchaseMortgageResult(): CalcResult {
         const price = this.propertyValue();
@@ -327,20 +337,26 @@ element.remove();
         else if (price < 850000) legal = 1375;
         else legal = 1575;
 
-        const titleFee = ltoFee(price);
-        const mortgageFee = ltoFee(this.mortgageAmount());
-        const other = this.otherDisbursements();
+        const titleFee = ltoFee(price);           // GST-exempt (Land Titles)
+        const mortgageFee = ltoFee(this.mortgageAmount()); // GST-exempt (Land Titles)
+        const other = this.otherDisbursements();   // taxable disbursement
+
+        const taxable = legal + other;
+        const gst = round2(taxable * GST_RATE);
 
         return {
             lines: [
                 { label: 'Legal Fee (Purchase & Mortgage)', value: legal },
+                { label: 'Other Disbursements (est.)', value: other, muted: true },
+                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
                 { label: 'Land Titles — Title Registration', value: titleFee, muted: true },
                 { label: 'Land Titles — Mortgage Registration', value: mortgageFee, muted: true },
-                { label: 'Other Disbursements (est.)', value: other, muted: true },
             ],
-            total: legal + titleFee + mortgageFee + other,
+            total: legal + titleFee + mortgageFee + other + gst,
             footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula '
-                + '($50 + $5 per $5,000 of value, effective Oct. 2024). GST is not included.',
+                + '($50 + $5 per $5,000 of value, effective Oct. 2024) and are GST-exempt. GST (5%) applies '
+                + 'to the legal fee and other disbursements. Title insurance is not included and varies by '
+                + 'lender, bank and/or circumstance.',
         };
     }
 
@@ -357,18 +373,22 @@ element.remove();
         else if (price < 650000) legal = 1150;
         else legal = 1275;
 
-        const titleFee = ltoFee(price);
+        const titleFee = ltoFee(price); // GST-exempt (Land Titles)
         const other = this.otherDisbursements();
+
+        const taxable = legal + other;
+        const gst = round2(taxable * GST_RATE);
 
         return {
             lines: [
                 { label: 'Legal Fee (Cash Purchase)', value: legal },
-                { label: 'Land Titles — Title Registration', value: titleFee, muted: true },
                 { label: 'Other Disbursements (est.)', value: other, muted: true },
+                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
+                { label: 'Land Titles — Title Registration', value: titleFee, muted: true },
             ],
-            total: legal + titleFee + other,
-            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula. '
-                + 'GST is not included.',
+            total: legal + titleFee + other + gst,
+            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula and '
+                + 'are GST-exempt. GST (5%) applies to the legal fee and other disbursements.',
         };
     }
 
@@ -385,19 +405,33 @@ element.remove();
         else if (price < 650000) legal = 995;
         else legal = 1195;
 
-        const discharge = this.hasMortgage() ? 10 : 0;
+        const isHouse = this.propertyKind() === 'house';
+        const reportFee = isHouse ? this.rprFee() : this.condoEstoppelFee();
+        const reportLabel = isHouse
+            ? 'Real Property Report (est.)'
+            : 'Condominium Estoppel Certificate (est.)';
+
+        const discharge = this.hasMortgage() ? 10 : 0; // GST-exempt (Land Titles)
         const other = this.otherDisbursements();
 
+        const taxable = legal + reportFee + other;
+        const gst = round2(taxable * GST_RATE);
+
         const lines: ResultLine[] = [{ label: 'Legal Fee (Sale)', value: legal }];
+        lines.push({ label: reportLabel, value: reportFee, muted: true });
+        lines.push({ label: 'Other Disbursements (est.)', value: other, muted: true });
+        lines.push({ label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true });
         if (this.hasMortgage()) {
             lines.push({ label: 'Land Titles — Mortgage Discharge Fee', value: discharge, muted: true });
         }
-        lines.push({ label: 'Other Disbursements (est.)', value: other, muted: true });
 
         return {
             lines,
-            total: legal + discharge + other,
-            footnote: 'GST is not included. Your lender may charge separate payout or discharge fees.',
+            total: legal + discharge + reportFee + other + gst,
+            footnote: `GST (5%) applies to the legal fee, the ${isHouse ? 'Real Property Report' : 'Condominium Estoppel Certificate'} `
+                + 'and other disbursements. The Land Titles discharge fee is GST-exempt. Title insurance is not '
+                + 'included and varies by lender, bank and/or circumstance. Your lender may also charge separate '
+                + 'payout fees.',
         };
     }
 
@@ -406,20 +440,25 @@ element.remove();
         const payouts = Math.max(1, this.payoutCount());
         const legal = 995 + (payouts - 1) * 175;
 
-        const mortgageFee = ltoFee(amount);
-        const dischargeFee = payouts * 10;
+        const mortgageFee = ltoFee(amount);       // GST-exempt (Land Titles)
+        const dischargeFee = payouts * 10;        // GST-exempt (Land Titles)
         const other = this.otherDisbursements();
+
+        const taxable = legal + other;
+        const gst = round2(taxable * GST_RATE);
 
         return {
             lines: [
                 { label: `Legal Fee (Refinance, ${payouts} payout${payouts > 1 ? 's' : ''})`, value: legal },
+                { label: 'Other Disbursements (est.)', value: other, muted: true },
+                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
                 { label: 'Land Titles — New Mortgage Registration', value: mortgageFee, muted: true },
                 { label: `Land Titles — Discharge Fee${payouts > 1 ? 's' : ''} (${payouts} \u00d7 $10)`, value: dischargeFee, muted: true },
-                { label: 'Other Disbursements (est.)', value: other, muted: true },
             ],
-            total: legal + mortgageFee + dischargeFee + other,
-            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula. '
-                + 'GST is not included.',
+            total: legal + mortgageFee + dischargeFee + other + gst,
+            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula and '
+                + 'are GST-exempt. GST (5%) applies to the legal fee and other disbursements. Title insurance '
+                + 'is not included and varies by lender, bank and/or circumstance.',
         };
     }
 
@@ -449,7 +488,7 @@ element.remove();
         const filing = 100;
         const govt = 275; // tax-exempt government filing fee
         const disb = this.incorpDisbursements();
-        const gst = round2((legal + filing) * GST_RATE);
+        const gst = round2((legal + filing + disb) * GST_RATE);
 
         return {
             lines: [
@@ -459,12 +498,13 @@ element.remove();
                         : 'Legal Fee (Professional Corporation)', value: legal
                 },
                 { label: 'Filing Fee', value: filing, muted: true },
-                { label: 'Government Filing Fee (tax-exempt)', value: govt, muted: true },
-                { label: 'GST (5% on legal + filing fee)', value: gst, muted: true },
                 { label: 'Disbursements (est.)', value: disb, muted: true },
+                { label: 'GST (5% on legal fee, filing fee & disbursements)', value: gst, muted: true },
+                { label: 'Government Filing Fee (tax-exempt)', value: govt, muted: true },
             ],
             total: legal + filing + govt + gst + disb,
-            footnote: 'The government filing fee is GST-exempt. Disbursements may include name/NUANS searches.',
+            footnote: 'GST (5%) applies to the legal fee, filing fee and disbursements. The government filing '
+                + 'fee is GST-exempt. Disbursements may include name/NUANS searches.',
         };
     }
 }
