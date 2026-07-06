@@ -60,6 +60,11 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
       req:   FastifyRequest<{ Body: { password: string } }>,
       reply: FastifyReply,
     ) => {
+      if (!config.auth.calcPasswordHash) {
+        req.log.error('Calculator config password hash is not configured');
+        return reply.status(500).send({ error: 'Calculator config login is not configured.' });
+      }
+
       const match = await bcrypt.compare(
         req.body.password,
         config.auth.calcPasswordHash,
