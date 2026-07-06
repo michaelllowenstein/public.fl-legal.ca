@@ -565,7 +565,7 @@
             "included": true,
             "taxable": true,
             "label": "Other Disbursements (est.)",
-            "default": 250
+            "default": 200
           },
           "titleInsurance": { "included": false, "taxable": true, "label": "Title Insurance (est.)", "default": 300 },
           "titleRegistration": { "included": true, "taxable": false, "label": "Land Titles — Title Registration" },
@@ -593,7 +593,7 @@
             "included": true,
             "taxable": true,
             "label": "Other Disbursements (est.)",
-            "default": 250
+            "default": 200
           },
           "gst": { "included": true, "label": "GST (5% on legal fee & disbursements)" }
         },
@@ -612,7 +612,7 @@
             "included": true,
             "taxable": true,
             "label": "Other Disbursements (est.)",
-            "default": 250
+            "default": 200
           },
           "gst": { "included": true, "label": "GST (5% on legal fee & disbursements)" }
         },

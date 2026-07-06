@@ -11,7 +11,7 @@
   },
   "cash-purchase": {
     "fields": {
-      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 250 },
+      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 200 },
       "titleInsurance": { "included": false, "taxable": true, "label": "Title Insurance (est.)", "default": 300 },
       "titleRegistration": { "included": true, "taxable": false, "label": "Land Titles — Title Registration" },
       "gst": { "included": true, "label": "GST (5% on legal fee & disbursements)" }
@@ -24,7 +24,7 @@
       "condoEstoppel": { "included": true, "taxable": true, "label": "Condominium Estoppel Certificate (est.)", "default": 250 },
       "titleInsurance": { "included": false, "taxable": true, "label": "Title Insurance (est.)", "default": 300 },
       "mortgageDischarge": { "included": true, "taxable": false, "label": "Land Titles — Mortgage Discharge Fee", "default": 10 },
-      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 250 },
+      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 200 },
       "gst": { "included": true, "label": "GST (5% on legal fee & disbursements)" }
     },
     "disclaimer": "The Land Titles discharge fee is GST-exempt. Title insurance is not included in this estimate and may vary by lender, bank and/or circumstance. Your lender may also charge separate payout fees."
@@ -34,7 +34,7 @@
       "mortgageRegistration": { "included": true, "taxable": false, "label": "Land Titles — New Mortgage Registration" },
       "dischargeFee": { "included": true, "taxable": false, "label": "Land Titles — Discharge Fee(s)" },
       "titleInsurance": { "included": false, "taxable": true, "label": "Title Insurance (est.)", "default": 300 },
-      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 250 },
+      "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 200 },
       "gst": { "included": true, "label": "GST (5% on legal fee & disbursements)" }
     },
     "disclaimer": "Land Titles fees use the Government of Alberta’s current registration formula and are GST-exempt. Title insurance is not included in this estimate and may vary by lender, bank and/or circumstance."
