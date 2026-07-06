@@ -117,7 +117,7 @@
                   <input
                     id="calc-other-1"
                     type="number" min="0" step="25"
-                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                   [ngModel]="otherDisbursementsFor('purchase-mortgage')" (ngModelChange)="onOtherDisbursements('purchase-mortgage', $event)"
                     class="fl-input" />
                   <p class="fl-hint">Tax certificate, courier and other file-specific costs — adjust to suit your file.</p>
                 </div>
@@ -143,7 +143,7 @@
                   <input
                     id="calc-other-2"
                     type="number" min="0" step="25"
-                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                    [ngModel]="otherDisbursementsFor('cash-purchase')" (ngModelChange)="onOtherDisbursements('cash-purchase', $event)"
                     class="fl-input" />
                   <p class="fl-hint">Title insurance, tax certificate, courier and file-specific costs — adjust to suit your file.</p>
                 </div>
@@ -237,7 +237,7 @@
                   <input
                     id="calc-other-3"
                     type="number" min="0" step="25"
-                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                    [ngModel]="otherDisbursementsFor('sale')" (ngModelChange)="onOtherDisbursements('sale', $event)"
                     class="fl-input" />
                   <p class="fl-hint">Tax certificate, payout statement fees and other file-specific costs.</p>
                 </div>
@@ -283,7 +283,7 @@
                   <input
                     id="calc-other-4"
                     type="number" min="0" step="25"
-                    [ngModel]="otherDisbursements()" (ngModelChange)="onOtherDisbursements($event)"
+                    [ngModel]="otherDisbursementsFor('refinance')" (ngModelChange)="onOtherDisbursements('refinance', $event)"
                     class="fl-input" />
                 </div>
               }

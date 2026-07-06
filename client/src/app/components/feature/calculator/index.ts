@@ -66,7 +66,14 @@ export class Calculator {
     propertyValue = signal(500000);
     mortgageAmount = signal(400000);
     hasMortgage = signal(true);
-    otherDisbursements = signal(this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250));
+    otherDisbursements = signal<Record<TabId, number>>({
+        'purchase-mortgage': this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250),
+        'cash-purchase': this.calcConfig.fieldDefault('cash-purchase', 'otherDisbursements', 200),
+        sale: this.calcConfig.fieldDefault('sale', 'otherDisbursements', 200),
+        refinance: this.calcConfig.fieldDefault('refinance', 'otherDisbursements', 200),
+        wills: 0,
+        incorporation: 0,
+    });
     titleInsurance = signal(this.calcConfig.fieldDefault('purchase-mortgage', 'titleInsurance', 300));
 
     // Sale-specific ────────────────────────────────────────────────────────────
@@ -124,7 +131,10 @@ export class Calculator {
 
     onPropertyValue(v: unknown) { this.propertyValue.set(Math.max(0, Number(v) || 0)); }
     onMortgageAmount(v: unknown) { this.mortgageAmount.set(Math.max(0, Number(v) || 0)); }
-    onOtherDisbursements(v: unknown) { this.otherDisbursements.set(Math.max(0, Number(v) || 0)); }
+    onOtherDisbursements(tab: TabId, v: unknown) {
+        const value = Math.max(0, Number(v) || 0);
+        this.otherDisbursements.update((current) => ({ ...current, [tab]: value }));
+    }
     onTitleInsurance(v: unknown) { this.titleInsurance.set(Math.max(0, Number(v) || 0)); }
     onRprFee(v: unknown) { this.rprFee.set(Math.max(0, Number(v) || 0)); }
     onCondoEstoppelFee(v: unknown) { this.condoEstoppelFee.set(Math.max(0, Number(v) || 0)); }
@@ -138,6 +148,10 @@ export class Calculator {
             currency: 'CAD',
             maximumFractionDigits: 0,
         }).format(n || 0);
+    }
+
+    otherDisbursementsFor(tab: TabId): number {
+        return this.otherDisbursements()[tab] ?? this.calcConfig.fieldDefault(tab, 'otherDisbursements', 0);
     }
 
     activeTabLabel(): string {
@@ -234,7 +248,14 @@ export class Calculator {
         this.propertyValue.set(500000);
         this.mortgageAmount.set(400000);
         this.hasMortgage.set(true);
-        this.otherDisbursements.set(this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250));
+        this.otherDisbursements.set({
+            'purchase-mortgage': this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250),
+            'cash-purchase': this.calcConfig.fieldDefault('cash-purchase', 'otherDisbursements', 200),
+            sale: this.calcConfig.fieldDefault('sale', 'otherDisbursements', 200),
+            refinance: this.calcConfig.fieldDefault('refinance', 'otherDisbursements', 200),
+            wills: 0,
+            incorporation: 0,
+        });
         this.titleInsurance.set(this.calcConfig.fieldDefault('purchase-mortgage', 'titleInsurance', 300));
         this.propertyKind.set('house');
         this.rprFee.set(this.calcConfig.fieldDefault('sale', 'rpr', 850));
@@ -479,7 +500,7 @@ element.remove();
 
         const titleFee = ltoFee(price);
         const mortgageFee = ltoFee(this.mortgageAmount());
-        const other = this.otherDisbursements();
+        const other = this.otherDisbursementsFor(tab);
         const titleIns = this.titleInsurance();
 
         const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
@@ -526,7 +547,7 @@ element.remove();
         else legal = 1275;
 
         const titleFee = ltoFee(price);
-        const other = this.otherDisbursements();
+        const other = this.otherDisbursementsFor(tab);
         const titleIns = this.titleInsurance();
 
         const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
@@ -581,7 +602,7 @@ element.remove();
         const includeTitleIns = cfg.isIncluded(tab, 'titleInsurance');
         const titleIns = this.titleInsurance();
         const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
-        const other = this.otherDisbursements();
+        const other = this.otherDisbursementsFor(tab);
         const includeDischarge = cfg.isIncluded(tab, 'mortgageDischarge') && this.hasMortgage();
         const discharge = includeDischarge ? cfg.fieldDefault(tab, 'mortgageDischarge', 10) : 0;
         const includeGst = cfg.isIncluded(tab, 'gst');
@@ -619,7 +640,7 @@ element.remove();
         const mortgageFee = ltoFee(amount);
         const dischargeFee = payouts * 10;
         const titleIns = this.titleInsurance();
-        const other = this.otherDisbursements();
+        const other = this.otherDisbursementsFor(tab);
 
         const includeMortgageReg = cfg.isIncluded(tab, 'mortgageRegistration');
         const includeDischargeFee = cfg.isIncluded(tab, 'dischargeFee');
