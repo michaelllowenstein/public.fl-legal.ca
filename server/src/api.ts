@@ -38,6 +38,10 @@ dotenv.config();
  *   PATCH  /api/calendar/:id             update event (lawyer JWT)
  *   DELETE /api/calendar/:id             delete event (lawyer JWT)
  *
+ *   GET    /api/calc-config              fetch calculator config     (public)
+ *   PATCH  /api/calc-config              update one config field     (editor JWT)
+ *   PUT    /api/calc-config              replace entire config tree  (editor JWT)
+ *
  *   GET    /health                       liveness check
  */
 
@@ -59,6 +63,7 @@ import { profileRoutes } from '@routes/profile';
 import { contentRoutes } from '@routes/content';
 import { inquiryRoutes } from '@routes/inquiry';
 import { calendarRoutes } from '@routes/calendar';
+import { calcConfigRoutes } from '@routes/calc-config';
 import { initFirebase } from '@services/firebase';
 
 // ─── TLS helper ───────────────────────────────────────────────────────────────
@@ -241,13 +246,14 @@ async function main() {
 
   // ── API routes ────────────────────────────────────────────────────────────
 
-  fastify.register(authRoutes,     { prefix: '/api/auth'      });
-  fastify.register(docsRoutes,      { prefix: '/api/docs'      });
-  fastify.register(profileRoutes,  { prefix: '/api/profiles'  });
-  fastify.register(contentRoutes,  { prefix: '/api/content'   });
-  fastify.register(blogRoutes,     { prefix: '/api/blog'      });
-  fastify.register(calendarRoutes, { prefix: '/api/calendar'  });
-  fastify.register(inquiryRoutes,  { prefix: '/api/inquiries' });
+  fastify.register(authRoutes,      { prefix: '/api/auth'        });
+  fastify.register(docsRoutes,      { prefix: '/api/docs'        });
+  fastify.register(profileRoutes,   { prefix: '/api/profiles'    });
+  fastify.register(contentRoutes,   { prefix: '/api/content'     });
+  fastify.register(blogRoutes,      { prefix: '/api/blog'        });
+  fastify.register(calendarRoutes,  { prefix: '/api/calendar'    });
+  fastify.register(inquiryRoutes,   { prefix: '/api/inquiries'   });
+  fastify.register(calcConfigRoutes,{ prefix: '/api/calc-config' });
 
   // ── Start ─────────────────────────────────────────────────────────────────
 
