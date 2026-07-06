@@ -16,6 +16,7 @@ dotenv.config();
 
  *
  *   POST   /api/auth/editor              secretary password → editor JWT
+ *   POST   /api/auth/calc                calculator password → calc JWT
  *   POST   /api/auth/lawyer              Firebase ID token  → lawyer JWT
  *   POST   /api/auth/lawyer/password     username+password  → lawyer JWT
  *
@@ -39,8 +40,8 @@ dotenv.config();
  *   DELETE /api/calendar/:id             delete event (lawyer JWT)
  *
  *   GET    /api/calc-config              fetch calculator config     (public)
- *   PATCH  /api/calc-config              update one config field     (editor JWT)
- *   PUT    /api/calc-config              replace entire config tree  (editor JWT)
+ *   PATCH  /api/calc-config              update one config field     (calc JWT)
+ *   PUT    /api/calc-config              replace entire config tree  (calc JWT)
  *
  *   GET    /health                       liveness check
  */
@@ -184,7 +185,7 @@ async function main() {
     index:  false,   // index.html served manually via GET /api below
   });
 
-  // ── JWT auth decorators (verifyEditor / verifyLawyer) ─────────────────────
+  // ── JWT auth decorators (verifyEditor / verifyCalcConfig / verifyLawyer) ──
 
   await fastify.register(authPlugin);
 

@@ -65,9 +65,11 @@ export const config = {
   auth: {
     jwtSecret:          require('JWT_SECRET'),
     editorPasswordHash: require('EDITOR_HASH'),
+    calcPasswordHash:   require('CALC_HASH'),
     adminPasswordHash: require('ADMIN_HASH'),
     lawyerTokenExpiry:  optional('LAWYER_TOKEN_EXPIRY', '8h'),
     editorTokenExpiry:  optional('EDITOR_TOKEN_EXPIRY', '4h'),
+    calcTokenExpiry:    optional('CALC_TOKEN_EXPIRY', '4h'),
   },
 
   firebase: {

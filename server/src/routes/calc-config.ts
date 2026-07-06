@@ -2,8 +2,8 @@
  * routes/calc-config.ts
  *
  * GET   /api/calc-config   — full calculator config tree           (public)
- * PATCH /api/calc-config   — update one field                      (editor JWT)
- * PUT   /api/calc-config   — replace the entire tree                (editor JWT)
+ * PATCH /api/calc-config   — update one field                      (calc JWT)
+ * PUT   /api/calc-config   — replace the entire tree                (calc JWT)
  *                            (used by "Apply JSON" and "Reset to Defaults"
  *                            in the admin settings panel)
  *
@@ -118,7 +118,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
     },
   );
 
-  // ── PATCH /api/calc-config (editor JWT) ───────────────────────────────────
+  // ── PATCH /api/calc-config (calc JWT) ─────────────────────────────────────
   //
   // Single-field update. Writes the field and an audit entry atomically via
   // dbMultiUpdate, same as content.ts's PATCH /api/content.
@@ -127,7 +127,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
     '/',
     {
       schema:     calcConfigPatchSchema,
-      preHandler: [(fastify as any).verifyEditor],
+      preHandler: [(fastify as any).verifyCalcConfig],
       config:     { rateLimit: { max: 60, timeWindow: '1 minute' } },
     },
     async (
@@ -155,7 +155,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
           [`public/${auditKey}`]: {
             key:      safeKey,
             value,
-            editorId: req.editorPayload?.id ?? 'editor',
+            calcId:   req.calcPayload?.id ?? 'calc',
             at:       new Date().toISOString(),
           },
         });
@@ -169,7 +169,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
     },
   );
 
-  // ── PUT /api/calc-config (editor JWT) — full-tree replace ─────────────────
+  // ── PUT /api/calc-config (calc JWT) — full-tree replace ───────────────────
   //
   // Used by "Apply JSON" and "Reset to Defaults" in the admin settings panel,
   // where the whole tree changes at once rather than one field.
@@ -177,7 +177,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
   fastify.put(
     '/',
     {
-      preHandler: [(fastify as any).verifyEditor],
+      preHandler: [(fastify as any).verifyCalcConfig],
       config:     { rateLimit: { max: 20, timeWindow: '1 minute' } },
     },
     async (req: FastifyRequest, reply: FastifyReply) => {
@@ -200,7 +200,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
           [`public/${auditKey}`]: {
             key:      'ALL',
             tabCount: tabs.length,
-            editorId: req.editorPayload?.id ?? 'editor',
+            calcId:   req.calcPayload?.id ?? 'calc',
             at:       new Date().toISOString(),
           },
         });

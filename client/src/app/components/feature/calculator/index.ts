@@ -14,16 +14,9 @@ import { TabId, CalcResult, ResultLine } from '@schema/models';
 import { TABS, WILL_LABELS, GST_RATE } from '@schema/constants';
 import { injectDialogClose } from '@components/factory/dialog/tokens';
 import { CalculatorConfigService } from '@core/services/calc-config';
+import { AuthService } from '@core/services/auth';
 
 // ── Component ─────────────────────────────────────────────────────────────────
-
-/**
- * TEMPORARY: hardcoded admin password gating the settings panel below.
- * This is a dev-only convenience for tuning which fields/disclaimers show
- * up per tab — NOT real auth. Remove the settings panel entirely (or wire
- * it to real role-based auth) before treating this as production-hardened.
- */
-const ADMIN_PASSWORD = 'admin';
 
 type CalculatorMode = 'calculator' | 'settings';
 
@@ -52,6 +45,7 @@ export class Calculator {
     close = injectDialogClose<void>();
 
     readonly calcConfig: CalculatorConfigService = inject(CalculatorConfigService);
+    private readonly auth: AuthService = inject(AuthService);
 
     tabs = TABS;
     activeTab = signal<TabId>('purchase-mortgage');
@@ -163,12 +157,13 @@ export class Calculator {
         this.mode.set('calculator');
     }
 
-    tryUnlock(): void {
-        if (this.passwordInput() === ADMIN_PASSWORD) {
+    async tryUnlock(): Promise<void> {
+        try {
+            await this.auth.loginForCalcConfig(this.passwordInput());
             this.settingsUnlocked.set(true);
             this.passwordError.set(false);
             this.rawJsonDraft.set(this.calcConfig.exportJson());
-        } else {
+        } catch {
             this.passwordError.set(true);
         }
     }

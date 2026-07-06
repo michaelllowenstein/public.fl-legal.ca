@@ -3,7 +3,7 @@
 # auth-cli.sh — FL Legal Auth Token Manager
 # =============================================================================
 #
-# Manages editor and lawyer JWT tokens for both local and production.
+# Manages editor, lawyer, and calculator-config JWT tokens for both local and production.
 # Also generates and verifies bcrypt password hashes for .env and Vercel.
 #
 # Usage:
@@ -13,10 +13,12 @@
 # Commands:
 #   login:editor                   authenticate as editor → save token
 #   login:lawyer                   authenticate as lawyer → save token
+#   login:calc                     authenticate for calculator config → save token
 #   verify:editor                  decode + verify editor token
 #   verify:lawyer                  decode + verify lawyer token
-#   token:show                     print both current tokens
-#   token:clear                    clear both saved tokens
+#   verify:calc                    decode + verify calc token
+#   token:show                     print current tokens
+#   token:clear                    clear saved tokens
 #   hash:gen                       generate a new bcrypt hash for a password
 #   hash:verify                    verify a password against a stored hash
 #   health                         API health check
@@ -27,6 +29,7 @@
 # Token storage:
 #   /tmp/fl_editor_token           editor JWT (matches sessionStorage key)
 #   /tmp/fl_lawyer_token           lawyer JWT
+#   /tmp/fl_calc_token             calculator config JWT
 #
 # Dependencies: curl, jq (optional but recommended), node (for hash ops)
 # =============================================================================
@@ -41,6 +44,7 @@ BLUE='\033[0;34m'; CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
 ENV_FILE="$(dirname "$0")/.auth.env"
 TOKEN_EDITOR=/tmp/fl_editor_token
 TOKEN_LAWYER=/tmp/fl_lawyer_token
+TOKEN_CALC=/tmp/fl_calc_token
 LOCAL_BASE="https://localhost:8228"
 PROD_BASE="https://fl-legal.ca"
  
@@ -81,6 +85,7 @@ header() {
   printf "  base: ${CYAN}%s${NC}\n" "$BASE"
   printf "  editor token : %s\n" "$(token_status "$TOKEN_EDITOR")"
   printf "  lawyer token : %s\n" "$(token_status "$TOKEN_LAWYER")"
+  printf "  calc token   : %s\n" "$(token_status "$TOKEN_CALC")"
   hr
   echo
 }
@@ -172,6 +177,12 @@ cmd_env() {
     echo -e "  email       : $(decode_token_field "$tok" email)"
   fi
   echo
+  echo -e "  Calc token  : $(token_status "$TOKEN_CALC")"
+  if [[ -f "$TOKEN_CALC" ]]; then
+    local tok; tok=$(cat "$TOKEN_CALC")
+    echo -e "  Role        : $(decode_token_field "$tok" role)"
+  fi
+  echo
 }
  
 cmd_login_editor() {
@@ -230,6 +241,34 @@ cmd_login_lawyer() {
     echo "  Response: $resp"
   fi
 }
+
+cmd_login_calc() {
+  echo -e "${BOLD}Calculator Config Login${NC}"
+  echo -e "URL: ${CYAN}${BASE}/api/auth/calc${NC}"
+  echo
+  read -rsp "  Enter calculator password: " pass; echo
+
+  local resp
+  resp=$(curl $(curl_flags) -X POST "${BASE}/api/auth/calc" \
+    -H "Content-Type: application/json" \
+    -d "{\"password\":\"${pass}\"}" 2>&1)
+
+  if echo "$resp" | grep -q '"token"'; then
+    local token; token=$(echo "$resp" | (command -v jq &>/dev/null && jq -r '.token' || grep -o '"token":"[^"]*"' | cut -d'"' -f4))
+    echo "$token" > "$TOKEN_CALC"
+    echo
+    echo -e "  ${GREEN}✓ Calculator config token saved${NC}"
+    echo -e "  Stored at: ${TOKEN_CALC}"
+    echo -e "  Status   : $(token_status "$TOKEN_CALC")"
+    echo
+    echo -e "  ${BOLD}Token payload:${NC}"
+    decode_token_payload "$token"
+  else
+    echo
+    echo -e "  ${RED}✗ Login failed${NC}"
+    echo "  Response: $resp"
+  fi
+}
  
 decode_token_payload() {
   local token="$1"
@@ -279,6 +318,28 @@ cmd_verify_lawyer() {
     (command -v jq &>/dev/null && jq 'length' || head -c 200)
   echo
 }
+
+cmd_verify_calc() {
+  echo -e "${BOLD}Calculator Config Token Verification${NC}"
+  echo
+  if [[ ! -f "$TOKEN_CALC" ]]; then
+    echo -e "  ${RED}No calculator config token saved. Run login:calc first.${NC}"
+    return
+  fi
+  local tok; tok=$(cat "$TOKEN_CALC")
+  echo -e "  Status: $(token_status "$TOKEN_CALC")"
+  echo
+  echo -e "  ${BOLD}Decoded payload:${NC}"
+  decode_token_payload "$tok"
+  echo
+  echo -e "  ${BOLD}Live API auth test — PATCH /api/calc-config with intentionally invalid key:${NC}"
+  echo -e "  ${YELLOW}Expected result with a valid calc token: 400 validation error after auth.${NC}"
+  curl $(curl_flags) -X PATCH "${BASE}/api/calc-config" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $tok" \
+    -d '{"key":"__auth__/disclaimer","value":""}' | pretty
+  echo
+}
  
 cmd_token_show() {
   echo -e "${BOLD}Saved Tokens${NC}"
@@ -300,16 +361,25 @@ cmd_token_show() {
   else
     echo -e "  ${RED}not set${NC}"
   fi
+  echo
+  echo -e "  ${CYAN}Calculator config${NC}"
+  if [[ -f "$TOKEN_CALC" ]]; then
+    echo "  $(cat "$TOKEN_CALC")"
+    echo
+    decode_token_payload "$(cat "$TOKEN_CALC")"
+  else
+    echo -e "  ${RED}not set${NC}"
+  fi
 }
  
 cmd_token_clear() {
-  rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER"
-  echo -e "  ${GREEN}✓ Both tokens cleared${NC}"
+  rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER" "$TOKEN_CALC"
+  echo -e "  ${GREEN}✓ Tokens cleared${NC}"
 }
  
 cmd_hash_gen() {
   echo -e "${BOLD}Generate bcrypt hash${NC}"
-  echo -e "  Used to set ${CYAN}EDITOR_HASH${NC} or ${CYAN}ADMIN_HASH${NC} in .env / Vercel"
+  echo -e "  Used to set ${CYAN}EDITOR_HASH${NC}, ${CYAN}CALC_HASH${NC}, or ${CYAN}ADMIN_HASH${NC} in .env / Vercel"
   echo
   read -rsp "  Enter password to hash: " pass; echo
   read -rsp "  Confirm password: " pass2; echo
@@ -340,9 +410,10 @@ cmd_hash_gen() {
     echo
     echo -e "  ${BOLD}Add to server/.env:${NC}"
     echo "  EDITOR_HASH=$hash"
+    echo "  CALC_HASH=$hash"
     echo
     echo -e "  ${BOLD}Add to Vercel env vars:${NC}"
-    echo "  Key:   EDITOR_HASH"
+    echo "  Key:   EDITOR_HASH or CALC_HASH"
     echo "  Value: $hash"
   else
     echo -e "  ${RED}✗ Hash generation failed: $hash${NC}"
@@ -382,7 +453,7 @@ cmd_hash_verify() {
 cmd_switch_local() {
   echo "$LOCAL_BASE" > "$ENV_FILE"
   BASE="$LOCAL_BASE"
-  rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER"   # clear tokens — different env
+  rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER" "$TOKEN_CALC"   # clear tokens — different env
   echo -e "  ${GREEN}✓ Switched to LOCAL (${LOCAL_BASE})${NC}"
   echo -e "  Tokens cleared — re-login required"
 }
@@ -395,7 +466,7 @@ cmd_switch_prod() {
   if [[ "${confirm,,}" == "y" ]]; then
     echo "$PROD_BASE" > "$ENV_FILE"
     BASE="$PROD_BASE"
-    rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER"
+    rm -f "$TOKEN_EDITOR" "$TOKEN_LAWYER" "$TOKEN_CALC"
     echo -e "  ${GREEN}✓ Switched to PRODUCTION${NC}"
     echo -e "  Tokens cleared — re-login required"
   else
@@ -412,14 +483,16 @@ menu() {
     echo -e "  ${BOLD}Authentication${NC}"
     echo "   1) Login as editor"
     echo "   2) Login as lawyer"
-    echo "   3) Verify editor token"
-    echo "   4) Verify lawyer token"
-    echo "   5) Show raw tokens"
-    echo "   6) Clear all tokens"
+    echo "   3) Login for calculator config"
+    echo "   4) Verify editor token"
+    echo "   5) Verify lawyer token"
+    echo "   6) Verify calculator config token"
+    echo "   7) Show raw tokens"
+    echo "   8) Clear all tokens"
     echo
     echo -e "  ${BOLD}Password Hashes${NC}"
-    echo "   7) Generate bcrypt hash  (for .env / Vercel)"
-    echo "   8) Verify password vs hash"
+    echo "   g) Generate bcrypt hash  (for .env / Vercel)"
+    echo "   v) Verify password vs hash"
     echo
     echo -e "  ${BOLD}Environment${NC}"
     echo "   9) Switch to LOCAL  (https://localhost:8443)"
@@ -434,12 +507,14 @@ menu() {
     case "$choice" in
       1)  cmd_login_editor ;;
       2)  cmd_login_lawyer ;;
-      3)  cmd_verify_editor ;;
-      4)  cmd_verify_lawyer ;;
-      5)  cmd_token_show ;;
-      6)  cmd_token_clear ;;
-      7)  cmd_hash_gen ;;
-      8)  cmd_hash_verify ;;
+      3)  cmd_login_calc ;;
+      4)  cmd_verify_editor ;;
+      5)  cmd_verify_lawyer ;;
+      6)  cmd_verify_calc ;;
+      7)  cmd_token_show ;;
+      8)  cmd_token_clear ;;
+      g|G) cmd_hash_gen ;;
+      v|V) cmd_hash_verify ;;
       9)  cmd_switch_local ;;
       0)  cmd_switch_prod ;;
       h)  cmd_health ;;
@@ -458,8 +533,10 @@ menu() {
 case "${1:-}" in
   login:editor)    cmd_login_editor ;;
   login:lawyer)    cmd_login_lawyer ;;
+  login:calc)      cmd_login_calc ;;
   verify:editor)   cmd_verify_editor ;;
   verify:lawyer)   cmd_verify_lawyer ;;
+  verify:calc)     cmd_verify_calc ;;
   token:show)      cmd_token_show ;;
   token:clear)     cmd_token_clear ;;
   hash:gen)        cmd_hash_gen ;;
