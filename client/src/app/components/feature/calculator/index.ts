@@ -6,19 +6,31 @@ import {
     inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
 import { FLIcon } from '@components/ui/icon';
 import { ltoFee, round2, esc } from '@schema/utils';
 import { TabId, CalcResult, ResultLine } from '@schema/models';
 import { TABS, WILL_LABELS, GST_RATE } from '@schema/constants';
 import { injectDialogClose } from '@components/factory/dialog/tokens';
+import { CalculatorConfigService } from '@core/services/calc-config';
 
 // ── Component ─────────────────────────────────────────────────────────────────
+
+/**
+ * TEMPORARY: hardcoded admin password gating the settings panel below.
+ * This is a dev-only convenience for tuning which fields/disclaimers show
+ * up per tab — NOT real auth. Remove the settings panel entirely (or wire
+ * it to real role-based auth) before treating this as production-hardened.
+ */
+const ADMIN_PASSWORD = 'admin';
+
+type CalculatorMode = 'calculator' | 'settings';
 
 @Component({
     selector: 'app-calculator',
     standalone: true,
-    imports: [FormsModule, FLIcon],
+    imports: [FormsModule, NgClass, FLIcon],
     templateUrl: './index.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
@@ -36,24 +48,53 @@ import { injectDialogClose } from '@components/factory/dialog/tokens';
   `],
 })
 export class Calculator {
-    private router = inject(Router);
+    private router: Router = inject(Router);
     close = injectDialogClose<void>();
+
+    readonly calcConfig: CalculatorConfigService = inject(CalculatorConfigService);
 
     tabs = TABS;
     activeTab = signal<TabId>('purchase-mortgage');
 
     pdfBlocked = signal(false);
 
+    // ── View mode (calculator vs. admin settings) ──────────────────────────────
+    mode = signal<CalculatorMode>('calculator');
+    settingsUnlocked = signal(false);
+    passwordInput = signal('');
+    passwordError = signal(false);
+    settingsTab = signal<TabId>('purchase-mortgage');
+    showRawJson = signal(false);
+    rawJsonDraft = signal('');
+    rawJsonError = signal<string | null>(null);
+
     // Real estate (shared) ─────────────────────────────────────────────────────
     propertyValue = signal(500000);
     mortgageAmount = signal(400000);
     hasMortgage = signal(true);
-    otherDisbursements = signal(250);
+    otherDisbursements = signal(this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250));
+    titleInsurance = signal(this.calcConfig.fieldDefault('purchase-mortgage', 'titleInsurance', 300));
 
     // Sale-specific ────────────────────────────────────────────────────────────
     propertyKind = signal<'house' | 'condo'>('house');
-    rprFee = signal(850);
-    condoEstoppelFee = signal(250);
+    rprFee = signal(this.calcConfig.fieldDefault('sale', 'rpr', 850));
+    condoEstoppelFee = signal(this.calcConfig.fieldDefault('sale', 'condoEstoppel', 250));
+
+    /** Which report types the current config allows, and which one is in effect. */
+    saleReportAvailability = computed(() => {
+        const fields = this.calcConfig.config()['sale'].fields;
+        return {
+            house: fields['rpr']?.included ?? false,
+            condo: fields['condoEstoppel']?.included ?? false,
+        };
+    });
+    effectiveSaleKind = computed<'house' | 'condo' | null>(() => {
+        const avail = this.saleReportAvailability();
+        if (avail.house && avail.condo) return this.propertyKind();
+        if (avail.house) return 'house';
+        if (avail.condo) return 'condo';
+        return null;
+    });
 
     // Refinance ──────────────────────────────────────────────────────────────
     refinanceAmount = signal(400000);
@@ -65,7 +106,7 @@ export class Calculator {
 
     // Incorporation ──────────────────────────────────────────────────────────
     corpType = signal<'standard' | 'professional'>('standard');
-    incorpDisbursements = signal(75);
+    incorpDisbursements = signal(this.calcConfig.fieldDefault('incorporation', 'disbursements', 75));
 
     result = computed<CalcResult>(() => {
         switch (this.activeTab()) {
@@ -90,6 +131,7 @@ export class Calculator {
     onPropertyValue(v: unknown) { this.propertyValue.set(Math.max(0, Number(v) || 0)); }
     onMortgageAmount(v: unknown) { this.mortgageAmount.set(Math.max(0, Number(v) || 0)); }
     onOtherDisbursements(v: unknown) { this.otherDisbursements.set(Math.max(0, Number(v) || 0)); }
+    onTitleInsurance(v: unknown) { this.titleInsurance.set(Math.max(0, Number(v) || 0)); }
     onRprFee(v: unknown) { this.rprFee.set(Math.max(0, Number(v) || 0)); }
     onCondoEstoppelFee(v: unknown) { this.condoEstoppelFee.set(Math.max(0, Number(v) || 0)); }
     onRefinanceAmount(v: unknown) { this.refinanceAmount.set(Math.max(0, Number(v) || 0)); }
@@ -106,6 +148,109 @@ export class Calculator {
 
     activeTabLabel(): string {
         return this.tabs.find(t => t.id === this.activeTab())?.label ?? '';
+    }
+
+    // ── Admin settings panel ────────────────────────────────────────────────
+
+    openSettings(): void {
+        this.mode.set('settings');
+        this.settingsTab.set(this.activeTab());
+        this.passwordInput.set('');
+        this.passwordError.set(false);
+    }
+
+    closeSettings(): void {
+        this.mode.set('calculator');
+    }
+
+    tryUnlock(): void {
+        if (this.passwordInput() === ADMIN_PASSWORD) {
+            this.settingsUnlocked.set(true);
+            this.passwordError.set(false);
+            this.rawJsonDraft.set(this.calcConfig.exportJson());
+        } else {
+            this.passwordError.set(true);
+        }
+    }
+
+    fieldKeysFor(tab: TabId): string[] {
+        return this.calcConfig.fieldKeys(tab);
+    }
+
+    isFieldIncluded(tab: TabId, field: string): boolean {
+        return this.calcConfig.isIncluded(tab, field);
+    }
+    setFieldIncluded(tab: TabId, field: string, value: boolean): void {
+        this.calcConfig.setFieldIncluded(tab, field, value);
+    }
+
+    fieldHasTaxable(tab: TabId, field: string): boolean {
+        return this.calcConfig.hasTaxableFlag(tab, field);
+    }
+    isFieldTaxable(tab: TabId, field: string): boolean {
+        return this.calcConfig.isTaxable(tab, field);
+    }
+    setFieldTaxable(tab: TabId, field: string, value: boolean): void {
+        this.calcConfig.setFieldTaxable(tab, field, value);
+    }
+
+    fieldLabelValue(tab: TabId, field: string): string {
+        return this.calcConfig.fieldLabel(tab, field, field);
+    }
+    setFieldLabel(tab: TabId, field: string, value: string): void {
+        this.calcConfig.setFieldLabel(tab, field, value);
+    }
+
+    fieldHasDefault(tab: TabId, field: string): boolean {
+        return this.calcConfig.hasDefault(tab, field);
+    }
+    fieldDefaultValue(tab: TabId, field: string): number {
+        return this.calcConfig.fieldDefault(tab, field, 0);
+    }
+    setFieldDefault(tab: TabId, field: string, value: unknown): void {
+        this.calcConfig.setFieldDefault(tab, field, Number(value) || 0);
+    }
+
+    disclaimerValue(tab: TabId): string {
+        return this.calcConfig.disclaimer(tab);
+    }
+    setDisclaimer(tab: TabId, value: string): void {
+        this.calcConfig.setDisclaimer(tab, value);
+    }
+
+    resetConfig(): void {
+        this.calcConfig.resetToDefaults();
+        this.rawJsonDraft.set(this.calcConfig.exportJson());
+        this.rawJsonError.set(null);
+    }
+
+    applyRawJson(): void {
+        try {
+            this.calcConfig.importJson(this.rawJsonDraft());
+            this.rawJsonError.set(null);
+        } catch (err) {
+            this.rawJsonError.set('Could not parse that JSON — no changes applied.');
+        }
+    }
+
+    /** Applies current config defaults to all editable inputs and returns to the calculator view. */
+    relaunch(): void {
+        this.activeTab.set('purchase-mortgage');
+        this.propertyValue.set(500000);
+        this.mortgageAmount.set(400000);
+        this.hasMortgage.set(true);
+        this.otherDisbursements.set(this.calcConfig.fieldDefault('purchase-mortgage', 'otherDisbursements', 250));
+        this.titleInsurance.set(this.calcConfig.fieldDefault('purchase-mortgage', 'titleInsurance', 300));
+        this.propertyKind.set('house');
+        this.rprFee.set(this.calcConfig.fieldDefault('sale', 'rpr', 850));
+        this.condoEstoppelFee.set(this.calcConfig.fieldDefault('sale', 'condoEstoppel', 250));
+        this.refinanceAmount.set(400000);
+        this.payoutCount.set(1);
+        this.willParty.set('single');
+        this.willPackage.set('package');
+        this.corpType.set('standard');
+        this.incorpDisbursements.set(this.calcConfig.fieldDefault('incorporation', 'disbursements', 75));
+        this.mode.set('calculator');
     }
 
     // ── PDF export (print-to-PDF — no external dependency) ─────────────────────
@@ -153,8 +298,6 @@ export class Calculator {
 
             const rows = r.lines
                 .map(line => {
-                    // All line entries share the same light treatment now —
-                    // only the total row is emphasized (see .total-row below).
                     return `
           <tr>
             <td class="line">${esc(line.label)}</td>
@@ -322,14 +465,16 @@ element.remove();
 
     // ── Calculators (fee tiers sourced from the firm's published PRICING schedule) ──
     //
-    // GST (5%) applies to legal fees and disbursements (RPR, condo estoppel
-    // certificates, and other file-specific disbursements). GST is EXEMPT on
-    // Land Titles Office registration/discharge fees, since those are
-    // government charges, not taxable supplies. Title insurance is NOT part
-    // of the calculation — see the per-tab footnotes, which disclose that it
-    // varies by lender/bank/circumstance and isn't included in the estimate.
+    // Every line below is gated on this.calcConfig.isIncluded(tab, field) so the
+    // admin settings panel can switch fields on/off (and re-tax them) live.
+    // GST is computed only from fields whose config marks them `taxable: true`,
+    // plus the core legal fee (always taxable when the tab's `gst` field is on).
+    // Land Titles Office fees are never taxable — that's a legal fact, not a
+    // toggle — but they can still be hidden via `included` for testing.
 
     private purchaseMortgageResult(): CalcResult {
+        const tab: TabId = 'purchase-mortgage';
+        const cfg = this.calcConfig;
         const price = this.propertyValue();
         let legal: number;
         if (price < 350000) legal = 975;
@@ -337,30 +482,42 @@ element.remove();
         else if (price < 850000) legal = 1375;
         else legal = 1575;
 
-        const titleFee = ltoFee(price);           // GST-exempt (Land Titles)
-        const mortgageFee = ltoFee(this.mortgageAmount()); // GST-exempt (Land Titles)
-        const other = this.otherDisbursements();   // taxable disbursement
+        const titleFee = ltoFee(price);
+        const mortgageFee = ltoFee(this.mortgageAmount());
+        const other = this.otherDisbursements();
+        const titleIns = this.titleInsurance();
 
-        const taxable = legal + other;
-        const gst = round2(taxable * GST_RATE);
+        const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
+        const includeTitleIns = cfg.isIncluded(tab, 'titleInsurance');
+        const includeTitleReg = cfg.isIncluded(tab, 'titleRegistration');
+        const includeMortgageReg = cfg.isIncluded(tab, 'mortgageRegistration');
+        const includeGst = cfg.isIncluded(tab, 'gst');
 
-        return {
-            lines: [
-                { label: 'Legal Fee (Purchase & Mortgage)', value: legal },
-                { label: 'Other Disbursements (est.)', value: other, muted: true },
-                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
-                { label: 'Land Titles — Title Registration', value: titleFee, muted: true },
-                { label: 'Land Titles — Mortgage Registration', value: mortgageFee, muted: true },
-            ],
-            total: legal + titleFee + mortgageFee + other + gst,
-            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula '
-                + '($50 + $5 per $5,000 of value, effective Oct. 2024) and are GST-exempt. GST (5%) applies '
-                + 'to the legal fee and other disbursements. Title insurance is not included and varies by '
-                + 'lender, bank and/or circumstance.',
-        };
+        let taxable = legal;
+        if (includeOther && cfg.isTaxable(tab, 'otherDisbursements')) taxable += other;
+        if (includeTitleIns && cfg.isTaxable(tab, 'titleInsurance')) taxable += titleIns;
+        const gst = includeGst ? round2(taxable * GST_RATE) : 0;
+
+        const lines: ResultLine[] = [{ label: 'Legal Fee (Purchase & Mortgage)', value: legal }];
+        if (includeTitleIns) lines.push({ label: cfg.fieldLabel(tab, 'titleInsurance', 'Title Insurance (est.)'), value: titleIns, muted: true });
+        if (includeOther) lines.push({ label: cfg.fieldLabel(tab, 'otherDisbursements', 'Other Disbursements (est.)'), value: other, muted: true });
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+        if (includeTitleReg) lines.push({ label: cfg.fieldLabel(tab, 'titleRegistration', 'Land Titles — Title Registration'), value: titleFee, muted: true });
+        if (includeMortgageReg) lines.push({ label: cfg.fieldLabel(tab, 'mortgageRegistration', 'Land Titles — Mortgage Registration'), value: mortgageFee, muted: true });
+
+        const total = legal
+            + (includeTitleIns ? titleIns : 0)
+            + (includeOther ? other : 0)
+            + gst
+            + (includeTitleReg ? titleFee : 0)
+            + (includeMortgageReg ? mortgageFee : 0);
+
+        return { lines, total, footnote: cfg.disclaimer(tab) };
     }
 
     private cashPurchaseResult(): CalcResult {
+        const tab: TabId = 'cash-purchase';
+        const cfg = this.calcConfig;
         const price = this.propertyValue();
         if (price >= 850000) {
             return {
@@ -373,26 +530,38 @@ element.remove();
         else if (price < 650000) legal = 1150;
         else legal = 1275;
 
-        const titleFee = ltoFee(price); // GST-exempt (Land Titles)
+        const titleFee = ltoFee(price);
         const other = this.otherDisbursements();
+        const titleIns = this.titleInsurance();
 
-        const taxable = legal + other;
-        const gst = round2(taxable * GST_RATE);
+        const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
+        const includeTitleIns = cfg.isIncluded(tab, 'titleInsurance');
+        const includeTitleReg = cfg.isIncluded(tab, 'titleRegistration');
+        const includeGst = cfg.isIncluded(tab, 'gst');
 
-        return {
-            lines: [
-                { label: 'Legal Fee (Cash Purchase)', value: legal },
-                { label: 'Other Disbursements (est.)', value: other, muted: true },
-                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
-                { label: 'Land Titles — Title Registration', value: titleFee, muted: true },
-            ],
-            total: legal + titleFee + other + gst,
-            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula and '
-                + 'are GST-exempt. GST (5%) applies to the legal fee and other disbursements.',
-        };
+        let taxable = legal;
+        if (includeOther && cfg.isTaxable(tab, 'otherDisbursements')) taxable += other;
+        if (includeTitleIns && cfg.isTaxable(tab, 'titleInsurance')) taxable += titleIns;
+        const gst = includeGst ? round2(taxable * GST_RATE) : 0;
+
+        const lines: ResultLine[] = [{ label: 'Legal Fee (Cash Purchase)', value: legal }];
+        if (includeTitleIns) lines.push({ label: cfg.fieldLabel(tab, 'titleInsurance', 'Title Insurance (est.)'), value: titleIns, muted: true });
+        if (includeOther) lines.push({ label: cfg.fieldLabel(tab, 'otherDisbursements', 'Other Disbursements (est.)'), value: other, muted: true });
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+        if (includeTitleReg) lines.push({ label: cfg.fieldLabel(tab, 'titleRegistration', 'Land Titles — Title Registration'), value: titleFee, muted: true });
+
+        const total = legal
+            + (includeTitleIns ? titleIns : 0)
+            + (includeOther ? other : 0)
+            + gst
+            + (includeTitleReg ? titleFee : 0);
+
+        return { lines, total, footnote: cfg.disclaimer(tab) };
     }
 
     private saleResult(): CalcResult {
+        const tab: TabId = 'sale';
+        const cfg = this.calcConfig;
         const price = this.propertyValue();
         if (price >= 950000) {
             return {
@@ -405,64 +574,91 @@ element.remove();
         else if (price < 650000) legal = 995;
         else legal = 1195;
 
-        const isHouse = this.propertyKind() === 'house';
-        const reportFee = isHouse ? this.rprFee() : this.condoEstoppelFee();
+        const kind = this.effectiveSaleKind();
+        const reportIncluded = kind !== null;
+        const isHouse = kind === 'house';
+        const reportFee = reportIncluded ? (isHouse ? this.rprFee() : this.condoEstoppelFee()) : 0;
+        const reportField = isHouse ? 'rpr' : 'condoEstoppel';
         const reportLabel = isHouse
-            ? 'Real Property Report (est.)'
-            : 'Condominium Estoppel Certificate (est.)';
+            ? cfg.fieldLabel(tab, 'rpr', 'Real Property Report (est.)')
+            : cfg.fieldLabel(tab, 'condoEstoppel', 'Condominium Estoppel Certificate (est.)');
 
-        const discharge = this.hasMortgage() ? 10 : 0; // GST-exempt (Land Titles)
+        const includeTitleIns = cfg.isIncluded(tab, 'titleInsurance');
+        const titleIns = this.titleInsurance();
+        const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
         const other = this.otherDisbursements();
+        const includeDischarge = cfg.isIncluded(tab, 'mortgageDischarge') && this.hasMortgage();
+        const discharge = includeDischarge ? cfg.fieldDefault(tab, 'mortgageDischarge', 10) : 0;
+        const includeGst = cfg.isIncluded(tab, 'gst');
 
-        const taxable = legal + reportFee + other;
-        const gst = round2(taxable * GST_RATE);
+        let taxable = legal;
+        if (reportIncluded && cfg.isTaxable(tab, reportField)) taxable += reportFee;
+        if (includeTitleIns && cfg.isTaxable(tab, 'titleInsurance')) taxable += titleIns;
+        if (includeOther && cfg.isTaxable(tab, 'otherDisbursements')) taxable += other;
+        const gst = includeGst ? round2(taxable * GST_RATE) : 0;
 
         const lines: ResultLine[] = [{ label: 'Legal Fee (Sale)', value: legal }];
-        lines.push({ label: reportLabel, value: reportFee, muted: true });
-        lines.push({ label: 'Other Disbursements (est.)', value: other, muted: true });
-        lines.push({ label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true });
-        if (this.hasMortgage()) {
-            lines.push({ label: 'Land Titles — Mortgage Discharge Fee', value: discharge, muted: true });
-        }
+        if (reportIncluded) lines.push({ label: reportLabel, value: reportFee, muted: true });
+        if (includeTitleIns) lines.push({ label: cfg.fieldLabel(tab, 'titleInsurance', 'Title Insurance (est.)'), value: titleIns, muted: true });
+        if (includeOther) lines.push({ label: cfg.fieldLabel(tab, 'otherDisbursements', 'Other Disbursements (est.)'), value: other, muted: true });
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+        if (includeDischarge) lines.push({ label: cfg.fieldLabel(tab, 'mortgageDischarge', 'Land Titles — Mortgage Discharge Fee'), value: discharge, muted: true });
 
-        return {
-            lines,
-            total: legal + discharge + reportFee + other + gst,
-            footnote: `GST (5%) applies to the legal fee, the ${isHouse ? 'Real Property Report' : 'Condominium Estoppel Certificate'} `
-                + 'and other disbursements. The Land Titles discharge fee is GST-exempt. Title insurance is not '
-                + 'included and varies by lender, bank and/or circumstance. Your lender may also charge separate '
-                + 'payout fees.',
-        };
+        const total = legal
+            + (reportIncluded ? reportFee : 0)
+            + (includeTitleIns ? titleIns : 0)
+            + (includeOther ? other : 0)
+            + gst
+            + discharge;
+
+        return { lines, total, footnote: cfg.disclaimer(tab) };
     }
 
     private refinanceResult(): CalcResult {
+        const tab: TabId = 'refinance';
+        const cfg = this.calcConfig;
         const amount = this.refinanceAmount();
         const payouts = Math.max(1, this.payoutCount());
         const legal = 995 + (payouts - 1) * 175;
 
-        const mortgageFee = ltoFee(amount);       // GST-exempt (Land Titles)
-        const dischargeFee = payouts * 10;        // GST-exempt (Land Titles)
+        const mortgageFee = ltoFee(amount);
+        const dischargeFee = payouts * 10;
+        const titleIns = this.titleInsurance();
         const other = this.otherDisbursements();
 
-        const taxable = legal + other;
-        const gst = round2(taxable * GST_RATE);
+        const includeMortgageReg = cfg.isIncluded(tab, 'mortgageRegistration');
+        const includeDischargeFee = cfg.isIncluded(tab, 'dischargeFee');
+        const includeTitleIns = cfg.isIncluded(tab, 'titleInsurance');
+        const includeOther = cfg.isIncluded(tab, 'otherDisbursements');
+        const includeGst = cfg.isIncluded(tab, 'gst');
 
-        return {
-            lines: [
-                { label: `Legal Fee (Refinance, ${payouts} payout${payouts > 1 ? 's' : ''})`, value: legal },
-                { label: 'Other Disbursements (est.)', value: other, muted: true },
-                { label: 'GST (5% on legal fee & disbursements)', value: gst, muted: true },
-                { label: 'Land Titles — New Mortgage Registration', value: mortgageFee, muted: true },
-                { label: `Land Titles — Discharge Fee${payouts > 1 ? 's' : ''} (${payouts} \u00d7 $10)`, value: dischargeFee, muted: true },
-            ],
-            total: legal + mortgageFee + dischargeFee + other + gst,
-            footnote: 'Land Titles fees use the Government of Alberta\u2019s current registration formula and '
-                + 'are GST-exempt. GST (5%) applies to the legal fee and other disbursements. Title insurance '
-                + 'is not included and varies by lender, bank and/or circumstance.',
-        };
+        let taxable = legal;
+        if (includeTitleIns && cfg.isTaxable(tab, 'titleInsurance')) taxable += titleIns;
+        if (includeOther && cfg.isTaxable(tab, 'otherDisbursements')) taxable += other;
+        const gst = includeGst ? round2(taxable * GST_RATE) : 0;
+
+        const lines: ResultLine[] = [
+            { label: `Legal Fee (Refinance, ${payouts} payout${payouts > 1 ? 's' : ''})`, value: legal },
+        ];
+        if (includeTitleIns) lines.push({ label: cfg.fieldLabel(tab, 'titleInsurance', 'Title Insurance (est.)'), value: titleIns, muted: true });
+        if (includeOther) lines.push({ label: cfg.fieldLabel(tab, 'otherDisbursements', 'Other Disbursements (est.)'), value: other, muted: true });
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+        if (includeMortgageReg) lines.push({ label: cfg.fieldLabel(tab, 'mortgageRegistration', 'Land Titles — New Mortgage Registration'), value: mortgageFee, muted: true });
+        if (includeDischargeFee) lines.push({ label: `${cfg.fieldLabel(tab, 'dischargeFee', 'Land Titles — Discharge Fee(s)')} (${payouts} \u00d7 $10)`, value: dischargeFee, muted: true });
+
+        const total = legal
+            + (includeTitleIns ? titleIns : 0)
+            + (includeOther ? other : 0)
+            + gst
+            + (includeMortgageReg ? mortgageFee : 0)
+            + (includeDischargeFee ? dischargeFee : 0);
+
+        return { lines, total, footnote: cfg.disclaimer(tab) };
     }
 
     private willsResult(): CalcResult {
+        const tab: TabId = 'wills';
+        const cfg = this.calcConfig;
         const party = this.willParty();
         const pkg = this.willPackage();
 
@@ -471,40 +667,53 @@ element.remove();
             : { will: 975, epa: 395, pd: 350, willPlusOne: 1075, package: 1175, codicil: 400 };
 
         const fee = table[pkg] ?? table['package'];
-        const gst = round2(fee * GST_RATE);
+        const includeGst = cfg.isIncluded(tab, 'gst');
+        const gst = includeGst ? round2(fee * GST_RATE) : 0;
 
-        return {
-            lines: [
-                { label: `${WILL_LABELS[pkg] ?? WILL_LABELS['package']} — ${party === 'couple' ? 'Couple' : 'Individual'}`, value: fee },
-                { label: 'GST (5%)', value: gst, muted: true },
-            ],
-            total: fee + gst,
-            footnote: 'Estate planning fees are flat rates plus GST; disbursements typically do not apply.',
-        };
+        const lines: ResultLine[] = [
+            { label: `${WILL_LABELS[pkg] ?? WILL_LABELS['package']} — ${party === 'couple' ? 'Couple' : 'Individual'}`, value: fee },
+        ];
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+
+        return { lines, total: fee + gst, footnote: cfg.disclaimer(tab) };
     }
 
     private incorporationResult(): CalcResult {
+        const tab: TabId = 'incorporation';
+        const cfg = this.calcConfig;
         const legal = this.corpType() === 'standard' ? 475 : 775;
-        const filing = 100;
-        const govt = 275; // tax-exempt government filing fee
-        const disb = this.incorpDisbursements();
-        const gst = round2((legal + filing + disb) * GST_RATE);
 
-        return {
-            lines: [
-                {
-                    label: this.corpType() === 'standard'
-                        ? 'Legal Fee (Standard Incorporation)'
-                        : 'Legal Fee (Professional Corporation)', value: legal
-                },
-                { label: 'Filing Fee', value: filing, muted: true },
-                { label: 'Disbursements (est.)', value: disb, muted: true },
-                { label: 'GST (5% on legal fee, filing fee & disbursements)', value: gst, muted: true },
-                { label: 'Government Filing Fee (tax-exempt)', value: govt, muted: true },
-            ],
-            total: legal + filing + govt + gst + disb,
-            footnote: 'GST (5%) applies to the legal fee, filing fee and disbursements. The government filing '
-                + 'fee is GST-exempt. Disbursements may include name/NUANS searches.',
-        };
+        const includeFiling = cfg.isIncluded(tab, 'filingFee');
+        const filing = includeFiling ? cfg.fieldDefault(tab, 'filingFee', 100) : 0;
+        const includeGovt = cfg.isIncluded(tab, 'govtFee');
+        const govt = includeGovt ? cfg.fieldDefault(tab, 'govtFee', 275) : 0;
+        const includeDisb = cfg.isIncluded(tab, 'disbursements');
+        const disb = this.incorpDisbursements();
+        const includeGst = cfg.isIncluded(tab, 'gst');
+
+        let taxable = legal;
+        if (includeFiling && cfg.isTaxable(tab, 'filingFee')) taxable += filing;
+        if (includeDisb && cfg.isTaxable(tab, 'disbursements')) taxable += disb;
+        const gst = includeGst ? round2(taxable * GST_RATE) : 0;
+
+        const lines: ResultLine[] = [
+            {
+                label: this.corpType() === 'standard'
+                    ? 'Legal Fee (Standard Incorporation)'
+                    : 'Legal Fee (Professional Corporation)', value: legal
+            },
+        ];
+        if (includeFiling) lines.push({ label: cfg.fieldLabel(tab, 'filingFee', 'Filing Fee'), value: filing, muted: true });
+        if (includeDisb) lines.push({ label: cfg.fieldLabel(tab, 'disbursements', 'Disbursements (est.)'), value: disb, muted: true });
+        if (includeGst) lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
+        if (includeGovt) lines.push({ label: cfg.fieldLabel(tab, 'govtFee', 'Government Filing Fee (tax-exempt)'), value: govt, muted: true });
+
+        const total = legal
+            + filing
+            + govt
+            + gst
+            + (includeDisb ? disb : 0);
+
+        return { lines, total, footnote: cfg.disclaimer(tab) };
     }
 }

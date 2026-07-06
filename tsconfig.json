@@ -1,4 +1,5 @@
 {
+  "ignoreDeprecations": "6.0",
   "compilerOptions": {
     "target":           "ES2020",
     "module":           "CommonJS",
@@ -6,7 +7,7 @@
     "esModuleInterop":  true,
     "strict":           false,
     "skipLibCheck":     true,
-    "baseUrl":          ".",
+    "baseUrl":          "./",
     "paths": {
       "@config":        ["server/src/config/index.ts"],
       "@schema":        ["server/src/schema/index.ts"],

@@ -7,6 +7,7 @@ export const CONTENT_ROOT     = `${DB_ROOT}/siteContent`;
 export const BLOG_ROOT        = `${DB_ROOT}/blog`;
 export const PROFILES_ROOT    = `${DB_ROOT}/profiles`;
 export const NAV_MEMBERS_PATH = `${DB_ROOT}/nav/members`;
+export const CALCULATOR_CONFIG_ROOT = `${DB_ROOT}/calcConfig`;
 
 export const MEMBERS: ProfileNav[] = [
   {
