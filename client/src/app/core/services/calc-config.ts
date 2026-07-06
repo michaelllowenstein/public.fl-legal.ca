@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { env } from '@env/environment';
 import { TabId } from '@schema/models';
 import { LoggerService } from './logger';
+import { AuthService } from './auth';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -147,13 +148,13 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
   sale: {
     fields: {
       rpr: {
-        included: true,
+        included: false,
         taxable: true,
         label: 'Real Property Report (est.)',
         default: 850,
       },
       condoEstoppel: {
-        included: true,
+        included: false,
         taxable: true,
         label: 'Condominium Estoppel Certificate (est.)',
         default: 250,
@@ -174,7 +175,7 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
         included: true,
         taxable: true,
         label: 'Other Disbursements (est.)',
-        default: 250,
+        default: 200,
       },
       gst: { included: true, label: 'GST (5% on legal fee & disbursements)' },
     },
@@ -254,15 +255,13 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
 //
 // Traffic model (changed from the direct-RTDB version):
 //   • GET  /api/calc-config  — public, no auth. Used on load and by verifyNow().
-//   • PATCH /api/calc-config — editor JWT required. One field per call.
+//   • PATCH /api/calc-config — calculator config JWT required. One field per call.
 //     { key: "<tab>/fields/<field>/<property>", value } or "<tab>/disclaimer".
-//   • PUT  /api/calc-config  — editor JWT required. Full-tree replace, used
+//   • PUT  /api/calc-config  — calculator config JWT required. Full-tree replace, used
 //     by importJson() and resetToDefaults().
 //
-// The JWT itself is never handled here — the app-wide `jwtInterceptor`
-// attaches whichever Bearer token exists (lawyer or editor) to any request
-// whose URL contains "/api/", exactly like every other authenticated
-// service in this app (CalendarService, NotificationService, etc.).
+// Write requests attach the calculator config JWT explicitly so calculator
+// edits do not depend on whichever lawyer/editor token is active elsewhere.
 //
 // Load order, same "instant paint, reconcile after" shape as before:
 //   1. Construct with whatever's in localStorage (or hardcoded defaults) so
@@ -286,7 +285,8 @@ const STORAGE_KEY = 'fl-calculator-config-v1';
 
 @Injectable({ providedIn: 'root' })
 export class CalculatorConfigService {
-  private http = inject(HttpClient);
+  private http: HttpClient = inject(HttpClient);
+  private auth: AuthService = inject(AuthService);
   private log  = inject(LoggerService).child('calcConfig');
   private readonly apiBase = `${env.apiURL}/api/calc-config`;
 
@@ -592,7 +592,11 @@ export class CalculatorConfigService {
     this.pushLogEntry({ id, timestamp, status: 'pending', ...meta });
     this.log.debug(`→ PATCH "${label}"`, { previous: meta.previousValue, next: meta.newValue });
 
-    firstValueFrom(this.http.patch<{ ok: boolean; at: string }>(this.apiBase, { key, value }))
+    firstValueFrom(this.http.patch<{ ok: boolean; at: string }>(
+      this.apiBase,
+      { key, value },
+      this.authHeaders(),
+    ))
       .then((res) => {
         this._lastSyncedAt.set(res?.at ?? new Date().toISOString());
         this.updateLogEntry(id, { status: 'confirmed' });
@@ -626,7 +630,11 @@ export class CalculatorConfigService {
     this.pushLogEntry({ id, timestamp, status: 'pending', ...meta });
     this.log.debug(`→ PUT "${label}" (full tree)`, { previous: meta.previousValue, next: meta.newValue });
 
-    firstValueFrom(this.http.put<{ ok: boolean; at: string }>(this.apiBase, body))
+    firstValueFrom(this.http.put<{ ok: boolean; at: string }>(
+      this.apiBase,
+      body,
+      this.authHeaders(),
+    ))
       .then((res) => {
         this._lastSyncedAt.set(res?.at ?? new Date().toISOString());
         this.updateLogEntry(id, { status: 'confirmed' });
@@ -652,5 +660,10 @@ export class CalculatorConfigService {
     this._syncLog.update((log) =>
       log.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
     );
+  }
+
+  private authHeaders(): { headers?: { Authorization: string } } {
+    const token = this.auth.calcToken();
+    return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
   }
 }
