@@ -51,9 +51,9 @@ type CalculatorMode = 'calculator' | 'settings';
   ],
 })
 export class Calculator {
-  private router = inject(Router);
+  private router: Router = inject(Router);
   close = injectDialogClose<void>();
-  readonly calcConfig = inject(CalculatorConfigService);
+  readonly calcConfig: CalculatorConfigService = inject(CalculatorConfigService);
 
   tabs = TABS;
   activeTab = signal<TabId>('purchase-mortgage');
@@ -69,7 +69,7 @@ export class Calculator {
   private _toastTimer?: ReturnType<typeof setTimeout>;
 
   private readonly _toastEffect = effect(() => {
-    const entry = this.calcConfig.lastSyncEntry();
+    const entry: any = this.calcConfig.lastSyncEntry();
     if (!entry || entry.status === 'pending') return;
     if (this._lastHandledSyncId === entry.id) return;
     this._lastHandledSyncId = entry.id;
@@ -150,7 +150,7 @@ export class Calculator {
     this.calcConfig.fieldDefault('incorporation', 'disbursements', 75),
   );
 
-  result = computed<CalcResult>(() => {
+  result = computed<CalcResult>((): any => {
     switch (this.activeTab()) {
       case 'purchase-mortgage':
         return this.purchaseMortgageResult();
@@ -165,6 +165,7 @@ export class Calculator {
       case 'incorporation':
         return this.incorporationResult();
     }
+    return;
   });
 
   // ── Navigation ───────────────────────────────────────────────────────────

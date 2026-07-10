@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "ignoreDeprecations": "6.0",
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./out-tsc/app",
     "types": []
   },
