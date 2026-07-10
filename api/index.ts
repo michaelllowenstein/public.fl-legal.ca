@@ -63,6 +63,7 @@ async function getApp() {
         'https://friclowenstein.com',
         'https://fl-legal.ca',
         'https://www.fl-legal.ca',
+        'https://staging.fl-legal.ca'
       ];
       if (
         allowed.includes(origin) ||

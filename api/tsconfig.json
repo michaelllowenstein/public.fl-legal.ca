@@ -5,12 +5,10 @@
     "module":           "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop":  true,
-    "ignoreDeprecations": "6.0",
     "strict":           false,
     "skipLibCheck":     true,
-    "rootDir":          "./",
+    "rootDir":          "../",
     "paths": {
-      "@api":           ["./api"],
       "@config":        ["./server/src/config/index.ts"],
       "@schema":        ["./server/src/schema/index.ts"],
       "@schema/*":      ["./server/src/schema/*"],

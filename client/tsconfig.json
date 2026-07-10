@@ -12,20 +12,20 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./",
+    "rootDir": "./",
     "paths": {
-      "@app/*":          ["src/app/*"],
-      "@core/*":         ["src/app/core/*"],
-      "@components/*":   ["src/app/components/*"],
-      "@page/*":         ["src/app/components/page/*"],
-      "@ui/*":           ["src/app/components/ui/*"],
-      "@layout/*":       ["src/app/components/layout/*"],
-      "@feature/*":      ["src/app/components/feature/*"],
-      "@factory/*":      ["src/app/components/factory/*"],
-      "@schema/*":       ["src/app/schema/*"],
-      "@schema":         ["src/app/schema"],
-      "@animations/*":   ["src/app/animations/*"],
-      "@env/*":          ["src/environments/*"]
+      "@app/*":          ["./src/app/*"],
+      "@core/*":         ["./src/app/core/*"],
+      "@components/*":   ["./src/app/components/*"],
+      "@page/*":         ["./src/app/components/page/*"],
+      "@ui/*":           ["./src/app/components/ui/*"],
+      "@layout/*":       ["./src/app/components/layout/*"],
+      "@feature/*":      ["./src/app/components/feature/*"],
+      "@factory/*":      ["./src/app/components/factory/*"],
+      "@schema/*":       ["./src/app/schema/*"],
+      "@schema":         ["./src/app/schema"],
+      "@animations/*":   ["./src/app/animations/*"],
+      "@env/*":          ["./src/environments/*"]
     }
   },
   "angularCompilerOptions": {

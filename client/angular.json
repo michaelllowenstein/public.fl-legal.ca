@@ -26,6 +26,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": ["html2pdf.js"],
+            "externalDependencies": ["firebase-admin"],
             "assets": [
               {
                 "glob": "**/*",
@@ -44,8 +45,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/envs/env.ts",
+                  "with": "src/envs/env.prod.ts"
                 }
               ],
               "optimization": true,
@@ -73,8 +74,8 @@
             "defaultConfiguration": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/envs/env.ts",
+                  "with": "src/envs/env.prod.ts"
                 }
               ],
               "optimization": true,
