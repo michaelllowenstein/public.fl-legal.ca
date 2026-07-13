@@ -1,6 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Database, ref, get } from '@angular/fire/database';
+import { firstValueFrom } from 'rxjs';
 import { TabId } from '@schema/models';
+import { DebugService } from '@core/services/debug';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -19,6 +22,10 @@ export interface CalculatorTabConfig {
 export type CalculatorConfig = Record<TabId, CalculatorTabConfig>;
 
 // ── Default configuration ──────────────────────────────────────────────────────
+//
+// Single source of truth for every field's default value, label, taxability,
+// and included state. The component NEVER repeats these values — it reads
+// them from the service via fieldDefault().
 
 export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
   'purchase-mortgage': {
@@ -36,7 +43,7 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
   },
   'cash-purchase': {
     fields: {
-      otherDisbursements: { included: true,  taxable: true,  label: 'Other Disbursements (est.)',              default: 250 },
+      otherDisbursements: { included: true,  taxable: true,  label: 'Other Disbursements (est.)',              default: 200 },
       titleInsurance:     { included: false, taxable: true,  label: 'Title Insurance (est.)',                  default: 300 },
       titleRegistration:  { included: true,  taxable: false, label: 'Land Titles \u2014 Title Registration'                 },
       gst:                { included: true,                  label: 'GST (5% on legal fee & disbursements)'                },
@@ -46,11 +53,11 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
   },
   sale: {
     fields: {
-      rpr:                { included: true,  taxable: true,  label: 'Real Property Report (est.)',                   default: 850 },
-      condoEstoppel:      { included: true,  taxable: true,  label: 'Condominium Estoppel Certificate (est.)',       default: 250 },
+      rpr:                { included: false,  taxable: true,  label: 'Real Property Report (est.)',                   default: 850 },
+      condoEstoppel:      { included: false,  taxable: true,  label: 'Condominium Estoppel Certificate (est.)',       default: 250 },
       titleInsurance:     { included: false, taxable: true,  label: 'Title Insurance (est.)',                        default: 300 },
       mortgageDischarge:  { included: true,  taxable: false, label: 'Land Titles \u2014 Mortgage Discharge Fee',     default: 10  },
-      otherDisbursements: { included: true,  taxable: true,  label: 'Other Disbursements (est.)',                    default: 250 },
+      otherDisbursements: { included: true,  taxable: true,  label: 'Other Disbursements (est.)',                    default: 200 },
       gst:                { included: true,                  label: 'GST (5% on legal fee & disbursements)'                     },
     },
     disclaimer:
@@ -88,31 +95,17 @@ export const DEFAULT_CALCULATOR_CONFIG: CalculatorConfig = {
 };
 
 // ── Service ───────────────────────────────────────────────────────────────────
-//
-// Persistence strategy:
-//
-//   1. localStorage is the optimistic store — every edit updates the signal
-//      and writes to localStorage immediately so the UI never waits.
-//   2. After each localStorage write, the full config is PUT to the Fastify
-//      API (`/api/calc-config`) which writes to Firebase via the Admin SDK
-//      with an audit trail. This call is fire-and-forget — failures are
-//      logged but don't roll back the local edit.
-//   3. On construction, localStorage is the authority. No Firebase read at
-//      startup — eliminates the sync-stomping race condition entirely.
-//
-// Because apiURL is '' in all environments and the proxy handles local dev,
-// the PUT call hits the same relative path everywhere:
-//   Local  →  proxy → https://localhost:8228/api/calc-config
-//   Staging → same-origin Vercel serverless function
-//   Prod    → same-origin Vercel serverless function
 
-const STORAGE_KEY = 'fl-calculator-config-v1';
+const STORAGE_KEY   = 'fl-calculator-config-v1';
+const FIREBASE_PATH = 'public/calcConfig';
 
 @Injectable({ providedIn: 'root' })
 export class CalculatorConfigService {
-  private http = inject(HttpClient);
+  private http: HttpClient = inject(HttpClient);
+  private db: Database   = inject(Database);
+  private log  = inject(DebugService).ns('CalcConfig');
 
-  private readonly _config = signal<CalculatorConfig>(this.loadInitial());
+  private readonly _config = signal<CalculatorConfig>(this.loadLocal());
   readonly config = this._config.asReadonly();
   readonly lastSyncEntry = signal<string | null>(null);
 
@@ -138,8 +131,11 @@ export class CalculatorConfigService {
     return this._config()[tab]?.fields?.[field]?.label ?? fallback;
   }
 
-  fieldDefault(tab: TabId, field: string, fallback: number): number {
-    return this._config()[tab]?.fields?.[field]?.default ?? fallback;
+  /** Returns the configured default for a field. No fallback parameter needed —
+   *  mergeWithDefaults() guarantees every field from DEFAULT_CALCULATOR_CONFIG
+   *  is always present, so 0 only appears for fields that genuinely have no default. */
+  fieldDefault(tab: TabId, field: string): number {
+    return this._config()[tab]?.fields?.[field]?.default ?? 0;
   }
 
   disclaimer(tab: TabId): string {
@@ -154,68 +150,76 @@ export class CalculatorConfigService {
     return JSON.stringify(this._config(), null, 2);
   }
 
-  // ── Writes ───────────────────────────────────────────────────────────────
+  // ── Remote fetch (on demand) ─────────────────────────────────────────────
 
-  setFieldIncluded(tab: TabId, field: string, included: boolean): void {
-    this.patchField(tab, field, { included });
+  async fetchRemote(): Promise<CalculatorConfig | null> {
+    const done = this.log.time('fetchRemote');
+
+    // 1. Firebase client SDK
+    this.log.debug('Trying Firebase at', FIREBASE_PATH);
+    try {
+      const snapshot = await get(ref(this.db, FIREBASE_PATH));
+      if (snapshot.exists() && snapshot.val()) {
+        const remote = this.mergeWithDefaults(snapshot.val() as Partial<CalculatorConfig>);
+        this.lastSyncEntry.set(new Date().toISOString());
+        this.log.info('Loaded from Firebase', { tabs: Object.keys(remote) });
+        done();
+        return remote;
+      }
+      this.log.debug('Firebase returned empty snapshot');
+    } catch (err) {
+      this.log.warn('Firebase read failed', err);
+    }
+
+    // 2. GET /api/calc-config
+    this.log.debug('Falling back to GET /api/calc-config');
+    try {
+      const data = await firstValueFrom(
+        this.http.get<Partial<CalculatorConfig>>('/api/calc-config'),
+      );
+      if (data && Object.keys(data).length > 0) {
+        const remote = this.mergeWithDefaults(data);
+        this.lastSyncEntry.set(new Date().toISOString());
+        this.log.info('Loaded from API', { tabs: Object.keys(remote) });
+        done();
+        return remote;
+      }
+      this.log.debug('API returned empty response');
+    } catch (err) {
+      this.log.warn('API read failed', err);
+    }
+
+    this.log.debug('No remote config available');
+    done();
+    return null;
   }
 
-  setFieldTaxable(tab: TabId, field: string, taxable: boolean): void {
-    this.patchField(tab, field, { taxable });
-  }
+  // ── Write ────────────────────────────────────────────────────────────────
 
-  setFieldLabel(tab: TabId, field: string, label: string): void {
-    this.patchField(tab, field, { label });
-  }
+  commit(config: CalculatorConfig): void {
+    this.log.group('commit');
+    const merged = this.mergeWithDefaults(config);
 
-  setFieldDefault(tab: TabId, field: string, value: number): void {
-    this.patchField(tab, field, { default: Math.max(0, Number(value) || 0) });
-  }
+    this.log.debug('Updating signal');
+    this._config.set(merged);
 
-  setDisclaimer(tab: TabId, text: string): void {
-    this._config.update(cfg => {
-      const next = structuredClone(cfg);
-      next[tab].disclaimer = text;
-      return next;
-    });
-    this.persist();
-  }
+    this.log.debug('Writing to localStorage');
+    this.cacheLocal(merged);
 
-  importJson(json: string): void {
-    const parsed = JSON.parse(json) as Partial<CalculatorConfig>;
-    this._config.set(this.mergeWithDefaults(parsed));
-    this.persist();
+    this.log.debug('Pushing to API');
+    this.pushToApi(merged);
+
+    this.log.groupEnd();
   }
 
   resetToDefaults(): void {
-    this._config.set(structuredClone(DEFAULT_CALCULATOR_CONFIG));
-    this.persist();
+    this.log.info('Resetting to hardcoded defaults');
+    this.commit(structuredClone(DEFAULT_CALCULATOR_CONFIG));
   }
 
-  // ── Internals ──────────────────────────────────────────────────────────
+  // ── Helpers ──────────────────────────────────────────────────────────────
 
-  private patchField(tab: TabId, field: string, patch: Partial<CalculatorFieldConfig>): void {
-    this._config.update(cfg => {
-      const next = structuredClone(cfg);
-      if (next[tab]?.fields?.[field]) {
-        next[tab].fields[field] = { ...next[tab].fields[field], ...patch };
-      }
-      return next;
-    });
-    this.persist();
-  }
-
-  private loadInitial(): CalculatorConfig {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return structuredClone(DEFAULT_CALCULATOR_CONFIG);
-      return this.mergeWithDefaults(JSON.parse(raw));
-    } catch {
-      return structuredClone(DEFAULT_CALCULATOR_CONFIG);
-    }
-  }
-
-  private mergeWithDefaults(saved: Partial<CalculatorConfig>): CalculatorConfig {
+  mergeWithDefaults(saved: Partial<CalculatorConfig>): CalculatorConfig {
     const merged = structuredClone(DEFAULT_CALCULATOR_CONFIG);
     for (const tab of Object.keys(merged) as TabId[]) {
       const savedTab = saved?.[tab];
@@ -231,18 +235,41 @@ export class CalculatorConfigService {
     return merged;
   }
 
-  private persist(): void {
-    // 1. localStorage — immediate, optimistic
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this._config()));
-      this.lastSyncEntry.set(new Date().toISOString());
-    } catch {
-      // Ignore quota/availability errors — config still works in-memory.
-    }
+  // ── Internals ──────────────────────────────────────────────────────────
 
-    // 2. API write-through — fire-and-forget to Firebase via Fastify
-    this.http.put('/api/calc-config', this._config()).subscribe({
-      error: (err) => console.warn('[CalcConfig] API write failed (local copy saved):', err?.status ?? err),
+  private loadLocal(): CalculatorConfig {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        this.log.debug('No localStorage cache \u2014 using hardcoded defaults');
+        return structuredClone(DEFAULT_CALCULATOR_CONFIG);
+      }
+      this.log.debug('Loaded from localStorage');
+      return this.mergeWithDefaults(JSON.parse(raw));
+    } catch (err) {
+      this.log.warn('localStorage parse failed \u2014 using defaults', err);
+      return structuredClone(DEFAULT_CALCULATOR_CONFIG);
+    }
+  }
+
+  private cacheLocal(config: CalculatorConfig): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      this.log.debug('localStorage updated');
+    } catch (err) {
+      this.log.warn('localStorage write failed', err);
+    }
+  }
+
+  private pushToApi(config: CalculatorConfig): void {
+    this.http.put('/api/calc-config', config).subscribe({
+      next: () => {
+        this.lastSyncEntry.set(new Date().toISOString());
+        this.log.info('Saved to API \u2192 Firebase');
+      },
+      error: (err) => {
+        this.log.warn('API write failed (local copy saved)', err?.status ?? err);
+      },
     });
   }
 }
