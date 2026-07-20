@@ -7,7 +7,10 @@
     "install:prod": "npm ci --legacy-peer-deps",
     "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
     "local:api": "cd server && npm run local",
-    "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json"
+    "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "node --import tsx --test --experimental-test-coverage \"client/test/**/*.test.ts\""
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

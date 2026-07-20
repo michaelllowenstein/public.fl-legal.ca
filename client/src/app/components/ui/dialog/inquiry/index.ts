@@ -6,11 +6,12 @@ import {
   computed,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { FLIcon } from '@components/ui/icon';
-import { injectDialogClose } from '@components/factory/dialog/tokens';
 import { env } from '@env/environment';
+import { FormsModule } from '@angular/forms';
+import { FLIcon } from '@components/ui/icon';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { injectDialogClose } from '@components/factory/dialog/tokens';
+import { LoggerService } from '@app/core/services/logger';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -57,8 +58,9 @@ const PRACTICE_AREAS = [
   `],
 })
 export class InquiryDialog {
-  private http  = inject(HttpClient);
-  close         = injectDialogClose<boolean>();
+  private http: HttpClient  = inject(HttpClient);
+  private log               = inject(LoggerService).child('inquiry-dialog');
+  close                     = injectDialogClose<boolean>();
 
   // ── Form state ─────────────────────────────────────────────────────────────
 
@@ -74,6 +76,17 @@ export class InquiryDialog {
 
   firstName = computed(() => this.form.name.split(' ')[0] || 'there');
 
+  // --- Priority Toggle -------------------------------------------------------
+  /**
+   * The practice-area field only applies to priority inquiries - the generalInquirySchema 
+   * rejects it outright (additionalProperties: false). Clear it when priority is switched off so a stale
+   * selection can never leak into a general inquiry payload.
+   */
+  setPriority(value: boolean): void {
+    this.isPriority.set(value);
+    if (!value) this.form.practiceArea = '';
+  }
+
   // ── Validation ─────────────────────────────────────────────────────────────
 
   private validate(): boolean {
@@ -88,12 +101,18 @@ export class InquiryDialog {
 
   // ── Submission ─────────────────────────────────────────────────────────────
 
-  async submit() {
-    if (!this.validate()) return;
+  async submit(): Promise<void> {
+    if (!this.validate()) {
+      this.log.warn('Submit blocked by client-side validation', {
+        errors: this.errors(),
+      });
+      return;
+    }    
 
     this.loading.set(true);
     this.serverError.set('');
 
+    const priority = this.isPriority();
     const endpoint = this.isPriority()
       ? `${env.apiURL}/api/inquiries/priority`
       : `${env.apiURL}/api/inquiries`;
@@ -104,20 +123,43 @@ export class InquiryDialog {
       email:   this.form.email,
       message: this.form.message,
       ...(this.form.phone                            && { phone:        this.form.phone }),
-      ...(this.isPriority() && this.form.practiceArea && { practiceArea: this.form.practiceArea }),
+      ...(priority && this.form.practiceArea && { practiceArea: this.form.practiceArea }),
     };
 
     try {
       await firstValueFrom(
         this.http.post(endpoint, body, { responseType: 'text' })
       );
+      this.log.info('Inquiry sent', { priority });
       this.submitted.set(true);
-    } catch {
-      this.serverError.set(
-        'Failed to send. Please try again or call us at (403) 258-9455.'
-      );
+    } catch (err) {
+      this.serverError.set(this.messageFor(err));
+      this.log.error('Inquiry submission failed', {
+        priority,
+        endpoint,
+        status:  err instanceof HttpErrorResponse ? err.status     : undefined,
+        message: err instanceof HttpErrorResponse ? err.message    : String(err),
+      });
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  private messageFor(err: unknown): string {
+    if (!(err instanceof HttpErrorResponse)) {
+      return 'Failed to send - please try again or give us a call at (403)291-2594.';
+    }
+    switch (err.status) {
+      case 0:
+        // No HTTP status reached us at all — offline, DNS failure, or
+        // blocked before it left the browser (CORS, an extension, etc.).
+        return 'We couldn\u2019t reach our server. Please check your connection and try again, or call us at (403) 258-9455.';
+      case 429:
+        return 'Too many attempts from this connection. Please wait a few minutes and try again, or call us at (403) 258-9455.';
+      case 400:
+        return 'Some of the information provided couldn\u2019t be sent. Please double-check the form and try again.';
+      default:
+        return 'Failed to send - please try again or give us a call at (403)291-2594.'; 
     }
   }
 }
