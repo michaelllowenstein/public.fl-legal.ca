@@ -20,8 +20,8 @@
   },
   "sale": {
     "fields": {
-      "rpr": { "included": true, "taxable": true, "label": "Real Property Report (est.)", "default": 850 },
-      "condoEstoppel": { "included": true, "taxable": true, "label": "Condominium Estoppel Certificate (est.)", "default": 250 },
+      "rpr": { "included": false, "taxable": true, "label": "Real Property Report (est.)", "default": 850 },
+      "condoEstoppel": { "included": false, "taxable": true, "label": "Condominium Estoppel Certificate (est.)", "default": 250 },
       "titleInsurance": { "included": false, "taxable": true, "label": "Title Insurance (est.)", "default": 300 },
       "mortgageDischarge": { "included": true, "taxable": false, "label": "Land Titles — Mortgage Discharge Fee", "default": 10 },
       "otherDisbursements": { "included": true, "taxable": true, "label": "Other Disbursements (est.)", "default": 200 },

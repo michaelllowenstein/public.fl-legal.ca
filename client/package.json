@@ -15,7 +15,8 @@
     "ngo:pipe": "node scripts/gen.mjs --pipe",
     "ngo:comp": "node scripts/gen.mjs",
     "ngo": "node scripts/gen.mjs",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "private": true,
   "prettier": {
@@ -52,12 +53,20 @@
     "@angular/build": "^20.1.1",
     "@angular/cli": "^20.1.1",
     "@angular/compiler-cli": "^20.1.0",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/angular": "^19.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
     "@types/firebase": "^2.4.32",
+    "angular-eslint": "22.1.0",
     "autoprefixer": "^10.4.27",
+    "eslint": "^10.6.0",
+    "eslint-plugin-playwright": "^2.10.5",
+    "msw": "^2.15.0",
     "postcss": "^8.5.8",
-    "prettier": "^3.8.1",
+    "prettier": "^3.9.5",
     "tailwindcss": "^3.4.19",
-    "typescript": "~5.8.2"
+    "typescript": "~5.8.2",
+    "typescript-eslint": "8.62.1"
   }
 }

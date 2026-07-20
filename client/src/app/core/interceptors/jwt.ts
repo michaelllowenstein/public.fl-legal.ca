@@ -11,7 +11,7 @@ import { inject } from '@angular/core';
  *   1. If the request is not going to our API, pass through unchanged.
  *   2. Lawyer token takes priority (calendar routes).
  *   3. Editor token used for content PATCH routes.
- *   4. Calculator config writes attach their calc token in CalculatorConfigService.
+ *   4. Calculator token used for calculator config writes.
  *   5. If neither is present, pass through — public routes need no auth.
  */
 /**
@@ -30,7 +30,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const auth: AuthService = inject(AuthService);
   const editor: EditorService = inject(EditorService);
  
-  const token = auth.lawyerToken() ?? auth.editorToken() ?? editor.token();
+  const token = auth.lawyerToken() ?? auth.editorToken() ?? auth.calcToken() ?? editor.token();
  
   if (token) {
     return next(req.clone({

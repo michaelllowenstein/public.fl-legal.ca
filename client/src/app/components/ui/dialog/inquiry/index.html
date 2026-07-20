@@ -1,10 +1,11 @@
 
-    <div
-      class="bg-white rounded-2xl shadow-dialog w-full max-w-md animate-scale-in"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="inquiry-title"
-      (click)="$event.stopPropagation()">
+<div
+  class="bg-white rounded-2xl shadow-dialog w-full max-w-md animate-scale-in"
+  style="color-scheme: light;"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="inquiry-title"
+  (click)="$event.stopPropagation()">
  
       <!-- ── Submitted state ─────────────────────────────────────────────── -->
       @if (submitted()) {
@@ -63,7 +64,7 @@
             <input
               type="checkbox"
               [ngModel]="isPriority()"
-              (ngModelChange)="isPriority.set($event)"
+              (ngModelChange)="setPriority($event)"
               class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0" />
             <span class="font-sans text-sm text-brand leading-snug">
               This is an <strong class="font-semibold">urgent matter</strong>

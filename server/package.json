@@ -26,7 +26,8 @@
     "bundle": "npm run build:prod && cp public/index.html dist/ && npm run docs:migrate",
     "sideload": "node jobs/sideloader.js",
     "smoketest": "./scripts/smoketest.sh",
-    "demos": "./scripts/demos.sh"
+    "demos": "./scripts/demos.sh",
+    "test": "node --import tsx --test --experimental-test-coverage \"test/**/*.test.ts\""
   },
   "keywords": [
     "NodeJS",

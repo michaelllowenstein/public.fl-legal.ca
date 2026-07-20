@@ -11,10 +11,10 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { dbGet, dbMultiUpdate } from '../services/firebase';
 
-const DB_PATH = 'public/calcConfig';
+export const CALC_CONFIG_DB_PATH = 'public/calcConfig';
 
 /** The six tab keys the calculator recognises — anything else is rejected. */
-const VALID_TABS = new Set([
+export const VALID_CALC_TABS = new Set([
   'purchase-mortgage',
   'cash-purchase',
   'sale',
@@ -23,7 +23,19 @@ const VALID_TABS = new Set([
   'incorporation',
 ]);
 
-function isValidConfig(body: unknown): body is Record<string, unknown> {
+export interface CalcConfigRouteDeps {
+  get: typeof dbGet;
+  multiUpdate: typeof dbMultiUpdate;
+  now: () => number;
+}
+
+const defaultDeps: CalcConfigRouteDeps = {
+  get: dbGet,
+  multiUpdate: dbMultiUpdate,
+  now: Date.now,
+};
+
+export function isValidConfig(body: unknown): body is Record<string, unknown> {
   if (typeof body !== 'object' || body === null || Array.isArray(body)) {
     return false;
   }
@@ -31,7 +43,7 @@ function isValidConfig(body: unknown): body is Record<string, unknown> {
   const obj = body as Record<string, unknown>;
 
   for (const key of Object.keys(obj)) {
-    if (!VALID_TABS.has(key)) return false;
+    if (!VALID_CALC_TABS.has(key)) return false;
     const tab = obj[key];
     if (typeof tab !== 'object' || tab === null) return false;
 
@@ -40,14 +52,17 @@ function isValidConfig(body: unknown): body is Record<string, unknown> {
     if (typeof t.disclaimer !== 'string') return false;
   }
 
-  for (const expected of VALID_TABS) {
+  for (const expected of VALID_CALC_TABS) {
     if (!(expected in obj)) return false;
   }
 
   return true;
 }
 
-export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> {
+export async function calcConfigRoutes(
+  fastify: FastifyInstance,
+  deps: CalcConfigRouteDeps = defaultDeps,
+): Promise<void> {
 
   // ── GET /api/calc-config ─────────────────────────────────────────────────
   fastify.get(
@@ -55,7 +70,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
     { config: { rateLimit: { max: 120, timeWindow: '1 minute' } } },
     async (req: FastifyRequest, reply: FastifyReply) => {
       try {
-        const data = await dbGet<Record<string, unknown>>(DB_PATH);
+        const data = await deps.get<Record<string, unknown>>(CALC_CONFIG_DB_PATH);
         reply.header('Cache-Control', 'public, max-age=5, stale-while-revalidate=30');
         return reply.status(200).send(data ?? {});
       } catch (err) {
@@ -69,7 +84,7 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
   fastify.put(
     '/',
     {
-      preHandler: [(fastify as any).verifyEditor],
+      preHandler: [fastify.verifyCalcConfig],
       config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
     },
     async (req: FastifyRequest, reply: FastifyReply) => {
@@ -84,9 +99,9 @@ export async function calcConfigRoutes(fastify: FastifyInstance): Promise<void> 
       }
 
       try {
-        await dbMultiUpdate({
-          [DB_PATH]: body,
-          [`public/audit/calcConfig/${Date.now()}`]: {
+        await deps.multiUpdate({
+          [CALC_CONFIG_DB_PATH]: body,
+          [`public/audit/calcConfig/${deps.now()}`]: {
             action: 'calc-config-update',
             at: new Date().toISOString(),
           },
