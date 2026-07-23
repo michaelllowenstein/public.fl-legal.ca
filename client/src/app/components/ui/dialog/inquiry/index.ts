@@ -6,12 +6,12 @@ import {
   computed,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { env } from '@env/environment';
 import { FormsModule } from '@angular/forms';
-import { FLIcon } from '@components/ui/icon';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { FLIcon } from '@components/ui/icon';
 import { injectDialogClose } from '@components/factory/dialog/tokens';
-import { LoggerService } from '@app/core/services/logger';
+import { LoggerService } from '@core/services/logger';
+import { env } from '@env/environment';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -35,7 +35,21 @@ const PRACTICE_AREAS = [
   'Other',
 ] as const;
 
-// --- Component ----------------------------------------------------------
+// ── Test-mode detection ───────────────────────────────────────────────────────
+//
+// The test-fill button appears on localhost and staging only — never on the
+// production domain.  We check the hostname at runtime so it works regardless
+// of which Angular build configuration was used (both environment.ts and
+// environment.prod.ts currently have `production: false`).
+
+function isTestEnvironment(): boolean {
+  const host = window?.location?.hostname ?? '';
+  return host === 'localhost'
+      || host === '127.0.0.1'
+      || host.includes('staging');
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 @Component({
   selector:    'app-inquiry-dialog',
@@ -58,9 +72,9 @@ const PRACTICE_AREAS = [
   `],
 })
 export class InquiryDialog {
-  private http: HttpClient  = inject(HttpClient);
-  private log               = inject(LoggerService).child('inquiry-dialog');
-  close                     = injectDialogClose<boolean>();
+  private http = inject(HttpClient);
+  private log  = inject(LoggerService).child('inquiry-dialog');
+  close        = injectDialogClose<boolean>();
 
   // ── Form state ─────────────────────────────────────────────────────────────
 
@@ -76,15 +90,40 @@ export class InquiryDialog {
 
   firstName = computed(() => this.form.name.split(' ')[0] || 'there');
 
-  // --- Priority Toggle -------------------------------------------------------
+  /** Whether the test-fill button should be visible. */
+  readonly showTestFill = signal(isTestEnvironment());
+
+  // ── Priority toggle ──────────────────────────────────────────────────────
+
   /**
-   * The practice-area field only applies to priority inquiries - the generalInquirySchema 
-   * rejects it outright (additionalProperties: false). Clear it when priority is switched off so a stale
-   * selection can never leak into a general inquiry payload.
+   * Clear practiceArea when priority is switched off so a stale value can
+   * never leak into a general-inquiry payload (which rejects unknown fields
+   * via additionalProperties: false on the server schema).
    */
   setPriority(value: boolean): void {
     this.isPriority.set(value);
     if (!value) this.form.practiceArea = '';
+  }
+
+  // ── Test autofill ──────────────────────────────────────────────────────────
+
+  /**
+   * Populates the form with sensible defaults for quick manual testing.
+   * The actual email recipient is controlled server-side via the
+   * TEST_EMAIL_RECIPIENT env var — what gets filled here is just what
+   * appears in the form inputs so you can hit Submit immediately.
+   */
+  fillTestData(): void {
+    this.form.name         = 'Michael Lowenstein';
+    this.form.email        = 'michael@lowenstein.ca';
+    this.form.phone        = '(825)-488-2533';
+    this.form.message      = 'Automated test submission from the inquiry dialog. '
+                           + 'If this arrives at a real inbox, TEST_EMAIL_RECIPIENT is not set.';
+    this.form.practiceArea = 'Other';
+    this.isPriority.set(true);
+    this.errors.set({});
+    this.serverError.set('');
+    this.log.info('Test data filled');
   }
 
   // ── Validation ─────────────────────────────────────────────────────────────
@@ -103,27 +142,24 @@ export class InquiryDialog {
 
   async submit(): Promise<void> {
     if (!this.validate()) {
-      this.log.warn('Submit blocked by client-side validation', {
-        errors: this.errors(),
-      });
+      this.log.warn('Submit blocked by client-side validation', { errors: this.errors() });
       return;
-    }    
+    }
 
     this.loading.set(true);
     this.serverError.set('');
 
     const priority = this.isPriority();
-    const endpoint = this.isPriority()
+    const endpoint = priority
       ? `${env.apiURL}/api/inquiries/priority`
       : `${env.apiURL}/api/inquiries`;
 
-    // Strip empty optional fields before sending
     const body = {
       name:    this.form.name,
       email:   this.form.email,
       message: this.form.message,
-      ...(this.form.phone                            && { phone:        this.form.phone }),
-      ...(priority && this.form.practiceArea && { practiceArea: this.form.practiceArea }),
+      ...(this.form.phone                     && { phone:        this.form.phone }),
+      ...(priority && this.form.practiceArea  && { practiceArea: this.form.practiceArea }),
     };
 
     try {
@@ -137,29 +173,29 @@ export class InquiryDialog {
       this.log.error('Inquiry submission failed', {
         priority,
         endpoint,
-        status:  err instanceof HttpErrorResponse ? err.status     : undefined,
-        message: err instanceof HttpErrorResponse ? err.message    : String(err),
+        status:  err instanceof HttpErrorResponse ? err.status  : undefined,
+        message: err instanceof HttpErrorResponse ? err.message : String(err),
       });
     } finally {
       this.loading.set(false);
     }
   }
 
+  /** Maps a failed request to a user-facing message that distinguishes the
+   *  most common failure modes instead of collapsing them all into one. */
   private messageFor(err: unknown): string {
     if (!(err instanceof HttpErrorResponse)) {
-      return 'Failed to send - please try again or give us a call at (403)291-2594.';
+      return 'Failed to send. Please try again or call us at (403)-291-2594.';
     }
     switch (err.status) {
       case 0:
-        // No HTTP status reached us at all — offline, DNS failure, or
-        // blocked before it left the browser (CORS, an extension, etc.).
-        return 'We couldn\u2019t reach our server. Please check your connection and try again, or call us at (403) 258-9455.';
+        return 'We couldn\u2019t reach our server. Please check your connection and try again, or call us at (403)-291-2594.';
       case 429:
-        return 'Too many attempts from this connection. Please wait a few minutes and try again, or call us at (403) 258-9455.';
+        return 'Too many attempts from this connection. Please wait a few minutes and try again, or call us at (403)-291-2594.';
       case 400:
         return 'Some of the information provided couldn\u2019t be sent. Please double-check the form and try again.';
       default:
-        return 'Failed to send - please try again or give us a call at (403)291-2594.'; 
+        return 'Failed to send. Please try again or call us at (403)-291-2594.';
     }
   }
 }

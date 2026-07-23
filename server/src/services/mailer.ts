@@ -1,55 +1,33 @@
+/**
+ * services/mailer.ts
+ *
+ * Sends inquiry-related emails via the SendGrid HTTPS API.
+ *
+ * Why SendGrid over raw nodemailer/SMTP:
+ *   • Vercel serverless functions have a 15 s execution budget — an HTTPS
+ *     POST is far more reliable than opening a TCP/TLS SMTP socket on
+ *     every cold start.
+ *   • SendGrid's sandbox mode validates the full request without actually
+ *     delivering, so staging and local dev never email a real inbox unless
+ *     the developer explicitly opts in via TEST_EMAIL_RECIPIENT.
+ *
+ * Environment strategy:
+ *   ┌─────────────────────┬───────────────┬────────────────────────────────┐
+ *   │ Environment         │ EMAIL_SANDBOX │ TEST_EMAIL_RECIPIENT           │
+ *   ├─────────────────────┼───────────────┼────────────────────────────────┤
+ *   │ fl-legal.ca (prod)  │ false         │ (unset)                        │
+ *   │ staging.fl-legal.ca │ false         │ your test inbox                │
+ *   │ localhost:4422      │ true          │ (unset — sandbox eats it)      │
+ *   └─────────────────────┴───────────────┴────────────────────────────────┘
+ *
+ *   Use separate SendGrid API keys per environment so a leaked
+ *   staging key can never send as the firm.
+ */
 
-import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
 import sgMail from '@sendgrid/mail';
-import { config } from '../config';
-import * as dotenv from 'dotenv';
+import { config } from '@config';
 
-dotenv.config();
-
-let _transport: Transporter | null = null;
-
-function transport(): Transporter {
-  if (!_transport) {
-    _transport = nodemailer.createTransport({
-      host:   config.email.host,
-      port:   config.email.port,
-      secure: config.email.secure,
-      auth: {
-        user: config.email.user,
-        pass: config.email.pass,
-      },
-    });
-  }
-  return _transport;
-}
-
-const FROM = `"${config.email.fromName}" <${config.email.user}>`;
-
-function sendDefault() {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY || 'no-email-api-key');
-  // sgMail.setDataResidency('eu'); 
-  // uncomment the above line if you are sending mail using a regional EU subuser
-
-  const msg = {
-    to: 'michaelllowenstein@gmail.com',
-    from: 'support@lowenstein.ca',
-    subject: 'Sending with SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-  }
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log('Email sent')
-    })
-    .catch((error) => {
-      console.error(error)
-    });
-}
-
-//                                                                              
-//  Public interfaces
-//                                                                              
+sgMail.setApiKey(config.email.apiKey);
 
 export interface GeneralInquiryPayload {
   name:    string;
@@ -59,13 +37,8 @@ export interface GeneralInquiryPayload {
 }
 
 export interface PriorityInquiryPayload extends GeneralInquiryPayload {
-  /** e.g. 'Real Estate', 'Family Law'   drives the priority subject line */
   practiceArea?: string;
 }
-
-//                                                                              
-//  Email templates
-//                                                                              
 
 function baseHtml(body: string): string {
   return `<!DOCTYPE html>
@@ -102,7 +75,7 @@ function baseHtml(body: string): string {
   <div class="wrap">
     <div class="hdr">
       <h1>Fric, Lowenstein &amp; Co. LLP</h1>
-      <p>Barristers &amp; Solicitors   Calgary, Alberta</p>
+      <p>Barristers &amp; Solicitors \u2014 Calgary, Alberta</p>
     </div>
     <div class="body">${body}</div>
     <div class="ftr">&copy; ${new Date().getFullYear()} Fric, Lowenstein &amp; Co. LLP. All rights reserved.</div>
@@ -110,16 +83,12 @@ function baseHtml(body: string): string {
 </body>
 </html>`;
 }
-
-//                                                                              
-//  1. General appointment request
-//     Sent to: firm inbox
-//     Subject: normal, no special flag
-//                                                                              
-
+ 
+// ── 1. General appointment request ───────────────────────────────────────────
+ 
 export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<void> {
-  const subject = `Appointment Request   ${data.name}`;
-
+  const subject = `Appointment Request \u2014 ${data.name}`;
+ 
   const html = baseHtml(`
     <h2>New Appointment Request</h2>
     <table class="fields">
@@ -130,33 +99,26 @@ export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<v
     <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">Message:</p>
     <div class="msg">${esc(data.message).replace(/\n/g, '<br>')}</div>
   `);
-
+ 
   const text =
     `New Appointment Request\n\n` +
     `Name:    ${data.name}\n` +
     `Email:   ${data.email}\n` +
     (data.phone ? `Phone:   ${data.phone}\n` : '') +
     `\nMessage:\n${data.message}`;
-
+ 
   await send({ subject, html, text, replyTo: data.email });
-
-  // Auto-confirm to the client
   await sendClientConfirmation(data.name, data.email);
 }
-
-//                                                                              
-//  2. Priority inquiry
-//     Sent to: firm inbox
-//     Subject: prefixed with   PRIORITY so secretarial staff spot it immediately
-//     in any email client (no filters or rules required)
-//                                                                              
-
+ 
+// ── 2. Priority inquiry (★ subject prefix) ───────────────────────────────────
+ 
 export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise<void> {
   const areaLabel = data.practiceArea ? ` [${data.practiceArea}]` : '';
-  const subject   = `  PRIORITY INQUIRY${areaLabel}   ${data.name}`;
-
+  const subject   = `\u2605 PRIORITY INQUIRY${areaLabel} \u2014 ${data.name}`;
+ 
   const html = baseHtml(`
-    <div class="badge">  Priority Inquiry${data.practiceArea ? '   ' + esc(data.practiceArea) : ''}</div>
+    <div class="badge">\u2605 Priority Inquiry${data.practiceArea ? ' \u2014 ' + esc(data.practiceArea) : ''}</div>
     <h2>Urgent Client Inquiry</h2>
     <p style="font-family:sans-serif;font-size:13px;color:#555;margin:0 0 16px">
       This inquiry has been marked <strong>priority</strong> and requires prompt attention.
@@ -170,27 +132,25 @@ export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise
     <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">Message:</p>
     <div class="msg">${esc(data.message).replace(/\n/g, '<br>')}</div>
   `);
-
+ 
   const text =
-    `  PRIORITY INQUIRY${areaLabel}\n\n` +
+    `\u2605 PRIORITY INQUIRY${areaLabel}\n\n` +
     `Name:    ${data.name}\n` +
     `Email:   ${data.email}\n` +
     (data.phone ? `Phone:   ${data.phone}\n` : '') +
     (data.practiceArea ? `Matter:  ${data.practiceArea}\n` : '') +
     `\nMessage:\n${data.message}`;
-
+ 
   await send({ subject, html, text, replyTo: data.email });
   await sendClientConfirmation(data.name, data.email);
 }
-
-//                                                                              
-//  3. Auto-confirmation to the client
-//                                                                              
-
+ 
+// ── 3. Auto-confirmation to the client ───────────────────────────────────────
+ 
 async function sendClientConfirmation(name: string, toEmail: string): Promise<void> {
   const firstName = name.split(' ')[0];
-  const subject   = `We've received your inquiry   Fric, Lowenstein & Co.`;
-
+  const subject   = `We\u2019ve received your inquiry \u2014 Fric, Lowenstein & Co.`;
+ 
   const html = baseHtml(`
     <h2>Thank you, ${esc(firstName)}.</h2>
     <p style="font-size:15px;line-height:1.7">
@@ -202,52 +162,60 @@ async function sendClientConfirmation(name: string, toEmail: string): Promise<vo
       <a href="tel:+14032589455" style="color:#1a3a5c">(403) 258-9455</a>.
     </p>
     <p style="font-size:13px;color:#888;margin-top:24px">
-      Office hours: Monday   Friday, 8:30 AM   5:00 PM (Mountain Time)
+      Office hours: Monday \u2013 Friday, 8:30 AM \u2013 5:00 PM (Mountain Time)
     </p>
   `);
-
+ 
   const text =
     `Thank you, ${firstName}.\n\n` +
     `We have received your inquiry and will be in touch within one business day.\n\n` +
     `For urgent matters, call: (403) 258-9455\n` +
-    `Office hours: Mon Fri, 8:30 AM   5:00 PM MT`;
-
-  await send({
-    to:      toEmail,
-    subject,
-    html,
-    text,
-  });
+    `Office hours: Mon\u2013Fri, 8:30 AM \u2013 5:00 PM MT`;
+ 
+  await send({ to: toEmail, subject, html, text });
 }
-
-//                                                                              
-//  Internal helpers
-//                                                                              
-
+ 
+// ── Internal send — SendGrid HTTPS API ───────────────────────────────────────
+ 
 interface SendOptions {
-  to?:     string;   // defaults to firm inbox
-  subject: string;
-  html:    string;
-  text:    string;
+  to?:      string;
+  subject:  string;
+  html:     string;
+  text:     string;
   replyTo?: string;
 }
-
+ 
 async function send(opts: SendOptions): Promise<void> {
-  const mail: SendMailOptions = {
-    from:    FROM,
-    to:      opts.to ?? config.email.firmEmail,
+  // TEST_EMAIL_RECIPIENT (if set) redirects EVERYTHING — firm-facing and
+  // client confirmation alike — so staging QA never emails a real address.
+  const to = config.email.testRecipient || opts.to || config.email.firmEmail;
+ 
+  const msg: sgMail.MailDataRequired = {
+    to,
+    from: { email: config.email.fromEmail, name: config.email.fromName },
     subject: opts.subject,
-    html:    opts.html,
-    text:    opts.text,
+    html: opts.html,
+    text: opts.text,
+    ...(opts.replyTo || config.email.replyTo
+      ? { replyTo: opts.replyTo ?? config.email.replyTo }
+      : {}),
+    // Sandbox mode validates the request against SendGrid's API but never
+    // actually delivers — the default everywhere except production.
+    mailSettings: { sandboxMode: { enable: config.email.sandbox } },
   };
-
-  if (opts.replyTo)                 mail.replyTo = opts.replyTo;
-  else if (config.email.replyTo)    mail.replyTo = config.email.replyTo;
-
-  await transport().sendMail(mail);
+ 
+  try {
+    await sgMail.send(msg);
+  } catch (err: any) {
+    // SendGrid surfaces the real error in err.response.body, not err.message.
+    const detail = err?.response?.body ?? err?.message ?? String(err);
+    throw new Error(`SendGrid send failed: ${JSON.stringify(detail)}`);
+  }
 }
-
-/** Minimal HTML-escape   prevents XSS in email templates. */
+ 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+ 
+/** Minimal HTML-escape — prevents XSS in email templates. */
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
