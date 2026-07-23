@@ -1,6 +1,11 @@
 /**
- * JSON Schema definitions used by Fastify's built-in validator (ajv).
- * Keeps route handlers thin and validation declarative.
+ * schema/inquiry.ts
+ *
+ * JSON Schema definitions for the inquiry endpoints, consumed by Fastify's
+ * built-in ajv validator.  Keeps route handlers thin and validation declarative.
+ *
+ * Payload TypeScript interfaces live in services/mailer.ts alongside the
+ * send logic — routes/inquiry.ts imports schemas from here and types from there.
  */
 
 export const generalInquirySchema = {
@@ -16,7 +21,7 @@ export const generalInquirySchema = {
     },
   },
 } as const;
-
+ 
 export const priorityInquirySchema = {
   body: {
     type: 'object',
@@ -31,4 +36,3 @@ export const priorityInquirySchema = {
     },
   },
 } as const;
-
