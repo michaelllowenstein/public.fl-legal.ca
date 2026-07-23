@@ -577,7 +577,7 @@ export class Calculator {
         const cfg = this.calcConfig;
         const amount = this.refinanceAmount(), payouts = Math.max(1, this.payoutCount());
         const legal = 995 + (payouts - 1) * 175;
-        const mortgageFee = ltoFee(amount), dischargeFee = payouts * 10;
+        const mortgageFee = ltoFee(amount), dischargeFee = 10;
         const titleIns = this.titleInsurance(), other = this.otherDisbursements();
 
         const includeMortgageReg = cfg.isIncluded(tab, 'mortgageRegistration');
@@ -596,7 +596,7 @@ export class Calculator {
         if (includeOther)        lines.push({ label: cfg.fieldLabel(tab, 'otherDisbursements', 'Other Disbursements (est.)'), value: other, muted: true });
         if (includeGst)          lines.push({ label: cfg.fieldLabel(tab, 'gst', 'GST (5%)'), value: gst, muted: true });
         if (includeMortgageReg)  lines.push({ label: cfg.fieldLabel(tab, 'mortgageRegistration', 'Land Titles \u2014 New Mortgage Registration'), value: mortgageFee, muted: true });
-        if (includeDischargeFee) lines.push({ label: `${cfg.fieldLabel(tab, 'dischargeFee', 'Land Titles \u2014 Discharge Fee(s)')} (${payouts} \u00d7 $10)`, value: dischargeFee, muted: true });
+        if (includeDischargeFee) lines.push({ label: cfg.fieldLabel(tab, 'dischargeFee', 'Land Titles — Discharge Fee'), value: dischargeFee, muted: true });
 
         const total = legal + (includeTitleIns ? titleIns : 0) + (includeOther ? other : 0) + gst + (includeMortgageReg ? mortgageFee : 0) + (includeDischargeFee ? dischargeFee : 0);
         return { lines, total, footnote: cfg.disclaimer(tab) };
