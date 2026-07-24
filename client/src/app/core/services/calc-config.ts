@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Database, ref, get } from '@angular/fire/database';
+import { Database, ref, get, set as dbSet } from '@angular/fire/database';
 import { firstValueFrom } from 'rxjs';
 import { TabId } from '@schema/models';
 import { DebugService } from '@core/services/debug';
@@ -207,7 +207,7 @@ export class CalculatorConfigService {
     this.cacheLocal(merged);
 
     this.log.debug('Pushing to API');
-    this.pushToApi(merged);
+    this.pushToRemote(merged);
 
     this.log.groupEnd();
   }
@@ -261,14 +261,25 @@ export class CalculatorConfigService {
     }
   }
 
-  private pushToApi(config: CalculatorConfig): void {
+  private async pushToRemote(config: CalculatorConfig): Promise<void> {
+    // 1. Write directly to Firebase (same as SiteService pattern)
+    try {
+      await dbSet(ref(this.db, FIREBASE_PATH), config);
+      this.lastSyncEntry.set(new Date().toISOString());
+      this.log.info('Saved to Firebase directly');
+      return; // Success — skip the API fallback
+    } catch (err) {
+      this.log.warn('Direct Firebase write failed, trying API', err);
+    }
+
+    // 2. Fallback: try the API (will only work with a valid calc JWT)
     this.http.put('/api/calc-config', config).subscribe({
       next: () => {
         this.lastSyncEntry.set(new Date().toISOString());
-        this.log.info('Saved to API \u2192 Firebase');
+        this.log.info('Saved to API → Firebase');
       },
       error: (err) => {
-        this.log.warn('API write failed (local copy saved)', err?.status ?? err);
+        this.log.warn('API write also failed — changes saved locally only', err?.status ?? err);
       },
     });
   }
