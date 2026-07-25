@@ -47,6 +47,7 @@ import { sendGeneralInquiry, sendPriorityInquiry } from '../src/services/mailer'
 // In production this actually goes to the "client" email address.
 // In staging/local, TEST_EMAIL_RECIPIENT overrides it inside send().
 const TEST_CLIENT_EMAIL = 'michael@lowenstein.ca';
+const TEST_CLIENT_NAME = 'Michael Lowenstein';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ async function main(): Promise<void> {
   const t1 = await runTest(
     'General inquiry → firm + confirmation → client',
     () => sendGeneralInquiry({
-      name:    'Smoke Test (General)',
+      name:    `${TEST_CLIENT_NAME} (General)`,
       email:   TEST_CLIENT_EMAIL,
       phone:   '(403) 555-0199',
       message: `Automated smoke test from ${envLabel()} at ${timestamp}.\n\n`
@@ -126,7 +127,7 @@ async function main(): Promise<void> {
   const t2 = await runTest(
     'Priority inquiry → firm + confirmation → client',
     () => sendPriorityInquiry({
-      name:         'Smoke Test (Priority)',
+      name:         `${TEST_CLIENT_NAME} (Priority)`,
       email:        TEST_CLIENT_EMAIL,
       phone:        '(403) 555-0199',
       practiceArea: 'Real Estate Law',

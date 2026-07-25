@@ -201,7 +201,7 @@ async function send(opts: SendOptions): Promise<void> {
       : {}),
     // Sandbox mode validates the request against SendGrid's API but never
     // actually delivers — the default everywhere except production.
-    mailSettings: { sandboxMode: { enable: config.email.sandbox } },
+    mailSettings: { sandboxMode: { enable: config.email.sandbox!.toString() } },
   };
  
   try {
