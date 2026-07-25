@@ -6,3 +6,4 @@ export * from './trunc-text';
 export * from './wrap-text';
 export * from './safe-html';
 export * from './section-text';
+export * from './fee-calcs';

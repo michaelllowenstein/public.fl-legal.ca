@@ -18,6 +18,8 @@ import { sectionText } from '@schema/utils';
 import { SeoService } from '@core/services/seo';
 import { AutoContrastDirective } from '@core/directives/auto-contrast';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DialogService } from '@app/components/factory/dialog/service';
+import { Calculator } from '@feature/calculator';
 
 const SECTION_META: Record<string, { icon: string; accent: string }> = {
   'purchase-mortgage': { icon: 'home',           accent: 'text-blue-600 bg-blue-50 border-blue-100'          },
@@ -52,11 +54,12 @@ const DEFAULT_META = {
   `
 })
 export class PricingPage {
-  private seo: SeoService   = inject(SeoService);
-  private siteService       = inject(SiteService);
-  private destroy           = inject(DestroyRef);
-  private log               = inject(LoggerService).child('pricing');
-  private sanitizer         = inject(DomSanitizer);
+  private seo: SeoService       = inject(SeoService);
+  private siteService           = inject(SiteService);
+  private destroy               = inject(DestroyRef);
+  private log                   = inject(LoggerService).child('pricing');
+  private sanitizer             = inject(DomSanitizer);
+  private dialog: DialogService = inject(DialogService);
 
   site    = signal(PRICING);
   loading = signal(true);
@@ -104,5 +107,10 @@ export class PricingPage {
       '<span class="font-semibold text-brand">$1</span>',
     );
     return this.sanitizer.bypassSecurityTrustHtml(highlighted);
+  }
+ 
+  openCalculator() {
+    this.log.info('Fee calculator dialog opened from Pricing page');
+    this.dialog.open(Calculator);
   }
 }

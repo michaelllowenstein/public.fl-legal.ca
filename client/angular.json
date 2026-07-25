@@ -3,7 +3,10 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "daf1539f-8125-4ecc-a907-7920f27b668a"
+    "analytics": "daf1539f-8125-4ecc-a907-7920f27b668a",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -22,9 +25,17 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": [
+              "html2pdf.js"
+            ],
+            "externalDependencies": [
+              "firebase-admin"
+            ],
             "assets": [
               {
                 "glob": "**/*",
@@ -101,11 +112,20 @@
               "buildTarget": "fl-legal.ca:build:local",
               "ssl": true,
               "sslCert": "cert/local/localhost.crt",
-              "sslKey":  "cert/local/localhost.decrypted.key",
+              "sslKey": "cert/local/localhost.decrypted.key",
               "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "local"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }

@@ -16,6 +16,7 @@ dotenv.config();
 
  *
  *   POST   /api/auth/editor              secretary password → editor JWT
+ *   POST   /api/auth/calc                calculator password → calc JWT
  *   POST   /api/auth/lawyer              Firebase ID token  → lawyer JWT
  *   POST   /api/auth/lawyer/password     username+password  → lawyer JWT
  *
@@ -38,6 +39,10 @@ dotenv.config();
  *   PATCH  /api/calendar/:id             update event (lawyer JWT)
  *   DELETE /api/calendar/:id             delete event (lawyer JWT)
  *
+ *   GET    /api/calc-config              fetch calculator config     (public)
+ *   PATCH  /api/calc-config              update one config field     (calc JWT)
+ *   PUT    /api/calc-config              replace entire config tree  (calc JWT)
+ *
  *   GET    /health                       liveness check
  */
 
@@ -59,6 +64,7 @@ import { profileRoutes } from '@routes/profile';
 import { contentRoutes } from '@routes/content';
 import { inquiryRoutes } from '@routes/inquiry';
 import { calendarRoutes } from '@routes/calendar';
+import { calcConfigRoutes } from '@routes/calc-config';
 import { initFirebase } from '@services/firebase';
 
 // ─── TLS helper ───────────────────────────────────────────────────────────────
@@ -179,7 +185,7 @@ async function main() {
     index:  false,   // index.html served manually via GET /api below
   });
 
-  // ── JWT auth decorators (verifyEditor / verifyLawyer) ─────────────────────
+  // ── JWT auth decorators (verifyEditor / verifyCalcConfig / verifyLawyer) ──
 
   await fastify.register(authPlugin);
 
@@ -241,13 +247,14 @@ async function main() {
 
   // ── API routes ────────────────────────────────────────────────────────────
 
-  fastify.register(authRoutes,     { prefix: '/api/auth'      });
-  fastify.register(docsRoutes,      { prefix: '/api/docs'      });
-  fastify.register(profileRoutes,  { prefix: '/api/profiles'  });
-  fastify.register(contentRoutes,  { prefix: '/api/content'   });
-  fastify.register(blogRoutes,     { prefix: '/api/blog'      });
-  fastify.register(calendarRoutes, { prefix: '/api/calendar'  });
-  fastify.register(inquiryRoutes,  { prefix: '/api/inquiries' });
+  fastify.register(authRoutes,      { prefix: '/api/auth'        });
+  fastify.register(docsRoutes,      { prefix: '/api/docs'        });
+  fastify.register(profileRoutes,   { prefix: '/api/profiles'    });
+  fastify.register(contentRoutes,   { prefix: '/api/content'     });
+  fastify.register(blogRoutes,      { prefix: '/api/blog'        });
+  fastify.register(calendarRoutes,  { prefix: '/api/calendar'    });
+  fastify.register(inquiryRoutes,   { prefix: '/api/inquiries'   });
+  fastify.register(calcConfigRoutes,{ prefix: '/api/calc-config' });
 
   // ── Start ─────────────────────────────────────────────────────────────────
 

@@ -4,13 +4,14 @@ import { CommonModule, NgIf } from '@angular/common';
 import { NavbarComponent } from '@components/layout/navbar';
 import { SpinnerComponent } from '@components/ui/spinner';
 import { routerSlideAnimation, ROUTE_ORDER } from '@animations/app';
+import { routerAnimations } from '@animations/route';
 import { StylusService } from '@core/services/stylus'
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NgIf, NavbarComponent, SpinnerComponent, CommonModule],
-  animations: [routerSlideAnimation],
+  animations: [routerAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="page-content">

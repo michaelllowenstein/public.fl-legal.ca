@@ -2,6 +2,7 @@
  * routes/auth.ts
  *
  * POST /api/auth/editor  — secretary login: password → editor JWT
+ * POST /api/auth/calc    — calculator-config login: password → calc JWT
  * POST /api/auth/lawyer  — lawyer login: Firebase ID token → lawyer JWT
  *                          (lawyers sign in via Firebase client SDK on the
  *                           Angular side, then exchange their ID token here
@@ -10,8 +11,8 @@
 import bcrypt from 'bcrypt';
 import * as admin from 'firebase-admin';
 import { config } from '@config';
-import { editorLoginSchema, fricLowensteinLoginSchema } from '@schema';
-import { signEditorToken, signLawyerToken } from '@plugins/auth';
+import { calcLoginSchema, editorLoginSchema, fricLowensteinLoginSchema } from '@schema';
+import { signCalcToken, signEditorToken, signLawyerToken } from '@plugins/auth';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export async function authRoutes(fastify: FastifyInstance): Promise<void> {
@@ -41,6 +42,39 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
       }
 
       const token = signEditorToken();
+      return reply.status(200).send({ token });
+    },
+  );
+
+  // ── POST /api/auth/calc ───────────────────────────────────────────────────
+  //    Body: { password: string }
+  //    Returns: { token: string }
+  //    Rate-limited hard: 10 attempts per 15 min per IP
+  fastify.post(
+    '/calc',
+    {
+      schema: calcLoginSchema,
+      config: { rateLimit: { max: 10, timeWindow: '15 minutes' } },
+    },
+    async (
+      req:   FastifyRequest<{ Body: { password: string } }>,
+      reply: FastifyReply,
+    ) => {
+      if (!config.auth.calcPasswordHash) {
+        req.log.error('Calculator config password hash is not configured');
+        return reply.status(500).send({ error: 'Calculator config login is not configured.' });
+      }
+
+      const match = await bcrypt.compare(
+        req.body.password,
+        config.auth.calcPasswordHash,
+      );
+
+      if (!match) {
+        return reply.status(401).send({ error: 'Invalid credentials.' });
+      }
+
+      const token = signCalcToken();
       return reply.status(200).send({ token });
     },
   );
