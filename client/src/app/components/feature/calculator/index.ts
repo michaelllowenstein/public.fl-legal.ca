@@ -303,7 +303,7 @@ export class Calculator {
     }
 
     setDisclaimer(tab: TabId, value: string): void {
-        this.draft.update(d => {
+        this.draft.update((d: any) => {
             if (!d) return d;
             const next = structuredClone(d);
             next[tab].disclaimer = value;
@@ -312,7 +312,7 @@ export class Calculator {
     }
 
     private patchDraft(tab: TabId, field: string, patch: Partial<CalculatorFieldConfig>): void {
-        this.draft.update(d => {
+        this.draft.update((d: any) => {
             if (!d) return d;
             const next = structuredClone(d);
             if (next[tab]?.fields?.[field]) {
@@ -405,7 +405,7 @@ export class Calculator {
             });
 
             const rows = r.lines
-                .map(line => `
+                .map((line: { label: unknown; value: number; }) => `
           <tr>
             <td class="line">${esc(line.label)}</td>
             <td class="line" style="text-align:right; white-space:nowrap;">${esc(this.fmt(line.value))}</td>
