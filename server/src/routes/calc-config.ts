@@ -61,8 +61,13 @@ export function isValidConfig(body: unknown): body is Record<string, unknown> {
 
 export async function calcConfigRoutes(
   fastify: FastifyInstance,
-  deps: CalcConfigRouteDeps = defaultDeps,
+  opts?: Record<string, unknown>,
 ): Promise<void> {
+  const deps: CalcConfigRouteDeps = {
+    get: (opts?.get as typeof dbGet)      ?? dbGet,
+    multiUpdate: (opts?.multiUpdate as typeof dbMultiUpdate) ?? dbMultiUpdate,
+    now: (opts?.now as () => number)            ?? Date.now,
+  };
 
   // ── GET /api/calc-config ─────────────────────────────────────────────────
   fastify.get(
