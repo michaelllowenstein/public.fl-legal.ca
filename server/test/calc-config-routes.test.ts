@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { describe, it, before } from 'node:test';
 import Fastify from 'fastify';
 
 process.env.NODE_ENV = 'test';
@@ -9,15 +9,18 @@ process.env.CALC_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uO
 process.env.EDITOR_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uOQve';
 process.env.ADMIN_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uOQve';
 process.env.FIREBASE_DATABASE_URL = 'https://example.test';
-process.env.SMTP_USER = 'unit@example.test';
-process.env.SMTP_PASS = 'unit-pass';
+process.env.SENDGRID_API_KEY = 'SG.unit-test-key';
 process.env.FIRM_EMAIL = 'firm@example.test';
 
-const authModule = await import('../src/plugins/auth');
-const authPlugin = authModule.default;
-const { signCalcToken, signEditorToken } = authModule;
-const calcRouteModule = await import('../src/routes/calc-config');
-const { CALC_CONFIG_DB_PATH, VALID_CALC_TABS, calcConfigRoutes, isValidConfig } = calcRouteModule;
+// ── Module-scope refs populated in before() ──────────────────────────────────
+
+let authPlugin: any;
+let signCalcToken: (...args: any[]) => string;
+let signEditorToken: (...args: any[]) => string;
+let calcConfigRoutes: any;
+let isValidConfig: (body: unknown) => boolean;
+let CALC_CONFIG_DB_PATH: string;
+let VALID_CALC_TABS: Set<string>;
 
 function validConfig(): Record<string, unknown> {
   return Object.fromEntries(
@@ -49,7 +52,7 @@ async function buildApp(options: {
         if (options.failGet) throw new Error('read failed');
         return options.stored ?? null;
       },
-      multiUpdate: async (update) => {
+      multiUpdate: async (update: Record<string, unknown>) => {
         if (options.failWrite) throw new Error('write failed');
         updates.push(update);
       },
@@ -63,6 +66,19 @@ async function buildApp(options: {
 }
 
 describe('calculator config route validation', () => {
+  before(async () => {
+    const authModule = await import('../src/plugins/auth');
+    authPlugin = authModule.default;
+    signCalcToken = authModule.signCalcToken;
+    signEditorToken = authModule.signEditorToken;
+
+    const calcRouteModule = await import('../src/routes/calc-config');
+    calcConfigRoutes = calcRouteModule.calcConfigRoutes;
+    isValidConfig = calcRouteModule.isValidConfig;
+    CALC_CONFIG_DB_PATH = calcRouteModule.CALC_CONFIG_DB_PATH;
+    VALID_CALC_TABS = calcRouteModule.VALID_CALC_TABS;
+  });
+
   it('requires all known calculator tabs', () => {
     const body = validConfig();
     assert.equal(isValidConfig(body), true);
@@ -79,6 +95,22 @@ describe('calculator config route validation', () => {
 });
 
 describe('calculator config routes', () => {
+  before(async () => {
+    // Guard: if the validation suite's before() already ran, skip re-import
+    if (calcConfigRoutes) return;
+
+    const authModule = await import('../src/plugins/auth');
+    authPlugin = authModule.default;
+    signCalcToken = authModule.signCalcToken;
+    signEditorToken = authModule.signEditorToken;
+
+    const calcRouteModule = await import('../src/routes/calc-config');
+    calcConfigRoutes = calcRouteModule.calcConfigRoutes;
+    isValidConfig = calcRouteModule.isValidConfig;
+    CALC_CONFIG_DB_PATH = calcRouteModule.CALC_CONFIG_DB_PATH;
+    VALID_CALC_TABS = calcRouteModule.VALID_CALC_TABS;
+  });
+
   it('serves calculator config publicly with short cache headers', async () => {
     const stored = validConfig();
     const { app } = await buildApp({ stored });
