@@ -21,7 +21,7 @@ const isProd = nodeEnv === 'production';
 //    local   → https://localhost:4200
 //    staging → http://localhost:4200   (or override via ALLOWED_ORIGINS)
 //    prod    → https://fl-legal.ca     (or override via ALLOWED_ORIGINS)
-const defaultOrigins = isDev ? 'https://localhost:4422' : isStage ? 'https://localhost:4244' : 'https://fl-legal.ca';
+const defaultOrigins = isDev ? 'https://localhost:4422' : isStage ? 'https://staging.fl-legal.ca' : 'https://fl-legal.ca';
 
 // Default TLS cert/key paths based on environment tier.
 // Can always be overridden via TLS_CERT / TLS_KEY env vars.
@@ -85,18 +85,18 @@ export const config = {
   email: {
     // SendGrid API key — use a SEPARATE key per environment so a leaked
     // staging key can never send as the firm in production.
-    apiKey: need('SENDGRID_API_KEY'),
+    apiKey: isProd ? need('SENDGRID_EMAIL_API_KEY') : isStage ? need('SENDGRID_STAGING_API_KEY') : need('SENDGRID_LOCAL_API_KEY'),
  
     // Verified sender identity — must match a Single Sender or an
-    // authenticated domain in your SendGrid account.
+    // authenticated domain in yor SendGrid account.
     fromEmail: optional('EMAIL_FROM', 'no-reply@fl-legal.ca'),
     fromName:  optional('EMAIL_FROM_NAME', 'Fric, Lowenstein & Co. LLP'),
  
     // Where firm-facing inquiry emails land.
-    firmEmail: need('FIRM_EMAIL'),
+    firmEmail: need('FIRM_EMAIL') ?? 'friclow@gmail.com',
  
     // Optional reply-to for outgoing mail.
-    replyTo: optional('EMAIL_REPLY_TO'),
+    replyTo: optional('EMAIL_REPLY_TO, no-reply@fl-legal.ca'),
  
     // Sandbox mode: validates the full request against SendGrid but
     // never actually delivers.  Defaults to ON everywhere except prod.

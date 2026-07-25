@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
-import Fastify from 'fastify';
+import { describe, it, before } from 'node:test';
+import Fastify, { type FastifyInstance } from 'fastify';
 
 process.env.NODE_ENV = 'test';
 process.env.HTTPS = 'false';
@@ -9,15 +9,17 @@ process.env.CALC_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uO
 process.env.EDITOR_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uOQve';
 process.env.ADMIN_HASH = '$2b$10$ABCDEFGHIJKLMNOPQRSTUO9fR0Q2hZJw5orF0pErPiL4k4uOQve';
 process.env.FIREBASE_DATABASE_URL = 'https://example.test';
-process.env.SMTP_USER = 'unit@example.test';
-process.env.SMTP_PASS = 'unit-pass';
+process.env.SENDGRID_API_KEY = 'SG.unit-test-key';
 process.env.FIRM_EMAIL = 'firm@example.test';
 
-const authModule = await import('../src/plugins/auth');
-const authPlugin = authModule.default;
-const { signCalcToken, signEditorToken, signLawyerToken } = authModule;
+// ── Module-scope refs populated in before() ──────────────────────────────────
 
-async function buildApp() {
+let authPlugin: any;
+let signCalcToken: (...args: any[]) => string;
+let signEditorToken: (...args: any[]) => string;
+let signLawyerToken: (...args: any[]) => string;
+
+async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({ logger: false });
   await app.register(authPlugin);
 
@@ -37,6 +39,14 @@ async function buildApp() {
 }
 
 describe('auth plugin', () => {
+  before(async () => {
+    const authModule = await import('../src/plugins/auth');
+    authPlugin = authModule.default;
+    signCalcToken = authModule.signCalcToken;
+    signEditorToken = authModule.signEditorToken;
+    signLawyerToken = authModule.signLawyerToken;
+  });
+
   it('rejects missing bearer tokens', async () => {
     const app = await buildApp();
     try {
