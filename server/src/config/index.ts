@@ -13,9 +13,9 @@ function optional(name: string, fallback = ''): string {
 }
 
 function resolveApiKey(): string {
-  if (isProd)  return process.env.SENDGRID_EMAIL_API_KEY || process.env.SENDGRID_API_KEY || '';
-  if (isStage) return process.env.SENDGRID_STAGING_API_KEY || process.env.SENDGRID_API_KEY || '';
-  return process.env.SENDGRID_LOCAL_API_KEY || process.env.SENDGRID_API_KEY || '';
+  if (isProd)  return process.env.SENDGRID_API_KEY || process.env.SENDGRID_EMAIL_API_KEY || '';
+  if (isStage) return process.env.SENDGRID_API_KEY || process.env.SENDGRID_STAGING_API_KEY || '';
+  return process.env.SENDGRID_API_KEY || process.env.SENDGRID_LOCAL_API_KEY || '';
 }
 
 // ── Environment tier ──────────────────────────────────────────────────────────
