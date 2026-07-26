@@ -38,7 +38,8 @@
  */
 
 import * as dotenv from 'dotenv';
-dotenv.config();
+dotenv.config();                // loads .env
+dotenv.config({ path: 'sendgrid.env' });
 
 import { config } from '../src/config';
 import { sendGeneralInquiry, sendPriorityInquiry } from '../src/services/mailer';

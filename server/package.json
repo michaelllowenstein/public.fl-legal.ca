@@ -28,7 +28,7 @@
     "smoketest": "./scripts/smoketest.sh",
     "demos": "./scripts/demos.sh",
     "test": "node --import tsx --test --experimental-test-coverage \"test/**/*.test.ts\"",
-    "test:emails:local": "tsx ./scripts/emails.ts",
+    "test:emails:local": "./scripts/emails.ts",
     "test:emails:stage": "NODE_ENV=staging tsx ./scripts/emails.ts",
     "test:emails:live": "NODE_ENV=production tsx ./scripts/emails.ts"
   },
