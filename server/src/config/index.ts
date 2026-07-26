@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+dotenv.config({path: '../../sendgrid.env'});
 
 export const need = (name: string): string => {
   const v = process.env[name];
