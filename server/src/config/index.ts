@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-dotenv.config({path: '../../sendgrid.env'});
+dotenv.config({ path: '../../resend.env', override: true });
 
 export const need = (name: string): string => {
   const v = process.env[name];
@@ -10,12 +10,6 @@ export const need = (name: string): string => {
 
 function optional(name: string, fallback = ''): string {
   return process.env[name] ?? fallback;
-}
-
-function resolveApiKey(): string {
-  if (isProd)  return process.env.SENDGRID_API_KEY || process.env.SENDGRID_EMAIL_API_KEY || '';
-  if (isStage) return process.env.SENDGRID_API_KEY || process.env.SENDGRID_STAGING_API_KEY || '';
-  return process.env.SENDGRID_API_KEY || process.env.SENDGRID_LOCAL_API_KEY || '';
 }
 
 // ── Environment tier ──────────────────────────────────────────────────────────
@@ -90,28 +84,11 @@ export const config = {
   },
  
   email: {
-    // SendGrid API key — use a SEPARATE key per environment so a leaked
-    // staging key can never send as the firm in production.
-    apiKey: resolveApiKey(),
- 
-    // Verified sender identity — must match a Single Sender or an
-    // authenticated domain in yor SendGrid account.
-    fromEmail: optional('EMAIL_FROM', 'no-reply@fl-legal.ca'),
-    fromName:  optional('EMAIL_FROM_NAME', 'Fric, Lowenstein & Co. LLP'),
- 
-    // Where firm-facing inquiry emails land.
-    firmEmail: need('FIRM_EMAIL') ?? 'friclow@gmail.com',
- 
-    // Optional reply-to for outgoing mail.
-    replyTo: optional('EMAIL_REPLY_TO, no-reply@fl-legal.ca'),
- 
-    // Sandbox mode: validates the full request against SendGrid but
-    // never actually delivers.  Defaults to ON everywhere except prod.
-    sandbox: false,
- 
-    // If set, ALL outgoing mail (firm inbox + client confirmation) is
-    // redirected here instead of the real recipient — safe for staging
-    // QA where you want to actually see an email land in your own inbox.
+    apiKey:        need('RESEND_API_KEY'),
+    fromEmail:     optional('EMAIL_FROM', 'no-reply@fl-legal.ca'),
+    fromName:      optional('EMAIL_FROM_NAME', 'Fric, Lowenstein & Co. LLP'),
+    firmEmail:     need('FIRM_EMAIL'),
+    replyTo:       optional('EMAIL_REPLY_TO', 'friclow@gmail.com'),
     testRecipient: optional('TEST_EMAIL_RECIPIENT'),
   },
   

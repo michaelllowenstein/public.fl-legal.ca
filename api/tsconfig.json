@@ -1,8 +1,7 @@
 {
-  "ignoreDeprecations": "6.0",
   "compilerOptions": {
     "target":           "ES2020",
-    "module":           "CommonJS",
+    "module":           "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop":  true,
     "strict":           false,
@@ -21,5 +20,6 @@
   "include": [
     "api/**/*.ts",
     "server/src/**/*.ts"
-  ]
+  ],
+  "exclude": ["api/dist"]
 }

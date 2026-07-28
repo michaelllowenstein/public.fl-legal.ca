@@ -59,8 +59,7 @@ async function getApp() {
     origin: (origin, cb) => {
       if (!origin) return cb(null, true);
       const allowed = [
-        'https://www.friclowenstein.com',
-        'https://friclowenstein.com',
+        'https://localhost:4422',
         'https://fl-legal.ca',
         'https://www.fl-legal.ca',
         'https://staging.fl-legal.ca'
@@ -74,7 +73,7 @@ async function getApp() {
       }
       cb(new Error(`CORS blocked: ${origin}`), false);
     },
-    methods:        ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    methods:        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials:    true,
   });

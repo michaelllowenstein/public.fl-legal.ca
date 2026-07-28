@@ -11,9 +11,7 @@
     "test": "npm run test:server && npm run test:client",
     "test:server": "cd server && npm test",
     "test:client": "node --import tsx --test --experimental-test-coverage \"client/test/**/*.test.ts\"",
-    "test:emails:local": "cd server && npm run test:emails:local",
-    "test:emails:stage": "cd server && npm run test:emails:stage",
-    "test:emails:live": "cd server && npm run test:emails:live"
+    "test:email": "cd server && npm run test:email"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
