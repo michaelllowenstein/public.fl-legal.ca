@@ -8,18 +8,18 @@
     "skipLibCheck":     true,
     "rootDir":          "../",
     "paths": {
-      "@config":        ["./server/src/config/index.ts"],
-      "@schema":        ["./server/src/schema/index.ts"],
-      "@schema/*":      ["./server/src/schema/*"],
-      "@services/*":    ["./server/src/services/*"],
-      "@plugins/*":     ["./server/src/plugins/*"],
-      "@routes/*":      ["./server/src/routes/*"]
+      "@config":        ["../server/src/config/index.ts"],
+      "@schema":        ["../server/src/schema/index.ts"],
+      "@schema/*":      ["../server/src/schema/*"],
+      "@services/*":    ["../server/src/services/*"],
+      "@plugins/*":     ["../server/src/plugins/*"],
+      "@routes/*":      ["../server/src/routes/*"]
     },
     "outDir": "dist"
   },
   "include": [
-    "api/**/*.ts",
-    "server/src/**/*.ts"
+    "./**/*.ts",
+    "../server/src/**/*.ts"
   ],
-  "exclude": ["api/dist"]
+  "exclude": ["./dist"]
 }
