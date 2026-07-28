@@ -1,33 +1,39 @@
 /**
  * services/mailer.ts
  *
- * Sends inquiry-related emails via the SendGrid HTTPS API.
+ * All outgoing email for fl-legal.ca — sent via the Resend HTTPS API.
  *
- * Why SendGrid over raw nodemailer/SMTP:
- *   • Vercel serverless functions have a 15 s execution budget — an HTTPS
- *     POST is far more reliable than opening a TCP/TLS SMTP socket on
- *     every cold start.
- *   • SendGrid's sandbox mode validates the full request without actually
- *     delivering, so staging and local dev never email a real inbox unless
- *     the developer explicitly opts in via TEST_EMAIL_RECIPIENT.
+ * Why Resend:
+ *   • Pure HTTPS — one POST per send, no SMTP socket, no connection pool.
+ *     Perfect for Vercel's 15 s serverless budget.
+ *   • Returns errors as data ({ error }), not thrown SDK exceptions with
+ *     internal validation quirks. If `error` is set, the send failed.
+ *   • Test mode is structural: an unverified domain can only deliver to
+ *     the account owner's address, so staging/local can never accidentally
+ *     email a real client.
  *
  * Environment strategy:
- *   ┌─────────────────────┬───────────────┬────────────────────────────────┐
- *   │ Environment         │ EMAIL_SANDBOX │ TEST_EMAIL_RECIPIENT           │
- *   ├─────────────────────┼───────────────┼────────────────────────────────┤
- *   │ fl-legal.ca (prod)  │ false         │ (unset)                        │
- *   │ staging.fl-legal.ca │ false         │ your test inbox                │
- *   │ localhost:4422      │ true          │ (unset — sandbox eats it)      │
- *   └─────────────────────┴───────────────┴────────────────────────────────┘
+ *   ┌─────────────────────┬─────────────────────────────────────────────────┐
+ *   │ Environment         │ Behaviour                                      │
+ *   ├─────────────────────┼─────────────────────────────────────────────────┤
+ *   │ fl-legal.ca (prod)  │ Verified domain, real delivery, no redirect    │
+ *   │ staging.fl-legal.ca │ TEST_EMAIL_RECIPIENT redirects all mail        │
+ *   │ localhost:4422      │ TEST_EMAIL_RECIPIENT redirects all mail        │
+ *   └─────────────────────┴─────────────────────────────────────────────────┘
  *
- *   Use separate SendGrid API keys per environment so a leaked
- *   staging key can never send as the firm.
+ *   Use separate Resend API keys per environment so a leaked
+ *   staging key can never send as the firm in production.
  */
 
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import { config } from '@config';
 
-sgMail.setApiKey(config.email.apiKey);
+// ── Initialise Resend client once at module load ─────────────────────────────
+
+const resend = new Resend(config.email.apiKey);
+
+// ── Public payload interfaces ────────────────────────────────────────────────
+//    (imported by routes/inquiry.ts alongside the send functions)
 
 export interface GeneralInquiryPayload {
   name:    string;
@@ -39,6 +45,20 @@ export interface GeneralInquiryPayload {
 export interface PriorityInquiryPayload extends GeneralInquiryPayload {
   practiceArea?: string;
 }
+
+export interface ContentEditPayload {
+  key:       string;
+  value:     string;
+  editor?:   string;
+}
+
+export interface CalcConfigEditPayload {
+  summary:   string;
+  changes?:  string[];
+  editor?:   string;
+}
+
+// ── Email HTML shell ─────────────────────────────────────────────────────────
 
 function baseHtml(body: string): string {
   return `<!DOCTYPE html>
@@ -69,6 +89,12 @@ function baseHtml(body: string): string {
     .badge { display:inline-block; background:#b8932a; color:#0f2235; font-family:sans-serif;
              font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
              padding:3px 10px; border-radius:999px; margin-bottom:12px; }
+    .change-list { margin:12px 0; padding:0; list-style:none; }
+    .change-list li { padding:6px 10px; font-size:13px; font-family:sans-serif; color:#374151;
+                      border-left:3px solid #b8932a; margin-bottom:6px; background:#f5f0e8;
+                      border-radius:0 6px 6px 0; }
+    .mono { font-family:'Courier New',monospace; font-size:12px; color:#6b7280;
+            background:#f5f0e8; padding:2px 6px; border-radius:4px; }
   </style>
 </head>
 <body>
@@ -83,12 +109,14 @@ function baseHtml(body: string): string {
 </body>
 </html>`;
 }
- 
-// ── 1. General appointment request ───────────────────────────────────────────
- 
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  1. INQUIRY EMAILS
+// ═══════════════════════════════════════════════════════════════════════════════
+
 export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<void> {
   const subject = `Appointment Request \u2014 ${data.name}`;
- 
+
   const html = baseHtml(`
     <h2>New Appointment Request</h2>
     <table class="fields">
@@ -99,24 +127,22 @@ export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<v
     <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">Message:</p>
     <div class="msg">${esc(data.message).replace(/\n/g, '<br>')}</div>
   `);
- 
+
   const text =
     `New Appointment Request\n\n` +
     `Name:    ${data.name}\n` +
     `Email:   ${data.email}\n` +
     (data.phone ? `Phone:   ${data.phone}\n` : '') +
     `\nMessage:\n${data.message}`;
- 
+
   await send({ subject, html, text, replyTo: data.email });
   await sendClientConfirmation(data.name, data.email);
 }
- 
-// ── 2. Priority inquiry (★ subject prefix) ───────────────────────────────────
- 
+
 export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise<void> {
   const areaLabel = data.practiceArea ? ` [${data.practiceArea}]` : '';
   const subject   = `\u2605 PRIORITY INQUIRY${areaLabel} \u2014 ${data.name}`;
- 
+
   const html = baseHtml(`
     <div class="badge">\u2605 Priority Inquiry${data.practiceArea ? ' \u2014 ' + esc(data.practiceArea) : ''}</div>
     <h2>Urgent Client Inquiry</h2>
@@ -132,7 +158,7 @@ export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise
     <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">Message:</p>
     <div class="msg">${esc(data.message).replace(/\n/g, '<br>')}</div>
   `);
- 
+
   const text =
     `\u2605 PRIORITY INQUIRY${areaLabel}\n\n` +
     `Name:    ${data.name}\n` +
@@ -140,17 +166,15 @@ export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise
     (data.phone ? `Phone:   ${data.phone}\n` : '') +
     (data.practiceArea ? `Matter:  ${data.practiceArea}\n` : '') +
     `\nMessage:\n${data.message}`;
- 
+
   await send({ subject, html, text, replyTo: data.email });
   await sendClientConfirmation(data.name, data.email);
 }
- 
-// ── 3. Auto-confirmation to the client ───────────────────────────────────────
- 
+
 async function sendClientConfirmation(name: string, toEmail: string): Promise<void> {
   const firstName = name.split(' ')[0];
   const subject   = `We\u2019ve received your inquiry \u2014 Fric, Lowenstein & Co.`;
- 
+
   const html = baseHtml(`
     <h2>Thank you, ${esc(firstName)}.</h2>
     <p style="font-size:15px;line-height:1.7">
@@ -159,24 +183,106 @@ async function sendClientConfirmation(name: string, toEmail: string): Promise<vo
     </p>
     <p style="font-size:15px;line-height:1.7">
       If your matter is urgent, please call us directly at
-      <a href="tel:+14032589455" style="color:#1a3a5c">(403) 258-9455</a>.
+      <a href="tel:+14032912594" style="color:#1a3a5c">(403) 291-2594</a>.
     </p>
     <p style="font-size:13px;color:#888;margin-top:24px">
       Office hours: Monday \u2013 Friday, 8:30 AM \u2013 5:00 PM (Mountain Time)
     </p>
   `);
- 
+
   const text =
     `Thank you, ${firstName}.\n\n` +
     `We have received your inquiry and will be in touch within one business day.\n\n` +
-    `For urgent matters, call: (403) 258-9455\n` +
+    `For urgent matters, call: (403) 291-2594\n` +
     `Office hours: Mon\u2013Fri, 8:30 AM \u2013 5:00 PM MT`;
- 
+
   await send({ to: toEmail, subject, html, text });
 }
- 
-// ── Internal send — SendGrid HTTPS API ───────────────────────────────────────
- 
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  2. ADMIN AUDIT NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export async function sendContentEditNotification(data: ContentEditPayload): Promise<void> {
+  const timestamp = fmtTimestamp();
+  const truncated = data.value.length > 300 ? data.value.slice(0, 300) + '\u2026' : data.value;
+  const section   = data.key.split('/')[0];
+
+  const subject = `\u270F Site Content Updated \u2014 ${section}`;
+
+  const html = baseHtml(`
+    <div class="badge">\u270F Content Edit</div>
+    <h2>Site Content Updated</h2>
+    <p style="font-family:sans-serif;font-size:13px;color:#555;margin:0 0 16px">
+      A content field was updated on fl-legal.ca at <strong>${esc(timestamp)}</strong>.
+    </p>
+    <table class="fields">
+      <tr><td class="label">Path</td><td><span class="mono">${esc(data.key)}</span></td></tr>
+      ${data.editor ? `<tr><td class="label">Editor</td><td>${esc(data.editor)}</td></tr>` : ''}
+      <tr><td class="label">Timestamp</td><td>${esc(timestamp)}</td></tr>
+    </table>
+    <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">New value:</p>
+    <div class="msg">${esc(truncated).replace(/\n/g, '<br>')}</div>
+    <p style="font-family:sans-serif;font-size:11px;color:#9ca3af;margin-top:16px">
+      This is an automated notification. The change has already been applied to the
+      live site.
+    </p>
+  `);
+
+  const text =
+    `Site Content Updated\n\n` +
+    `Path:      ${data.key}\n` +
+    (data.editor ? `Editor:    ${data.editor}\n` : '') +
+    `Timestamp: ${timestamp}\n\n` +
+    `New value:\n${truncated}`;
+
+  await send({ subject, html, text });
+}
+
+export async function sendCalcConfigNotification(data: CalcConfigEditPayload): Promise<void> {
+  const timestamp = fmtTimestamp();
+  const subject   = `\u2699 Calculator Config Updated`;
+
+  const changesHtml = data.changes?.length
+    ? `<ul class="change-list">${data.changes.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`
+    : '';
+
+  const changesText = data.changes?.length
+    ? '\nChanges:\n' + data.changes.map(c => `  \u2022 ${c}`).join('\n') + '\n'
+    : '';
+
+  const html = baseHtml(`
+    <div class="badge">\u2699 Config Update</div>
+    <h2>Calculator Configuration Updated</h2>
+    <p style="font-family:sans-serif;font-size:13px;color:#555;margin:0 0 16px">
+      The fee calculator configuration was updated at <strong>${esc(timestamp)}</strong>.
+    </p>
+    <table class="fields">
+      <tr><td class="label">Summary</td><td>${esc(data.summary)}</td></tr>
+      ${data.editor ? `<tr><td class="label">Editor</td><td>${esc(data.editor)}</td></tr>` : ''}
+      <tr><td class="label">Timestamp</td><td>${esc(timestamp)}</td></tr>
+    </table>
+    ${changesHtml}
+    <p style="font-family:sans-serif;font-size:11px;color:#9ca3af;margin-top:16px">
+      This is an automated notification. The configuration has been saved to Firebase
+      and will take effect on the next calculator load.
+    </p>
+  `);
+
+  const text =
+    `Calculator Config Updated\n\n` +
+    `Summary:   ${data.summary}\n` +
+    (data.editor ? `Editor:    ${data.editor}\n` : '') +
+    `Timestamp: ${timestamp}\n` +
+    changesText;
+
+  await send({ subject, html, text });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  INTERNAL SEND — Resend HTTPS API
+// ═══════════════════════════════════════════════════════════════════════════════
+
 interface SendOptions {
   to?:      string;
   subject:  string;
@@ -184,38 +290,38 @@ interface SendOptions {
   text:     string;
   replyTo?: string;
 }
- 
+
 async function send(opts: SendOptions): Promise<void> {
-  // TEST_EMAIL_RECIPIENT (if set) redirects EVERYTHING — firm-facing and
-  // client confirmation alike — so staging QA never emails a real address.
   const to = config.email.testRecipient || opts.to || config.email.firmEmail;
- 
-  const msg: sgMail.MailDataRequired = {
+
+  const { error } = await resend.emails.send({
+    from:    `${config.email.fromName} <${config.email.fromEmail}>`,
     to,
-    from: { email: config.email.fromEmail, name: config.email.fromName },
     subject: opts.subject,
-    html: opts.html,
-    text: opts.text,
+    html:    opts.html,
+    text:    opts.text,
     ...(opts.replyTo || config.email.replyTo
-      ? { replyTo: opts.replyTo ?? config.email.replyTo }
+      ? { reply_to: opts.replyTo ?? config.email.replyTo }
       : {}),
-    // Sandbox mode validates the request against SendGrid's API but never
-    // actually delivers — the default everywhere except production.
-    mailSettings: config.email.sandbox ? { sandboxMode: { enable: true } } : {},
-  };
- 
-  try {
-    await sgMail.send(msg);
-  } catch (err: any) {
-    // SendGrid surfaces the real error in err.response.body, not err.message.
-    const detail = err?.response?.body ?? err?.message ?? String(err);
-    throw new Error(`SendGrid send failed: ${JSON.stringify(detail)}`);
+  });
+
+  if (error) {
+    throw new Error(`Email send failed: ${JSON.stringify(error)}`);
   }
 }
- 
-// ── Helpers ──────────────────────────────────────────────────────────────────
- 
-/** Minimal HTML-escape — prevents XSS in email templates. */
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function fmtTimestamp(): string {
+  return new Date().toLocaleString('en-CA', {
+    timeZone: 'America/Edmonton',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')

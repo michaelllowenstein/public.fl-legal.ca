@@ -31,7 +31,8 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
-              "html2pdf.js"
+              "html2pdf.js",
+              "html2canvas"
             ],
             "externalDependencies": [
               "firebase-admin"

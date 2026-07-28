@@ -245,10 +245,6 @@ async function main() {
       }),
   );
 
-  // -- EMAIL CONFIG
-  if (config.nodeEnv !== 'staging' && config.nodeEnv !== 'production')
-    dotenv.config({ path: './sendgrid.env'});
-
   // ── API routes ────────────────────────────────────────────────────────────
 
   fastify.register(authRoutes,      { prefix: '/api/auth'        });
