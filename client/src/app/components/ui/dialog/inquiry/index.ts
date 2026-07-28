@@ -115,7 +115,7 @@ export class InquiryDialog {
    */
   fillTestData(): void {
     this.form.name         = 'Michael Lowenstein';
-    this.form.email        = 'michael@lowenstein.ca';
+    this.form.email        = 'iam@miloseng.com';
     this.form.phone        = '(825)-488-2533';
     this.form.message      = 'Automated test submission from the inquiry dialog. '
                            + 'If this arrives at a real inbox, TEST_EMAIL_RECIPIENT is not set.';
