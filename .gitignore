@@ -4,3 +4,4 @@ server/node_modules
 client/dist
 server/dist
 server/resend.env
+server/hash.envserver/friclowenstein-firebase-adminsdk.json
