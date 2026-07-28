@@ -2,38 +2,36 @@
  * services/mailer.ts
  *
  * All outgoing email for fl-legal.ca — sent via the Resend HTTPS API.
- *
- * Why Resend:
- *   • Pure HTTPS — one POST per send, no SMTP socket, no connection pool.
- *     Perfect for Vercel's 15 s serverless budget.
- *   • Returns errors as data ({ error }), not thrown SDK exceptions with
- *     internal validation quirks. If `error` is set, the send failed.
- *   • Test mode is structural: an unverified domain can only deliver to
- *     the account owner's address, so staging/local can never accidentally
- *     email a real client.
- *
- * Environment strategy:
- *   ┌─────────────────────┬─────────────────────────────────────────────────┐
- *   │ Environment         │ Behaviour                                      │
- *   ├─────────────────────┼─────────────────────────────────────────────────┤
- *   │ fl-legal.ca (prod)  │ Verified domain, real delivery, no redirect    │
- *   │ staging.fl-legal.ca │ TEST_EMAIL_RECIPIENT redirects all mail        │
- *   │ localhost:4422      │ TEST_EMAIL_RECIPIENT redirects all mail        │
- *   └─────────────────────┴─────────────────────────────────────────────────┘
- *
- *   Use separate Resend API keys per environment so a leaked
- *   staging key can never send as the firm in production.
+ * Includes detailed diagnostic logging for Vercel function logs.
  */
 
 import { Resend } from 'resend';
 import { config } from '@config';
 
-// ── Initialise Resend client once at module load ─────────────────────────────
+// ── Initialise Resend client ─────────────────────────────────────────────────
 
-const resend = new Resend(config.email.apiKey);
+const RESEND_KEY = config.email.apiKey ?? '';
+
+console.log('[mailer] ──────────────────────────────────────────────');
+console.log('[mailer] Initialising Resend email service');
+console.log('[mailer]   NODE_ENV:         ', config.nodeEnv);
+console.log('[mailer]   apiKey present:   ', !!RESEND_KEY);
+console.log('[mailer]   apiKey prefix:    ', RESEND_KEY ? RESEND_KEY.slice(0, 6) + '...' : '(empty)');
+console.log('[mailer]   apiKey length:    ', RESEND_KEY.length);
+console.log('[mailer]   fromEmail:        ', config.email.fromEmail);
+console.log('[mailer]   fromName:         ', config.email.fromName);
+console.log('[mailer]   firmEmail:        ', config.email.firmEmail);
+console.log('[mailer]   replyTo:          ', config.email.replyTo || '(not set)');
+console.log('[mailer]   testRecipient:    ', config.email.testRecipient || '(not set — real addresses)');
+console.log('[mailer] ──────────────────────────────────────────────');
+
+if (!RESEND_KEY) {
+  console.error('[mailer] ⚠ RESEND_API_KEY is empty — all sends will fail');
+}
+
+const resend = new Resend(RESEND_KEY);
 
 // ── Public payload interfaces ────────────────────────────────────────────────
-//    (imported by routes/inquiry.ts alongside the send functions)
 
 export interface GeneralInquiryPayload {
   name:    string;
@@ -115,6 +113,8 @@ function baseHtml(body: string): string {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<void> {
+  console.log('[mailer] sendGeneralInquiry called', { name: data.name, email: data.email });
+
   const subject = `Appointment Request \u2014 ${data.name}`;
 
   const html = baseHtml(`
@@ -140,6 +140,12 @@ export async function sendGeneralInquiry(data: GeneralInquiryPayload): Promise<v
 }
 
 export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise<void> {
+  console.log('[mailer] sendPriorityInquiry called', {
+    name: data.name,
+    email: data.email,
+    practiceArea: data.practiceArea ?? '(none)',
+  });
+
   const areaLabel = data.practiceArea ? ` [${data.practiceArea}]` : '';
   const subject   = `\u2605 PRIORITY INQUIRY${areaLabel} \u2014 ${data.name}`;
 
@@ -172,6 +178,8 @@ export async function sendPriorityInquiry(data: PriorityInquiryPayload): Promise
 }
 
 async function sendClientConfirmation(name: string, toEmail: string): Promise<void> {
+  console.log('[mailer] sendClientConfirmation called', { name, toEmail });
+
   const firstName = name.split(' ')[0];
   const subject   = `We\u2019ve received your inquiry \u2014 Fric, Lowenstein & Co.`;
 
@@ -204,11 +212,12 @@ async function sendClientConfirmation(name: string, toEmail: string): Promise<vo
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function sendContentEditNotification(data: ContentEditPayload): Promise<void> {
+  console.log('[mailer] sendContentEditNotification called', { key: data.key, editor: data.editor });
+
   const timestamp = fmtTimestamp();
   const truncated = data.value.length > 300 ? data.value.slice(0, 300) + '\u2026' : data.value;
   const section   = data.key.split('/')[0];
-
-  const subject = `\u270F Site Content Updated \u2014 ${section}`;
+  const subject   = `\u270F Site Content Updated \u2014 ${section}`;
 
   const html = baseHtml(`
     <div class="badge">\u270F Content Edit</div>
@@ -224,8 +233,7 @@ export async function sendContentEditNotification(data: ContentEditPayload): Pro
     <p style="font-family:sans-serif;font-size:12px;color:#888;margin:0 0 6px">New value:</p>
     <div class="msg">${esc(truncated).replace(/\n/g, '<br>')}</div>
     <p style="font-family:sans-serif;font-size:11px;color:#9ca3af;margin-top:16px">
-      This is an automated notification. The change has already been applied to the
-      live site.
+      This is an automated notification. The change has already been applied to the live site.
     </p>
   `);
 
@@ -240,6 +248,8 @@ export async function sendContentEditNotification(data: ContentEditPayload): Pro
 }
 
 export async function sendCalcConfigNotification(data: CalcConfigEditPayload): Promise<void> {
+  console.log('[mailer] sendCalcConfigNotification called', { summary: data.summary, editor: data.editor });
+
   const timestamp = fmtTimestamp();
   const subject   = `\u2699 Calculator Config Updated`;
 
@@ -264,8 +274,7 @@ export async function sendCalcConfigNotification(data: CalcConfigEditPayload): P
     </table>
     ${changesHtml}
     <p style="font-family:sans-serif;font-size:11px;color:#9ca3af;margin-top:16px">
-      This is an automated notification. The configuration has been saved to Firebase
-      and will take effect on the next calculator load.
+      This is an automated notification. The configuration has been saved to Firebase.
     </p>
   `);
 
@@ -280,7 +289,7 @@ export async function sendCalcConfigNotification(data: CalcConfigEditPayload): P
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  INTERNAL SEND — Resend HTTPS API
+//  INTERNAL SEND — Resend HTTPS API (with full diagnostic logging)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 interface SendOptions {
@@ -292,21 +301,78 @@ interface SendOptions {
 }
 
 async function send(opts: SendOptions): Promise<void> {
-  const to = config.email.testRecipient || opts.to || config.email.firmEmail;
+  const to       = config.email.testRecipient || opts.to || config.email.firmEmail;
+  const from     = `${config.email.fromName} <${config.email.fromEmail}>`;
+  const replyTo  = opts.replyTo || config.email.replyTo || undefined;
 
-  const { error } = await resend.emails.send({
-    from:    `${config.email.fromName} <${config.email.fromEmail}>`,
+  console.log('[mailer:send] ─── Preparing email ───');
+  console.log('[mailer:send]   from:      ', from);
+  console.log('[mailer:send]   to:        ', to);
+  console.log('[mailer:send]   subject:   ', opts.subject);
+  console.log('[mailer:send]   replyTo:   ', replyTo ?? '(none)');
+  console.log('[mailer:send]   html size: ', opts.html.length, 'chars');
+  console.log('[mailer:send]   text size: ', opts.text.length, 'chars');
+  console.log('[mailer:send]   apiKey ok: ', !!RESEND_KEY && RESEND_KEY.startsWith('re_'));
+  console.log('[mailer:send]   recipient source:', config.email.testRecipient ? 'TEST_EMAIL_RECIPIENT' : opts.to ? 'opts.to' : 'FIRM_EMAIL');
+
+  const payload = {
+    from,
     to,
     subject: opts.subject,
     html:    opts.html,
     text:    opts.text,
-    ...(opts.replyTo || config.email.replyTo
-      ? { reply_to: opts.replyTo ?? config.email.replyTo }
-      : {}),
-  });
+    ...(replyTo ? { reply_to: replyTo } : {}),
+  };
 
-  if (error) {
-    throw new Error(`Email send failed: ${JSON.stringify(error)}`);
+  const t0 = Date.now();
+
+  try {
+    console.log('[mailer:send]   Calling resend.emails.send()...');
+    const result = await resend.emails.send(payload);
+    const ms = Date.now() - t0;
+
+    console.log('[mailer:send]   ─── Resend response ───');
+    console.log('[mailer:send]   duration:  ', ms, 'ms');
+    console.log('[mailer:send]   data:      ', JSON.stringify(result.data));
+    console.log('[mailer:send]   error:     ', JSON.stringify(result.error));
+
+    if (result.error) {
+      console.error('[mailer:send] ❌ Resend returned error:', JSON.stringify(result.error, null, 2));
+      console.error('[mailer:send]   Error name:   ', result.error.name);
+      console.error('[mailer:send]   Error message:', result.error.message);
+      throw new Error(
+        `Resend send failed [${result.error.name}]: ${result.error.message}`
+      );
+    }
+
+    console.log('[mailer:send] ✅ Email sent successfully');
+    console.log('[mailer:send]   Resend ID: ', result.data?.id ?? '(no id returned)');
+  } catch (err: any) {
+    const ms = Date.now() - t0;
+
+    // If we already threw from the result.error check above, re-throw as-is
+    if (err.message?.startsWith('Resend send failed')) {
+      throw err;
+    }
+
+    // Unexpected error (network failure, SDK crash, etc.)
+    console.error('[mailer:send] ❌ Unexpected error during send');
+    console.error('[mailer:send]   duration:  ', ms, 'ms');
+    console.error('[mailer:send]   error type:', err?.constructor?.name ?? typeof err);
+    console.error('[mailer:send]   message:   ', err?.message ?? String(err));
+    console.error('[mailer:send]   stack:     ', err?.stack ?? '(no stack)');
+
+    // Check for common Resend error shapes
+    if (err?.statusCode) {
+      console.error('[mailer:send]   statusCode:', err.statusCode);
+    }
+    if (err?.response) {
+      console.error('[mailer:send]   response:  ', JSON.stringify(err.response));
+    }
+
+    throw new Error(
+      `Email send failed: ${err?.message ?? String(err)}`
+    );
   }
 }
 
