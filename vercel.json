@@ -4,14 +4,6 @@
   "buildCommand": "cd server && node scripts/build-api.mjs && cd ../client && npm run build -- --configuration production",
   "outputDirectory": "client/dist/fl-legal.ca/browser",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
-    }
-  ],
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 15
-    }
-  }
+    { "source": "/api/(.*)", "destination": "/api/index" }
+  ]
 }

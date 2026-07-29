@@ -109,6 +109,8 @@ async function getApp() {
   console.log('[vercel] Fastify ready');
   return fastify;
 }
+
+
  
 // ── Vercel handler ────────────────────────────────────────────────────────────
 //
