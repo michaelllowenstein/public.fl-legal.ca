@@ -168,7 +168,7 @@ export class InquiryDialog {
       );
       this.log.info('Inquiry sent', { priority });
       this.submitted.set(true);
-    } catch (err) {
+    } catch (err: any) {
       this.serverError.set(this.messageFor(err));
       this.log.error('Inquiry submission failed', {
         priority,
@@ -183,7 +183,7 @@ export class InquiryDialog {
 
   /** Maps a failed request to a user-facing message that distinguishes the
    *  most common failure modes instead of collapsing them all into one. */
-  private messageFor(err: unknown): string {
+  private messageFor(err: any): string {
     if (!(err instanceof HttpErrorResponse)) {
       return 'Failed to send. Please try again or call us at (403)-291-2594.';
     }

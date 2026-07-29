@@ -20,7 +20,7 @@
     "test:email": "cd server && npm run test:email",
     "build:serverless": "cd server && npm run build:api",
     "deploy:app": "npm run deploy:first && npm run deploy:norm && npm run deploy:second",
-    "deploy:install": "npm run install:base && npm run install:api && install:norm && npm run install client"
+    "deploy:install": "npm run install:base && npm run install:api && install:norm && npm run install:client"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
