@@ -2,15 +2,14 @@
   "name": "fl-legal.ca",
   "private": true,
   "scripts": {
-    "deploy:norm": "cd ..",
-    "deploy:second": "npm run build:client",
-    "deploy:first": "npm run build:serverless",
+    
+    "deploy:second": "npm run build:client && cd ..",
+    "deploy:first": "npm run build:serverless && cd ..",
     "build:app": "npm run build:client",
-    "build:client": "cd client && npm ci --legacy-peer-deps && npm run build:prod",
+    "build:client": "cd client && npm ci --legacy-peer-deps && npm run build:prod && cd ..",
     "install:base": "npm install",
-    "install:api": "cd server && npm ci",
-    "install:norm": "cd ..",
-    "install:client": "cd client && npm ci --legacy-peer-deps",
+    "install:api": "cd server && npm ci && cd ..",
+    "install:client": "cd client && npm ci --legacy-peer-deps && cd ..",
     "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
@@ -19,8 +18,8 @@
     "test:client": "node --import tsx --test --experimental-test-coverage \"client/test/**/*.test.ts\"",
     "test:email": "cd server && npm run test:email",
     "build:serverless": "cd server && npm run build:api",
-    "deploy:app": "npm run deploy:first && npm run deploy:norm && npm run deploy:second",
-    "deploy:install": "npm run install:base && npm run install:api && install:norm && npm run install:client"
+    "deploy:build": "npm run deploy:first && npm run deploy:second",
+    "deploy:install": "npm run install:base && npm run install:api && npm run install:client"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
