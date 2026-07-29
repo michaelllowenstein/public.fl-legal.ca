@@ -3,5 +3,8 @@ client/node_modules
 server/node_modules
 client/dist
 server/dist
+server/hash.env
 server/resend.env
-server/hash.envserver/friclowenstein-firebase-adminsdk.json
+server/hash.env
+server/friclowenstein-firebase-adminsdk.json
+codescans/

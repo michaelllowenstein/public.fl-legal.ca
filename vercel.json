@@ -1,12 +1,16 @@
 {
   "version": 2,
-  "buildCommand": "cd client && npm ci --legacy-peer-deps && npm run build -- --configuration production",
+  "installCommand": "npm install && cd server && npm ci && cd ../client && npm ci --legacy-peer-deps",
+  "buildCommand": "cd server && node scripts/build-api.mjs && cd ../client && npm run build -- --configuration production",
   "outputDirectory": "client/dist/fl-legal.ca/browser",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    }
   ],
   "functions": {
-    "api/index.ts": {
+    "api/index.js": {
       "maxDuration": 15
     }
   }

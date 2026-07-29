@@ -28,7 +28,8 @@
     "smoketest": "./scripts/smoketest.sh",
     "demos": "./scripts/demos.sh",
     "test": "node --import tsx --test --experimental-test-coverage \"test/**/*.test.ts\"",
-    "test:email": "tsx ./scripts/emails.ts"
+    "test:email": "tsx ./scripts/emails.ts",
+    "build:vercel": "node ./scripts/build-api.mjs"
   },
   "keywords": [
     "NodeJS",
