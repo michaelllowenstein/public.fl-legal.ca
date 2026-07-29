@@ -1,3 +1,23 @@
+// --- Path alias resolution for Vercel runtime ---
+// Vercel's NodeJS builder does not resolve Typescript path 
+// aliases (e.g. @config, @routes, etc...) at runtime. 
+// tsconfig-paths intercepts require() calls and maps them to 
+// the correct file paths - this runs once on cold start.
+import { resolve } from 'path';
+import { register } from 'tsconfig-paths';
+
+register({
+  baseUrl: resolve(__dirname, '..', 'server', 'src'),
+  paths: {
+    '@config':  ['config/index'],
+    '@schema':  ['schema/index'],
+    '@schema/*':  ['schema/*'],
+    '@routes/*':  ['routes/*'],
+    '@plugins/*':  ['plugins/*'],
+    '@services/*':  ['services/*'],
+  }
+});
+
 /**
  * api/index.ts  —  Vercel Serverless Function entry point
  *
