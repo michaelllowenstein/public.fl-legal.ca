@@ -252,7 +252,7 @@ async function main() {
   fastify.register(profileRoutes,   { prefix: '/api/profiles'    });
   fastify.register(contentRoutes,   { prefix: '/api/content'     });
   fastify.register(blogRoutes,      { prefix: '/api/blog'        });
-  fastify.register(calendarRoutes,  { prefix: '/api/calendar'    });
+  // fastify.register(calendarRoutes,  { prefix: '/api/calendar'    });
   fastify.register(inquiryRoutes,   { prefix: '/api/inquiries'   });
   fastify.register(calcConfigRoutes,{ prefix: '/api/calc-config' });
 

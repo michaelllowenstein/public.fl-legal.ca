@@ -19,7 +19,8 @@
     "test:email": "cd server && npm run test:email",
     "build:serverless": "cd server && npm run build:api",
     "deploy:build": "npm run deploy:first && npm run deploy:second",
-    "deploy:install": "npm run install:base && npm run install:api && npm run install:client"
+    "deploy:install": "npm run install:base && npm run install:api && npm run install:client",
+    "deploy:verify": "cd server && node scripts/verify-vercel.mjs && cd .."
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

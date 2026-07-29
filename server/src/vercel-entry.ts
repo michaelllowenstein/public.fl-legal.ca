@@ -98,7 +98,7 @@ async function getApp() {
   fastify.register(blogRoutes, { prefix: '/api/blog' });
   fastify.register(inquiryRoutes, { prefix: '/api/inquiries' });
   fastify.register(profileRoutes, { prefix: '/api/profiles' });
-  fastify.register(calendarRoutes, { prefix: '/api/calendar' });
+//   fastify.register(calendarRoutes, { prefix: '/api/calendar' });
   fastify.register(logRoutes, { prefix: '/api/logs' });
   fastify.register(notificationsRoutes, { prefix: '/api/notifications' });
   fastify.register(calcConfigRoutes, { prefix: '/api/calc-config' });

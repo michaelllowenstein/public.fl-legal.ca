@@ -248,21 +248,6 @@ var auth_default = (0, import_fastify_plugin.default)(authPlugin, { name: "auth"
 var import_bcrypt = __toESM(require("bcrypt"));
 var admin = __toESM(require("firebase-admin"));
 
-// src/schema/calendar-event.ts
-var calendarEventSchema = {
-  body: {
-    type: "object",
-    required: ["title", "date"],
-    additionalProperties: false,
-    properties: {
-      title: { type: "string", minLength: 1, maxLength: 200 },
-      date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
-      time: { type: "string", pattern: "^([01]\\d|2[0-3]):[0-5]\\d$" },
-      description: { type: "string", maxLength: 1e3 }
-    }
-  }
-};
-
 // src/schema/editor-login.ts
 var editorLoginSchema = {
   body: {
@@ -1095,113 +1080,6 @@ async function logRoutes(fastify) {
   );
 }
 
-// src/routes/calendar.ts
-var ROOT3 = "calendar";
-async function calendarRoutes(fastify) {
-  const guard = [fastify.verifyLawyer];
-  fastify.get(
-    "/",
-    { preHandler: guard },
-    async (req, reply) => {
-      try {
-        const raw = await dbGet(ROOT3);
-        if (!raw) return reply.status(200).send([]);
-        const events = Object.entries(raw).map(([id, ev]) => ({ ...ev, id })).sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? "").localeCompare(b.time ?? ""));
-        return reply.status(200).send(events);
-      } catch (err) {
-        req.log.error({ err }, "Failed to fetch calendar events");
-        return reply.status(500).send({ error: "Could not load calendar." });
-      }
-    }
-  );
-  fastify.get(
-    "/:id",
-    {
-      schema: { params: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
-      preHandler: guard
-    },
-    async (req, reply) => {
-      try {
-        const ev = await dbGet(`${ROOT3}/${req.params.id}`);
-        if (!ev) return reply.status(404).send({ error: "Event not found." });
-        return reply.status(200).send({ ...ev, id: req.params.id });
-      } catch (err) {
-        req.log.error({ err }, "Failed to fetch calendar event");
-        return reply.status(500).send({ error: "Could not load event." });
-      }
-    }
-  );
-  fastify.post(
-    "/",
-    {
-      schema: calendarEventSchema,
-      preHandler: guard
-    },
-    async (req, reply) => {
-      try {
-        const newEvent = {
-          ...req.body,
-          createdAt: (/* @__PURE__ */ new Date()).toISOString()
-        };
-        const id = await dbPush(ROOT3, newEvent);
-        await dbUpdate(`${ROOT3}/${id}`, { id });
-        return reply.status(201).send({ id, ...newEvent });
-      } catch (err) {
-        req.log.error({ err }, "Failed to create calendar event");
-        return reply.status(500).send({ error: "Could not create event." });
-      }
-    }
-  );
-  fastify.patch(
-    "/:id",
-    {
-      schema: {
-        params: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
-        body: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            title: { type: "string", minLength: 1, maxLength: 200 },
-            date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
-            time: { type: "string", pattern: "^([01]\\d|2[0-3]):[0-5]\\d$" },
-            description: { type: "string", maxLength: 1e3 }
-          }
-        }
-      },
-      preHandler: guard
-    },
-    async (req, reply) => {
-      try {
-        const existing = await dbGet(`${ROOT3}/${req.params.id}`);
-        if (!existing) return reply.status(404).send({ error: "Event not found." });
-        await dbUpdate(`${ROOT3}/${req.params.id}`, req.body);
-        return reply.status(204).send();
-      } catch (err) {
-        req.log.error({ err }, "Failed to update calendar event");
-        return reply.status(500).send({ error: "Could not update event." });
-      }
-    }
-  );
-  fastify.delete(
-    "/:id",
-    {
-      schema: { params: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } },
-      preHandler: guard
-    },
-    async (req, reply) => {
-      try {
-        const existing = await dbGet(`${ROOT3}/${req.params.id}`);
-        if (!existing) return reply.status(404).send({ error: "Event not found." });
-        await dbRemove(`${ROOT3}/${req.params.id}`);
-        return reply.status(204).send();
-      } catch (err) {
-        req.log.error({ err }, "Failed to delete calendar event");
-        return reply.status(500).send({ error: "Could not delete event." });
-      }
-    }
-  );
-}
-
 // src/routes/notifications.ts
 var import_database = require("firebase-admin/database");
 var import_uuid = require("uuid");
@@ -1469,7 +1347,6 @@ async function getApp() {
   fastify.register(blogRoutes, { prefix: "/api/blog" });
   fastify.register(inquiryRoutes, { prefix: "/api/inquiries" });
   fastify.register(profileRoutes, { prefix: "/api/profiles" });
-  fastify.register(calendarRoutes, { prefix: "/api/calendar" });
   fastify.register(logRoutes, { prefix: "/api/logs" });
   fastify.register(notificationsRoutes, { prefix: "/api/notifications" });
   fastify.register(calcConfigRoutes, { prefix: "/api/calc-config" });
