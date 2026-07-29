@@ -10,7 +10,7 @@
     "install:base": "npm install",
     "install:api": "cd server && npm ci && cd ..",
     "install:client": "cd client && npm ci --legacy-peer-deps && cd ..",
-    "local": "concurrently --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run local:api\" \"npm run local:app\"",
+    "local": "npm run local:app",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
     "test": "npm run test:server && npm run test:client",
@@ -18,8 +18,8 @@
     "test:client": "node --import tsx --test --experimental-test-coverage \"client/test/**/*.test.ts\"",
     "test:email": "cd server && npm run test:email",
     "build:serverless": "cd server && npm run build:api",
-    "deploy:build": "npm run deploy:first && npm run deploy:second",
-    "deploy:install": "npm run install:base && npm run install:api && npm run install:client",
+    "deploy:build": "npm run deploy:client",
+    "deploy:install": "npm run install:client",
     "deploy:verify": "cd server && node scripts/verify-vercel.mjs && cd .."
   },
   "devDependencies": {

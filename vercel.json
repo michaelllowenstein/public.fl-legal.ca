@@ -1,9 +1,5 @@
 {
   "version": 2,
-  "installCommand": "npm run deploy:install",
-  "buildCommand": "npm run deploy:build",
-  "outputDirectory": "client/dist/fl-legal.ca/browser",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" }
-  ]
+  "buildCommand": "npm run build:client",
+  "outputDirectory": "client/dist/fl-legal.ca/browser"
 }
