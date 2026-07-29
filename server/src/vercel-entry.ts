@@ -21,18 +21,18 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
  
-import { config } from '@config';
-import authPlugin from '@plugins/auth';
-import { authRoutes } from '@routes/auth';
-import { contentRoutes } from '@routes/content';
-import { blogRoutes } from '@routes/blog';
-import { inquiryRoutes } from '@routes/inquiry';
-import { profileRoutes } from '@routes/profile';
-import { logRoutes } from '@routes/logs';
-import { calendarRoutes } from '@routes/calendar';
-import { notificationsRoutes } from '@routes/notifications';
-import { calcConfigRoutes } from '@routes/calc-config';
-import { initFirebase } from '@services/firebase';
+import { config } from './config';
+import authPlugin from './plugins/auth';
+import { authRoutes } from './routes/auth';
+import { contentRoutes } from './routes/content';
+import { blogRoutes } from './routes/blog';
+import { inquiryRoutes } from './routes/inquiry';
+import { profileRoutes } from './routes/profile';
+import { logRoutes } from './routes/logs';
+import { calendarRoutes } from './routes/calendar';
+import { notificationsRoutes } from './routes/notifications';
+import { calcConfigRoutes } from './routes/calc-config';
+import { initFirebase } from './services/firebase';
  
 // ── Fastify instance — cached across warm Vercel invocations ─────────────────
  

@@ -20,8 +20,8 @@
 import fp from 'fastify-plugin';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { randomUUID } from 'crypto';
-import { db } from 'src/app/core/services/firebase';
-import { config } from '@config';
+import { db } from '../services/firebase';
+import { config } from '../config';
  
 // ── Types ─────────────────────────────────────────────────────────────────────
  

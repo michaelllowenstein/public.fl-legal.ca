@@ -10,9 +10,9 @@
  */
 import bcrypt from 'bcrypt';
 import * as admin from 'firebase-admin';
-import { config } from '@config';
-import { calcLoginSchema, editorLoginSchema, fricLowensteinLoginSchema } from '@schema';
-import { signCalcToken, signEditorToken, signLawyerToken } from '@plugins/auth';
+import { config } from '../config';
+import { calcLoginSchema, editorLoginSchema, fricLowensteinLoginSchema } from '../schema';
+import { signCalcToken, signEditorToken, signLawyerToken } from '../plugins/auth';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 export async function authRoutes(fastify: FastifyInstance): Promise<void> {

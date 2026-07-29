@@ -16,13 +16,13 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import {
   generalInquirySchema,
   priorityInquirySchema,
-} from '@schema';
+} from '../schema';
 import {
   sendGeneralInquiry,
   sendPriorityInquiry,
   GeneralInquiryPayload,
   PriorityInquiryPayload,
-} from '@services/mailer';
+} from '../services/mailer';
 
 export async function inquiryRoutes(fastify: FastifyInstance): Promise<void> {
 

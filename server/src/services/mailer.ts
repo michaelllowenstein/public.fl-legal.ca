@@ -6,7 +6,7 @@
  */
 
 import { Resend } from 'resend';
-import { config } from '@config';
+import { config } from '../config';
 
 // ── Initialise Resend client ─────────────────────────────────────────────────
 

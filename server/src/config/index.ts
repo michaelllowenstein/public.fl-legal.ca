@@ -17,6 +17,8 @@ const nodeEnv = optional('NODE_ENV', 'development');
 const isDev = nodeEnv === 'development';
 const isStage = nodeEnv === 'staging';
 const isProd = nodeEnv === 'production';
+// for serverless function config
+const maxDuration = 15;
 
 // ── CORS origin — stage-switched, matches your old Express pattern ────────────
 //    local   → https://localhost:4200
@@ -33,6 +35,7 @@ const defaultKey = isDev ? 'cert/local/localhost.decrypted.key' : isStage ? 'cer
 export const config = {
   port: parseInt(optional('PORT', '3000'), 10),
   host: optional('HOSTNAME', '0.0.0.0'),
+  maxDuration,
   nodeEnv,
   isDev,
   isStage,
