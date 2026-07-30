@@ -12,7 +12,7 @@
  *   - Silently accepting (always returns 204, even if Firebase write fails)
  */
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { dbPush } from '@services/firebase';
+import { dbPush } from '../services/firebase';
 
 export async function logRoutes(fastify: FastifyInstance): Promise<void> {
 

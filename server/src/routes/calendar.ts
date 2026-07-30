@@ -22,7 +22,7 @@
  */
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { dbGet, dbSet, dbPush, dbRemove, dbUpdate } from '../services/firebase';
-import { calendarEventSchema } from '@schema';
+import { calendarEventSchema } from '../schema';
 
 const ROOT = 'calendar';
 

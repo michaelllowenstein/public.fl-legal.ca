@@ -1,6 +1,6 @@
-import { prependOnceListener } from 'cluster';
 import * as dotenv from 'dotenv';
 dotenv.config();
+dotenv.config({ path: '../../resend.env', override: true });
 
 export const need = (name: string): string => {
   const v = process.env[name];
@@ -12,24 +12,13 @@ function optional(name: string, fallback = ''): string {
   return process.env[name] ?? fallback;
 }
 
-function setemailvar(env: string): string {
-  if (isProd) {
-    optional('SENDGRID_API_KEY', process.env.SENDGRID_EMAIL_API_KEY);
-    return '[Production] SENDGRID_API_KEY set to production environment.'
-  } else if (isStage) {
-    optional('SENDGRID_API_KEY', process.env.SENDGRID_LOCAL_API_KEY);
-    return '[Preview] SENDGRID_API_KEY set to staging environment.'
-  } else {
-    optional('SENDGRID_API_KEY', process.env.SENDGRID_LOCAL_API_KEY);
-    return '[Local] SENDGRID_API_KEY set to local environment.'
-  }
-}
-
 // ── Environment tier ──────────────────────────────────────────────────────────
 const nodeEnv = optional('NODE_ENV', 'development');
 const isDev = nodeEnv === 'development';
 const isStage = nodeEnv === 'staging';
 const isProd = nodeEnv === 'production';
+// for serverless function config
+const maxDuration = 15;
 
 // ── CORS origin — stage-switched, matches your old Express pattern ────────────
 //    local   → https://localhost:4200
@@ -46,6 +35,7 @@ const defaultKey = isDev ? 'cert/local/localhost.decrypted.key' : isStage ? 'cer
 export const config = {
   port: parseInt(optional('PORT', '3000'), 10),
   host: optional('HOSTNAME', '0.0.0.0'),
+  maxDuration,
   nodeEnv,
   isDev,
   isStage,
@@ -97,28 +87,11 @@ export const config = {
   },
  
   email: {
-    // SendGrid API key — use a SEPARATE key per environment so a leaked
-    // staging key can never send as the firm in production.
-    apiKey: setemailvar(nodeEnv),
- 
-    // Verified sender identity — must match a Single Sender or an
-    // authenticated domain in yor SendGrid account.
-    fromEmail: optional('EMAIL_FROM', 'no-reply@fl-legal.ca'),
-    fromName:  optional('EMAIL_FROM_NAME', 'Fric, Lowenstein & Co. LLP'),
- 
-    // Where firm-facing inquiry emails land.
-    firmEmail: need('FIRM_EMAIL') ?? 'friclow@gmail.com',
- 
-    // Optional reply-to for outgoing mail.
-    replyTo: optional('EMAIL_REPLY_TO, no-reply@fl-legal.ca'),
- 
-    // Sandbox mode: validates the full request against SendGrid but
-    // never actually delivers.  Defaults to ON everywhere except prod.
-    sandbox: false,
- 
-    // If set, ALL outgoing mail (firm inbox + client confirmation) is
-    // redirected here instead of the real recipient — safe for staging
-    // QA where you want to actually see an email land in your own inbox.
+    apiKey:        need('RESEND_API_KEY'),
+    fromEmail:     optional('EMAIL_FROM', 'no-reply@fl-legal.ca'),
+    fromName:      optional('EMAIL_FROM_NAME', 'Fric, Lowenstein & Co. LLP'),
+    firmEmail:     need('FIRM_EMAIL'),
+    replyTo:       optional('EMAIL_REPLY_TO', 'friclow@gmail.com'),
     testRecipient: optional('TEST_EMAIL_RECIPIENT'),
   },
   

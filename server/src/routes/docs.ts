@@ -15,8 +15,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import * as fs from 'fs';
 import * as path from 'path';
-import { config } from '@config';
- 
+import { config } from '../config';
+
 // ── Read + cache the HTML on cold start ────────────────────────────────────────
 const docsHtmlPath = path.resolve(__dirname, 'docs.html');
 let cachedHtml: string | null = null;

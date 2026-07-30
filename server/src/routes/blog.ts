@@ -25,7 +25,7 @@
  * stored in the document itself.
  */
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { dbGet, dbPush, dbUpdate, dbRemove } from '@services/firebase';
+import { dbGet, dbPush, dbUpdate, dbRemove } from '../services/firebase';
 
 const ROOT = 'blog';
 

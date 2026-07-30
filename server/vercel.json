@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'no build needed — Vercel compiles the TS function'",
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" }
+  ]
+}

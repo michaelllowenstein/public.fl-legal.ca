@@ -44,7 +44,7 @@
  */
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { dbGet, dbMultiUpdate } from '../services/firebase';
-import { contentPatchSchema } from '@schema';
+import { contentPatchSchema } from '../schema';
 
 const ROOT = 'siteContent';
 
