@@ -9,7 +9,7 @@
     "build:client": "cd client && npm ci --legacy-peer-deps && npm run build:prod && cd ..",
     "install:base": "npm install",
     "install:api": "cd server && npm ci && cd ..",
-    "install:client": "cd client && npm ci --legacy-peer-deps && cd ..",
+    "install:client": "cd client && npm ci --legacy-peer-deps",
     "local": "npm run local:app",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
