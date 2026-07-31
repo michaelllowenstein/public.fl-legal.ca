@@ -1,5 +1,17 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:client",
-  "outputDirectory": "client/dist/fl-legal.ca/browser"
+  "installCommand": "npm ci --legacy-peer-deps",
+  "buildCommand": "npm run build:prod",
+  "outputDirectory": "dist/fl-legal.ca",
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

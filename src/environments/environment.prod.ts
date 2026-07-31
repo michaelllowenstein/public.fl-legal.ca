@@ -1,6 +1,6 @@
 export const env = {
-  production: false,
-  name: 'local',
+  production: true,
+  name: 'prod',
   firebase: {
     apiKey: "AIzaSyCKPoNctKhZjzs6agbBlQf67KZipOHc2mg",
     authDomain: "friclowenstein.firebaseapp.com",
@@ -18,5 +18,14 @@ export const env = {
     longitude: -114.06998756735986,
     latitude: 50.955083281651376,
   },
-  apiURL: 'https://fl-legal-api.up.railway.app' // or https://api.fl-legal.ca
+ 
+  // ── Railway API ───────────────────────────────────────────────────────
+  //
+  // Replace with your actual Railway URL from `railway domain list`.
+  // Once you add a custom domain (api.fl-legal.ca), switch to that.
+  //
+  // Railway URL format:  https://<service-name>.up.railway.app
+  // Custom domain:       https://api.fl-legal.ca
+  //
+  apiURL: 'https://api-fl-legal-ca.onrender.com'
 };
