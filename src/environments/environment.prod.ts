@@ -27,5 +27,5 @@ export const env = {
   // Railway URL format:  https://<service-name>.up.railway.app
   // Custom domain:       https://api.fl-legal.ca
   //
-  apiURL: 'https://api-fl-legal-ca.up.railway.app'
+  apiURL: 'https://api-fl-legal-ca.onrender.com'
 };
