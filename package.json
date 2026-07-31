@@ -1,0 +1,54 @@
+{
+  "name": "fl-legal.ca",
+  "private": true,
+  "scripts": {
+    
+    "deploy:second": "npm run build:client && cd ..",
+    "deploy:first": "npm run build:serverless && cd ..",
+    "build:app": "npm run build:client",
+    "build:client": "cd client && npm ci --legacy-peer-deps && npm run build:prod && cd ..",
+    "install:base": "npm install",
+    "install:api": "cd server && npm ci && cd ..",
+    "install:client": "cd client && npm ci --legacy-peer-deps && cd ..",
+    "local": "npm run local:app",
+    "local:api": "cd server && npm run local",
+    "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "node --import tsx --test --experimental-test-coverage \"client/test/**/*.test.ts\"",
+    "test:email": "cd server && npm run test:email",
+    "build:serverless": "cd server && npm run build:api",
+    "deploy:build": "npm run deploy:client",
+    "deploy:install": "npm run install:client",
+    "deploy:verify": "cd server && node scripts/verify-vercel.mjs && cd .."
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/body-parser": "^1.19.6",
+    "@types/compression": "^1.8.1",
+    "@types/dotenv": "^6.1.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.5.0",
+    "@types/nodemailer": "^7.0.11",
+    "@types/nodemailer-sendgrid": "^1.0.3",
+    "@vercel/node": "^5.9.0",
+    "concurrently": "^8.2.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.1",
+    "fastify": "^5.8.2",
+    "fastify-plugin": "^5.1.0",
+    "firebase-admin": "^13.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "resend": "^6.18.0",
+    "uuid": "^14.0.1"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "public": {
+    "siteContent": {
+      "home": {
+        "id": "home",
+        "page": "Home",
+        "header": "Welcome",
+        "subheader": "FRIC, LOWENSTEIN & CO. LLP: Serving Calgary For Over 30 Years...",
+        "intro": "Turn to Fric, Lowenstein & Co. LLP for highly experienced legal representation. Serving clients in Calgary and throughout Alberta, Fric, Lowenstein & Co. LLP offers a wide range of areas of expertise for individuals and businesses throughout Alberta. Trust the dynamic team from Fric, Lowenstein & Co. LLP for comprehensive legal representation. Personalized Legal Services in Calgary. No matter what your specific legal challenges may be, choose Fric, Lowenstein & Co. LLP and place 3 decades of legal expertise on your side.",
+        "bulletpoints": [
+          "Real Estate Transactions & Mortgages",
+          "Wills & Estates",
+          "Civil Litigation",
+          "Personal Injury",
+          "Business Incorporation",
+          "Business Sales & Purchases",
+          "Employment Law - including wrongful dismissal",
+          "Builders' Liens",
+          "…and helping people with general legal matters"
+        ],
+        "footer": "We offer discounted flat rates for many routine legal services. Now Located at Southcenter Executive Tower at 11012 Macleod Trail SE, Calgary, AB. Easy to get to and easy to park!"
+      },
+      "aboutUs": {
+        "id": "about-us",
+        "page": "About Us",
+        "header": "About Us",
+        "subheader": "About Us: Classmates and Partners",
+        "intro": "After graduating together in 1976, William Fric and Howard Lowenstein committed themselves to serving the legal needs of their neighbours. Since 1982, Fric, Lowenstein & Co. LLP has offered prudent legal advice to citizens in Calgary and throughout Alberta. When you choose Fric, Lowenstein & Co. LLP, you put 5 lawyers and over 30 years of legal expertise to work for you. We offer a range of legal services for individuals as well as business owners in the province and our committed staff is ready to offer you first-rate legal representation. Call us today to speak to our team.",
+        "bulletpoints": [
+          "Real Estate Transactions & Mortgages",
+          "Wills & Estates",
+          "Civil Litigation",
+          "Personal Injury",
+          "Business Incorporation",
+          "Business Sales & Purchases",
+          "Employment Law - including wrongful dismissal",
+          "Builders' Liens",
+          "…and helping people with general legal matters"
+        ],
+        "footer": "We offer discounted flat rates for many routine legal services. Now Located at Southcenter Executive Tower at 11012 Macleod Trail SE, Calgary, AB. Easy to get to and easy to park!"
+      },
+      "areasOfLaw": {
+        "id": "areas-of-law",
+        "page": "Areas of Law",
+        "header": "Areas of Law",
+        "subheader": "Our Mission: To Provide Excellent Legal Service at a Reasonable Cost.",
+        "intro": "For more than 30 years, clients in Calgary and throughout Alberta have trusted Fric, Lowenstein & Co. LLP for prudent, customer-focused legal representation. No matter what your specific legal needs may be, our analytical team will work tirelessly to defend your rights. Contact our team to discuss your specific situation. We help people with services related to:",
+        "bulletpoints": [
+          "Real Estate Transactions & Mortgages",
+          "Wills & Estates",
+          "Civil Litigation",
+          "Personal Injury",
+          "Business Incorporation",
+          "Business Sales & Purchases",
+          "Employment Law - including wrongful dismissal",
+          "Builders' Liens",
+          "Foreclosures",
+          "Debt Collection",
+          "Commercial Transactions",
+          "Notarization",
+          "Banking",
+          "Private Lending"
+        ],
+        "footer": ""
+      },
+      "faq": {
+        "id": "faq",
+        "page": "FAQ",
+        "header": "Frequently Asked Questions",
+        "subheader": "Professional Legal Services in Calgary",
+        "intro": "Learn more about Fric, Lowenstein & Co. LLP's Calgary-based legal practice. We have been serving individuals and businesses throughout Alberta since 1982.",
+        "faqs": [
+          {
+            "question": "How long has Fric, Lowenstein & Co. LLP been in practice?",
+            "answer": "Fric, Lowenstein & Co. LLP has more than 40 years of experience serving the legal needs of citizens in Calgary and throughout Alberta. Founded in 1982, our firm has built lasting relationships with individuals, families, and businesses across the province."
+          },
+          {
+            "question": "Do I have a case?",
+            "answer": "<p>Every situation is unique. <a class=\"text-link\" href=\"/contact-us\">Contact us today</a> to discuss your specific circumstances — we are committed to defending the rights of our clients.</p><p>We regularly help people who are: buying or selling a residential or commercial property; starting or operating a small business; concerned about will and estate planning; dealing with a foreclosure or mortgage issue; seeking debt collection or creditor remedies; recovering from a personal injury; or in need of general legal guidance.</p>"
+          },
+          {
+            "question": "What areas of law does the firm practice?",
+            "answer": "<p>Our firm offers a broad range of legal services including: real estate — sales, purchases and mortgages; wills and estates; corporate and small business law; civil and commercial litigation; foreclosures; debt collection; commercial transactions; personal injury (contingency fee available); banking and private lending; and notarization and commissioning.</p>"
+          },
+          {
+            "question": "Can I call for a free initial telephone discussion?",
+            "answer": "Yes. We will take your initial call at no charge and let you know whether we can assist with your matter. For areas outside our practice — such as criminal or family law — we work closely with other trusted lawyers and can provide a direct referral. If it is a matter we can handle ourselves, we will give you a clear estimate of anticipated costs before any work begins."
+          },
+          {
+            "question": "Do you offer flat-rate or fixed-fee services?",
+            "answer": "Yes. We offer discounted flat rates for many routine legal services including real estate transactions, incorporations, wills, and notarizations. See our Pricing page for the current fee schedule, or call us for a quote on more complex matters."
+          },
+          {
+            "question": "Where is your office located?",
+            "answer": "We are conveniently located at #750, 11012 Macleod Trail S.E., Calgary, Alberta T2J 7E4 — Southcentre Executive Tower. Easy to get to and easy to park. Office hours are Monday to Friday, 8:30 AM to 5:00 PM."
+          }
+        ],
+        "footer": ""
+      },
+      "pricing": {
+        "id": "pricing",
+        "page": "Pricing",
+        "header": "Pricing",
+        "subheader": "REAL ESTATE FEES JULY 1, 2024",
+        "intro": "We offer straightforward, transparent pricing for most routine legal services. Fees below are estimates — contact us for a firm quote on complex matters.",
+        "sections": [
+          {
+            "id": "purchase-mortgage",
+            "label": "Purchase & Mortgage Fees",
+            "rows": [
+              "Under 50,000.00 P&M 50.00 + 25.00 = 75.00 + Disbursements",
+              "50,000.00 – 00,000.00 P&M 75.00 + 50.00 = ,125.00 + Disbursements",
+              "00,000.00 – 50,000.00 P&M 50.00 + 25.00 = ,375.00 + Disbursements",
+              "OVER 50,000.00 P&M ,025.00 + 50.00 = ,575.00 + Disbursements"
+            ]
+          },
+          {
+            "id": "cash-purchase",
+            "label": "Cash Purchase Fees",
+            "rows": [
+              "Under 00,000.00 = 50.00 + Disbursements",
+              "00,000.00 to 50,000.00 = ,150.00 + Disbursements",
+              "50,000.00 to 50,000.00 = ,275.00 + Disbursements",
+              "Over 50,000.00 = ,375.00 and up + Disbursements – Please call for a quote"
+            ]
+          },
+          {
+            "id": "sales",
+            "label": "Sales",
+            "rows": [
+              "Under 00,000.00 = 95.00 + Disbursements",
+              "00,000.00 – 50,000.00 = 95.00 + Disbursements",
+              "50,000.00 – 50,000 = ,195.00",
+              "50,000.00 and above = Call for quote"
+            ]
+          },
+          {
+            "id": "refinances",
+            "label": "Refinances",
+            "rows": ["95.00 + Disbursements (includes 1 payout)", "+75.00 for each additional payout required"]
+          },
+          {
+            "id": "interim-financing",
+            "label": "Interim Financing",
+            "rows": ["50.00 + Disbursements"]
+          },
+          {
+            "id": "transfer-of-land",
+            "label": "Transfer of Land",
+            "rows": [
+              "75.00 + Land Titles Disbursements",
+              "ASSIGN RENTS: 25.00 + Land Titles Disbursements",
+              "POA: 25.00",
+              "ENCROACHMENT AGREEMENT: 50.00 + Disbursements",
+              "RELAXATION: 50.00 + Disbursements"
+            ]
+          },
+          {
+            "id": "corporate",
+            "label": "Corporate Fees",
+            "rows": [
+              "Incorporation of Company — Standard structure:",
+              "Legal Fees – 75.00",
+              "Filing Fee – 00.00",
+              "Government Filing Fee – 75.00 (tax exempt)",
+              "Plus Disbursements and GST",
+              "Professional Corporation: Legal Fees – 75.00 (all other charges same as above)",
+              "Annual Returns / Registered Office: 20.00 + Filing Fee 5.00",
+              "Amalgamations: Base Fee of ,250.00 plus time and value fee",
+              "Extra provincial registration: 50.00",
+              "Registration of Trade Name: 20.00"
+            ]
+          },
+          {
+            "id": "wills-epa-single",
+            "label": "Wills, Enduring Power of Attorney & Personal Representative Documents — Single Person",
+            "rows": [
+              "Will – 95.00 plus GST",
+              "Enduring Power of Attorney (EPA) – 95.00 plus GST",
+              "Personal Directive (PD) – 75.00 plus GST",
+              "Will and PD or EPA – 50.00 plus GST",
+              "Will, EPA and PD package – 95.00 plus GST",
+              "Codicil – 75.00 plus GST"
+            ]
+          },
+          {
+            "id": "wills-epa-couple",
+            "label": "Wills, EPA & Personal Representative Documents — Married Couple",
+            "rows": [
+              "Will – 75.00 plus GST",
+              "EPA – 95.00 plus GST",
+              "PD – 50.00 plus GST",
+              "Will and PD or EPA – ,075.00 plus GST",
+              "Will, EPA and PD package – ,175.00 plus GST",
+              "Codicil – 00.00 plus GST"
+            ]
+          },
+          {
+            "id": "probate",
+            "label": "Estate Probate and Administration Fees",
+            "rows": [
+              "This fee is for core services generally required.",
+              "Estates up to 50,000.00: ,250.00 plus ½% of the value of the estate; plus disbursements",
+              "Estates over 50,000.00: ,250.00 plus 1% of the value of the estate plus disbursements",
+              "For estates over ,000,000.00, fees will vary with complexity and size — please contact us for a quote."
+            ]
+          },
+          {
+            "id": "personal-injury",
+            "label": "Personal Injury Cases",
+            "rows": [
+              "Usually we charge a contingency fee of 25% to 35% for personal injury cases.",
+              "Our fee is a percentage of the amount recovered — we receive no fee until you are paid."
+            ]
+          },
+          {
+            "id": "notary",
+            "label": "Notary Fees / Commissioning Fees",
+            "rows": [
+              "One (1) document notarized: 0.00",
+              "Each additional document: .00 – 0.00",
+              "One (1) certified copy: 5.00",
+              "Each additional certified copy: 0.00",
+              "Travel letter (standard Government of Canada form): 5.00",
+              "Specific Power of Attorney drafted by our office: 50.00",
+              "One (1) document commissioned: 0.00",
+              "Each additional commissioned document: .00 – 0.00"
+            ]
+          },
+          {
+            "id": "extra-services",
+            "label": "Other Potential Fees for Extra Services",
+            "rows": [
+              "RUSH FEE: 00.00 – 00.00",
+              "EXTRA SIGNING APPOINTMENT FEE: 00.00 per appointment",
+              "DIRECT DEPOSIT of Proceeds (per deposit): 0.00 – 0.00",
+              "ORDER RPR WITH COMPLIANCE: 50.00 / ORDER COMPLIANCE ONLY: 0.00",
+              "WIRE FEES: Outgoing wire fee: 50.00 / Incoming bank wire fee: 5.00",
+              "Mortgages that are FCT or FNF: extra 50.00"
+            ]
+          },
+          {
+            "id": "disclaimer",
+            "label": "Important Note",
+            "rows": [
+              "Fees & Disbursements above are estimated. We cannot give a firm amount until we have the file opened and have all information and details."
+            ]
+          }
+        ],
+        "footer": ""
+      }
+    }
+  }
+}
