@@ -2,14 +2,13 @@
   "name": "fl-legal.ca",
   "private": true,
   "scripts": {
-    
     "deploy:second": "npm run build:client && cd ..",
     "deploy:first": "npm run build:serverless && cd ..",
     "build:app": "npm run build:client",
-    "build:client": "cd client && npm ci --legacy-peer-deps && npm run build:prod && cd ..",
+    "build:client": "npm run build:prod",
     "install:base": "npm install",
-    "install:api": "cd server && npm ci && cd ..",
-    "install:client": "cd client && npm ci --legacy-peer-deps && cd ..",
+    "install:api": "cd server && npm ci",
+    "install:client": "cd client && npm run deploy:install",
     "local": "npm run local:app",
     "local:api": "cd server && npm run local",
     "local:app": "cd client && ng serve --configuration local --port 4422 --proxy-config proxy.conf.json",
