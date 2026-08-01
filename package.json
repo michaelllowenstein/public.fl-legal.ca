@@ -5,7 +5,7 @@
     "deploy:second": "npm run build:client && cd ..",
     "deploy:first": "npm run build:serverless && cd ..",
     "build:app": "npm run build:client",
-    "build:client": "npm run build:prod",
+    "build:client": "cd client && npm run deploy:build",
     "install:base": "npm install",
     "install:api": "cd server && npm ci",
     "install:client": "cd client && npm run deploy:install",
